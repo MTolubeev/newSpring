@@ -19,7 +19,7 @@ poisk: <input type ="text" name ="title"><br>
 </#list>
 <hr>
 <h3> Make new</h3>
-<form action="/product/create" method="post" enctype="multipart/form-data">
+<form action="/product/create" enctype="multipart/form-data" method="post">
 Nazvanie <input type="text" name="title"/><br><br>
 Opis <input type="text" name="description"/><br><br>
 Price <input type="number" name="price"/><br><br>

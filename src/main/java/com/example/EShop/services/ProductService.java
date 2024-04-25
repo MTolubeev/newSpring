@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
-    private final List<Product> products = new ArrayList<>();
+
 
     public List<Product> listProducts(String title) {
         if (title != null) return productRepository.findByTitle(title);
