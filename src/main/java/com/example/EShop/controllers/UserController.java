@@ -37,4 +37,11 @@ public class UserController {
     public String securityUrl() {
         return "hello";
     }
+=======
+    @GetMapping("/registration")
+    public String registration() {
+
+    }
+
+>>>>>>> origin/main
 }

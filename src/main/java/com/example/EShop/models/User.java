@@ -44,6 +44,10 @@ public class User implements UserDetails {
         dateOfCreated = LocalDateTime.now();
     }
 
+<<<<<<< HEAD
+=======
+    //Security
+>>>>>>> origin/main
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;

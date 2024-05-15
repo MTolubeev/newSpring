@@ -2,7 +2,6 @@ package com.example.EShop.services;
 
 import com.example.EShop.models.Image;
 import com.example.EShop.models.Product;
-import com.example.EShop.models.User;
 import com.example.EShop.repositories.ProductRepository;
 import com.example.EShop.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,8 +44,7 @@ public class ProductService {
             image3 = toImageEntity(file3);
             product.addImageToProduct(image3);
         }
-        log.info("Saving new Product. Title: {}; Shopper email: {}", product.getTitle(), product.getUser().getEmail());
-        Product productFromDB = productRepository.save(product);
+        log.info("Saving new Product. Title: {}; Shopper email: {}", product.getTitle(), product.getUser().getEmail());        Product productFromDB = productRepository.save(product);
         productFromDB.setPreviewImageId(productFromDB.getImages().get(0).getId());
         productRepository.save(product);
     }
