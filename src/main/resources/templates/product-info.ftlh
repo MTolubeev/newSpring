@@ -21,8 +21,6 @@
 <b>Opis </b>${product.description}<br>
 <b>Cena </b>${product.price}<br>
 <b>Kolvo </b>${product.count}<br>
-
-<b>User </b>${product.user.name}<br>
-<b>Mobila </b>${product.user.phoneNumber}<br>
+<b>Автор: </b><a href="/user/${product.user.id}">${product.user.name}</a><br>
 </body>
 </html>
