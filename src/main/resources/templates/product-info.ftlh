@@ -21,6 +21,6 @@
 <b>Opis </b>${product.description}<br>
 <b>Cena </b>${product.price}<br>
 <b>Kolvo </b>${product.count}<br>
-<b>Автор: </b><a href="/user/${product.user.id}">${product.user.name}</a><br>
+<form action="/basket" method="post">
 </body>
 </html>

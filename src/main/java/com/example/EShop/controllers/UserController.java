@@ -30,7 +30,7 @@ public class UserController {
             model.addAttribute("errorMessage", "Пользователь с email:" + user.getEmail() + "уже существует");
             return "registration";
         }
-       userService.createUser(user);
+        userService.createUser(user);
         return "redirect:/login";
     }
 
@@ -38,14 +38,13 @@ public class UserController {
     public String securityUrl() {
         return "hello";
     }
-@GetMapping("/user/{user}")
-public String userinfo(@PathVariable("user") User user, Model model){
-        model.addAttribute("user",user);
+
+    @GetMapping("/user/{user}")
+    public String userinfo(@PathVariable("user") User user, Model model) {
+        model.addAttribute("user", user);
         model.addAttribute("products", user.getProducts());
         return "user-info";
-
-
-}
+    }
 
 
 }

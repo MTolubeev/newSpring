@@ -62,4 +62,7 @@ public class UserService {
         }
         userRepository.save(user);
     }
+    public void putInBasket(User user, Long id){
+
+    }
 }

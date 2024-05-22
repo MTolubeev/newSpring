@@ -17,6 +17,7 @@
  <#else>
      <a href="/login">Войти</a></h1>
  </#if>
+  <a href="/basket">Корзина</a>
  <hr>
 <h4>products we have</h4>
 <form action="/" method="get">
@@ -30,22 +31,6 @@ poisk: <input type ="text" name ="title"><br>
 <#else>
 <h3>Net tovara</h3>
 </#list>
-<#if user.email??>
-<hr>
-<h3> Make new</h3>
-<form action="/product/create" enctype="multipart/form-data" method="post">
-Nazvanie <input type="text" name="title"/><br><br>
-Opis <input type="text" name="description"/><br><br>
-Price <input type="number" name="price"/><br><br>
-kolvo <input type="number" name="count"/><br><br>
 
-1 Photo <input type="file" name="file1"/><br><br>
-2 Photo <input type="file" name="file2"/><br><br>
-3 Photo <input type="file" name="file3"/><br><br>
-<input type ="hidden" name = "_csrf" value="${_csrf.token}">
-
-<input type="submit" value="add prod"/>
-</form>
-</#if>
 </body>
 </html>
