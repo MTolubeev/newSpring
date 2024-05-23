@@ -1,5 +1,6 @@
 package com.example.EShop.services;
 
+import com.example.EShop.models.Basket;
 import com.example.EShop.models.Product;
 import com.example.EShop.models.User;
 import com.example.EShop.repositories.ProductRepository;
@@ -19,7 +20,8 @@ public class BasketService {
     private final UserRepository userRepository;
     private final List<Product> products = new ArrayList<>();
 
-    public void addProduct(User user, Product product){
+    public void addProduct(){
+        Basket basket = new Basket();
 
     }
 }

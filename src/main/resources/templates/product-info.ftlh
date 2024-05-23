@@ -10,10 +10,7 @@
 
 
 <#list images as img>
-<img src="./images/${img.id}" height="60px"/><br><br>
-
     <img src="/images/${img.id}" height="60px"/><br><br>
-
 </#list>
 
 
@@ -22,5 +19,7 @@
 <b>Cena </b>${product.price}<br>
 <b>Kolvo </b>${product.count}<br>
 <form action="/basket" method="post">
+ <input type="submit" value="Add v korzinochky"/>
+ </form>
 </body>
 </html>

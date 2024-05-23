@@ -28,8 +28,7 @@ public class User implements UserDetails {
     @Column(name = "password", length = 1000)
     private String password;
 
-    @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-    private Basket basket;
+
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
