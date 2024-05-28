@@ -22,10 +22,11 @@ public class Basket {
     private Long id;
 
     @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-    @JoinColumn(name = "basketId")
+   // @JoinColumn(name = "basketId")
     private Set<Product> products = new HashSet<Product>();
+
     @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-    @JoinColumn(name = "basketId")
+  //  @JoinColumn(name = "basketId")
     private User user;
 
 }

@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,9 +23,8 @@ public class BasketController {
     }
 
     @PostMapping("/basket")
-    public String addToBasket(@PathVariable User user, Model model) {
-        model.addAttribute("user", user);
-        model.addAttribute("products", user.getProducts());
-        return "redirect:/basket";
+    public String addToBasket(User user, Model model) {
+
+        return "/basket";
     }
 }
