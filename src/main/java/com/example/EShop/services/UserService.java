@@ -1,10 +1,14 @@
 package com.example.EShop.services;
 
+import com.example.EShop.models.Product;
 import com.example.EShop.models.User;
 import com.example.EShop.models.enums.Role;
 import com.example.EShop.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +36,8 @@ public class UserService {
         return true;
 
     }
-    public List<User> list(){
+
+    public List<User> list() {
         return userRepository.findAll();
     }
 
@@ -62,7 +67,11 @@ public class UserService {
         }
         userRepository.save(user);
     }
-    public void putInBasket(User user, Long id){
 
+    public void putInBasket(User user, Long id) {
+
+    }
+    public User getUserById(String email) {
+        return userRepository.findByEmail(email);
     }
 }

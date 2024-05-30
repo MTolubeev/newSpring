@@ -7,10 +7,7 @@ import com.example.EShop.services.BasketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,9 +19,13 @@ public class BasketController {
         return "basket";
     }
 
-    @PostMapping("/basket")
-    public String addToBasket(User user, Model model) {
+    @PostMapping("/basket/adding")
+    public String addToBasket( @ModelAttribute Product product, @ModelAttribute User user) {
 
-        return "/basket";
+
+        basketService.addProduct(user, product);
+
+
+        return "basket";
     }
 }

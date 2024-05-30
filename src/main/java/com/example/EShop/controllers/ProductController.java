@@ -1,14 +1,13 @@
 package com.example.EShop.controllers;
 
 import com.example.EShop.models.Product;
+import com.example.EShop.models.User;
 import com.example.EShop.services.ProductService;
+import com.example.EShop.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -18,6 +17,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
+    private final UserService userService;
 
     @GetMapping("/")
     public String products(@RequestParam(name = "title", required = false) String title,Principal principal, Model model) {
@@ -27,10 +27,12 @@ public class ProductController {
     }
 
     @GetMapping("/product/{id}")
-    public String productInfo(@PathVariable Long id, Model model) {
+    public String productInfo(@PathVariable Long id, Model model, Principal principal) {
         Product product = productService.getProductById(id);
+        User user = productService.getUserByPrincipal(principal);
         model.addAttribute("product", product);
         model.addAttribute("images", product.getImages());
+        model.addAttribute("user", user);
         return "product-info";
     }
 

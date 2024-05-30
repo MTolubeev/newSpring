@@ -8,9 +8,9 @@ import com.example.EShop.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Slf4j
@@ -18,10 +18,11 @@ import java.util.List;
 public class BasketService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
-    private final List<Product> products = new ArrayList<>();
+    private final ArrayList<Product> products = new ArrayList<>();
 
-    public void addProduct(){
+    public void addProduct(@RequestParam User user, Product product) {
         Basket basket = new Basket();
-
+        basket.setProducts(product);
+        basket.setUser(user);
     }
 }
