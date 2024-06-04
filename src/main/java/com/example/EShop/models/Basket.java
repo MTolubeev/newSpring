@@ -19,19 +19,19 @@ public class Basket {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
     private Long id;
 
-    @OneToMany
-    @JoinColumn(name = "product_Id")
-    private ArrayList<Product> products = new ArrayList<Product>();
-
-    @OneToOne
-    @JoinColumn(name = "user_Id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
-
-
+    @ManyToMany
+    @JoinTable(
+            name = "basket_products",
+            joinColumns = @JoinColumn(name = "basket_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private List<Product> products = new ArrayList<>();
 
 
     public User getUser() {
@@ -42,11 +42,18 @@ public class Basket {
         this.user = user;
     }
 
-    public ArrayList<Product> getProducts() {
+    public List<Product> getProducts() {
         return products;
     }
 
-    public void setProducts(Product product) {
-        products.add(product);
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+    @Override
+    public String toString() {
+        return "Basket{" +
+                "id=" + id +
+                ", userId=" + (user != null ? user.getId() : "null") +
+                '}';
     }
 }

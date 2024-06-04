@@ -11,13 +11,13 @@
          <input type="hidden" name="_csrf" value="${_csrf.token}">
          <input type="submit" value="Выйти"/>
      </form>
+      <a href="/basket/${user.id}">View Basket</a>
       <#if user.isAdmin()>
              <a href="/admin">Панель администратора</a>
          </#if>
  <#else>
      <a href="/login">Войти</a></h1>
  </#if>
-  <a href="/basket">Корзина</a>
  <hr>
 <h4>products we have</h4>
 <form action="/" method="get">

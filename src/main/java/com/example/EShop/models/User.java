@@ -109,6 +109,13 @@ public class User implements UserDetails {
     public void setName(String name) {
         this.name = name;
     }
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + uid +
+                ", username='" + name + '\'' +
+                '}';
+    }
 
 
 }
