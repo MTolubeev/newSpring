@@ -4,10 +4,10 @@ import com.example.EShop.models.Basket;
 import com.example.EShop.models.Product;
 import com.example.EShop.models.User;
 import com.example.EShop.repositories.BasketRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
@@ -40,6 +40,7 @@ public class BasketService {
         products.add(product);
         basketRepository.save(basket);
     }
+@Transactional
     public List<Product> getUserProducts(User user) {
         Basket basket = basketRepository.findByUser(user);
         if (basket != null && basket.getProducts() != null) {

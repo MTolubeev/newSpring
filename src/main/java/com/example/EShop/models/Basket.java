@@ -19,6 +19,7 @@ public class Basket {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column
     private Long id;
 
     @ManyToOne

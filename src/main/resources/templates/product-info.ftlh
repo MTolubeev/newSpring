@@ -18,7 +18,7 @@
 <b>Opis </b>${product.description}<br>
 <b>Cena </b>${product.price}<br>
 <b>Kolvo </b>${product.count}<br>
-<form action="/basket/adding" method="post">
+<form action="/basket/${user.id}" method="post">
     <input type="hidden" name="productId" value="${product.id}">
 
 <#if user??>

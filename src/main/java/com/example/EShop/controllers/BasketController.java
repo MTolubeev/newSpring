@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
+@RequestMapping("/basket")
 @RequiredArgsConstructor
 public class BasketController {
 
@@ -23,7 +24,7 @@ public class BasketController {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
 
-    @GetMapping("/basket/{userId}")
+    @GetMapping("/hi/{userId}")
     public String getBasket(@PathVariable Long userId, Model model){
      if (userId == null) {
         model.addAttribute("message", "User ID not found in session");
@@ -38,11 +39,11 @@ public class BasketController {
 
     List<Product> products = basketService.getUserProducts(user);
         model.addAttribute("products", products);
-        return "/basket";
+        return "basket";
 }
 
-    @PostMapping("/basket/adding")
-    public String addToBasket(@RequestParam Long productId, @RequestParam Long userId, Model model) {
+    @PostMapping("/{userId}")
+    public String addToBasket(@RequestParam Long productId, @PathVariable Long userId, Model model) {
 
 
         if (userId == null) {
@@ -60,6 +61,6 @@ public class BasketController {
             model.addAttribute("message", "Error adding product to basket: " + e.getMessage());
         }
 
-        return "/";
+        return "redirect:/";
     }
 }

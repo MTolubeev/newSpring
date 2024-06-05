@@ -34,8 +34,6 @@ public class Product {
     private String price;
 
 
-
-
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "product")
     private List<Image> images = new ArrayList<>();
     private Long previewImageId;
@@ -44,15 +42,17 @@ public class Product {
     @JoinColumn
     private User user;
 
-    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-    private Basket baskets;
+//    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+//    private Basket baskets;
+
     private LocalDateTime dateOfCreated;
 
     @PrePersist
-    private void init(){
+    private void init() {
         dateOfCreated = LocalDateTime.now();
     }
-    public void addImageToProduct(Image image){
+
+    public void addImageToProduct(Image image) {
         image.setProduct(this);
         images.add(image);
     }

@@ -11,7 +11,7 @@
          <input type="hidden" name="_csrf" value="${_csrf.token}">
          <input type="submit" value="Выйти"/>
      </form>
-      <a href="/basket/${user.id}">View Basket</a>
+      <a href="/basket/hi/${user.id}">View Basket</a>
       <#if user.isAdmin()>
              <a href="/admin">Панель администратора</a>
          </#if>
