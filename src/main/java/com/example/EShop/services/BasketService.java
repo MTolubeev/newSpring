@@ -19,7 +19,8 @@ import java.util.List;
 public class BasketService {
 
     private final BasketRepository basketRepository;
-@Transactional
+
+    @Transactional
     public void addProduct(User user, Product product) {
         // Поиск существующей корзины для пользователя
 
@@ -40,12 +41,19 @@ public class BasketService {
         products.add(product);
         basketRepository.save(basket);
     }
-@Transactional
+
+    @Transactional
     public List<Product> getUserProducts(User user) {
         Basket basket = basketRepository.findByUser(user);
         if (basket != null && basket.getProducts() != null) {
             return basket.getProducts();
         }
         return new ArrayList<>();
+    }
+
+    @Transactional
+    public void deleteProduct(Long id) {
+        basketRepository.deleteProductFromBasketProducts(id);
+
     }
 }

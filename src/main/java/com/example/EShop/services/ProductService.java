@@ -3,6 +3,7 @@ package com.example.EShop.services;
 import com.example.EShop.models.Image;
 import com.example.EShop.models.Product;
 import com.example.EShop.models.User;
+import com.example.EShop.repositories.BasketRepository;
 import com.example.EShop.repositories.ProductRepository;
 import com.example.EShop.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.List;
 public class ProductService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final BasketRepository basketRepository;
     private final List<Product> products = new ArrayList<>();
 
     public List<Product> listProducts(String title) {
@@ -29,8 +31,8 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public void saveProduct(Principal principal, Product product, MultipartFile file1, MultipartFile file2, MultipartFile file3) throws IOException {
-       product.setUser(getUserByPrincipal(principal));
+    public void saveProduct(Product product, MultipartFile file1, MultipartFile file2, MultipartFile file3) throws IOException {
+//       product.setUser(getUserByPrincipal(principal));
         Image image1;
         Image image2;
         Image image3;
@@ -47,11 +49,10 @@ public class ProductService {
             image3 = toImageEntity(file3);
             product.addImageToProduct(image3);
         }
-        log.info("Saving new Product. Title: {}; Shopper email: {}", product.getTitle(), product.getUser().getEmail());        Product productFromDB = productRepository.save(product);
+        log.info("Saving new Product. Title: {}", product.getTitle());        Product productFromDB = productRepository.save(product);
         productFromDB.setPreviewImageId(productFromDB.getImages().get(0).getId());
         productRepository.save(product);
     }
-
     public User getUserByPrincipal(Principal principal) {
         if(principal == null) return new User();
         return userRepository.findByEmail(principal.getName());
@@ -68,7 +69,9 @@ public class ProductService {
     }
 
     public void deleteProduct(Long id) {
+        basketRepository.deleteProductFromBasketProducts(id);
         productRepository.deleteById(id);
+
     }
 
     public Product getProductById(Long id) {

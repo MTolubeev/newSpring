@@ -38,19 +38,19 @@ public class Product {
     private List<Image> images = new ArrayList<>();
     private Long previewImageId;
 
-    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-    @JoinColumn
-    private User user;
+//    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+//    @JoinColumn
+//    private User user;
 
 //    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 //    private Basket baskets;
-
-    private LocalDateTime dateOfCreated;
-
-    @PrePersist
-    private void init() {
-        dateOfCreated = LocalDateTime.now();
-    }
+//
+//    private LocalDateTime dateOfCreated;
+//
+//    @PrePersist
+//    private void init() {
+//        dateOfCreated = LocalDateTime.now();
+//    }
 
     public void addImageToProduct(Image image) {
         image.setProduct(this);

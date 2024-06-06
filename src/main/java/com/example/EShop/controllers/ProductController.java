@@ -5,6 +5,7 @@ import com.example.EShop.models.User;
 import com.example.EShop.services.ProductService;
 import com.example.EShop.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
+
 public class ProductController {
     private final ProductService productService;
     private final UserService userService;
@@ -37,9 +39,9 @@ public class ProductController {
     }
 
     @PostMapping("/product/create")
-    public String createProduct(@RequestParam("file1") MultipartFile file1, @RequestParam("file2") MultipartFile file2, @RequestParam("file3") MultipartFile file3, Product product, Principal principal) throws IOException {
-        productService.saveProduct(principal,product, file1, file2, file3);
-
+    public String createProduct(@RequestParam("file1") MultipartFile file1, @RequestParam("file2") MultipartFile file2,
+                                @RequestParam("file3") MultipartFile file3, Product product) throws IOException {
+        productService.saveProduct(product, file1, file2, file3);
         return "redirect:/";
     }
 

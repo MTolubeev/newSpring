@@ -20,17 +20,12 @@
 <b>Kolvo </b>${product.count}<br>
 <form action="/basket/${user.id}" method="post">
     <input type="hidden" name="productId" value="${product.id}">
-
-<#if user??>
-<p>user is present: ${user}</p>
- <input type="hidden" name="userId" value="${user.id}">
-
-<#else>
-<p>User unknown</p>
-</#if>
-
     <input type="hidden" name="_csrf" value="${_csrf.token}">
     <input type="submit" value="Add v korzinochky"/>
+</form>
+<form action="/product/delete/${product.id}" method="post">
+<input type="hidden" name="_csrf" value="${_csrf.token}">
+    <input type="submit" value="Удалить товар"/>
 </form>
 </body>
 </html>

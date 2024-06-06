@@ -39,12 +39,12 @@ public class UserController {
         return "hello";
     }
 
-    @GetMapping("/user/{user}")
-    public String userinfo(@PathVariable("user") User user, Model model) {
-        model.addAttribute("user", user);
-        model.addAttribute("products", user.getProducts());
-        return "user-info";
-    }
+//    @GetMapping("/user/{user}")
+//    public String userinfo(@PathVariable("user") User user, Model model) {
+//        model.addAttribute("user", user);
+//        model.addAttribute("products", user.getProducts());
+//        return "user-info";
+//    }
 
 
 }
