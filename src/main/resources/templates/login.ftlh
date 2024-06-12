@@ -4,7 +4,7 @@
     <title>BUYSELL</title>
 </head>
 <body>
-<h1>BUYSELL</h1><hr>
+<h1>Shop</h1><hr>
 <a href = "/">дом</a>
 <h4>Авторизация</h4>
 <form action="/login" method="post">

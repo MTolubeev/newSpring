@@ -2,6 +2,7 @@ package com.example.EShop.controllers;
 
 import com.example.EShop.models.Product;
 import com.example.EShop.models.User;
+import com.example.EShop.services.BasketService;
 import com.example.EShop.services.ProductService;
 import com.example.EShop.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +21,14 @@ import java.security.Principal;
 public class ProductController {
     private final ProductService productService;
     private final UserService userService;
+    private final BasketService basketService;
 
     @GetMapping("/")
     public String products(@RequestParam(name = "title", required = false) String title,Principal principal, Model model) {
+
         model.addAttribute("products", productService.listProducts(title));
         model.addAttribute("user", productService.getUserByPrincipal(principal));
+
         return "products";
     }
 
@@ -39,9 +43,8 @@ public class ProductController {
     }
 
     @PostMapping("/product/create")
-    public String createProduct(@RequestParam("file1") MultipartFile file1, @RequestParam("file2") MultipartFile file2,
-                                @RequestParam("file3") MultipartFile file3, Product product) throws IOException {
-        productService.saveProduct(product, file1, file2, file3);
+    public String createProduct(@RequestParam("file1") MultipartFile file1,  Product product) throws IOException {
+        productService.saveProduct(product, file1);
         return "redirect:/";
     }
 

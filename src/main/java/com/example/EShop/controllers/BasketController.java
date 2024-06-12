@@ -24,7 +24,7 @@ public class BasketController {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
 
-    @GetMapping("/hi/{userId}")
+    @GetMapping("/{userId}")
     public String getBasket(@PathVariable Long userId, Model model) {
         if (userId == null) {
             model.addAttribute("message", "User ID not found in session");
@@ -39,6 +39,7 @@ public class BasketController {
 
         List<Product> products = basketService.getUserProducts(user);
         model.addAttribute("products", products);
+        model.addAttribute("user", user);
         return "basket";
     }
 
@@ -63,10 +64,17 @@ public class BasketController {
 
         return "redirect:/";
     }
-    @PostMapping("/delete/{productId}")
-    public String deleteFromBasket(@PathVariable Long productId){
-        basketService.deleteProduct(productId);
-        return "basket";
+    @PostMapping("/{userId}/delete/{productId}")
+    public String deleteFromBasket(@PathVariable Long userId, @PathVariable Long productId, Model model ){
+        try {
+            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+            Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
+            basketService.deleteProduct(user, product);
+            model.addAttribute("message", "Product removed from basket successfully");
+        } catch (Exception e) {
+            model.addAttribute("message", "Error removing product from basket: " + e.getMessage());
+        }
+        return "redirect:/basket/" + userId;
 
     }
 
