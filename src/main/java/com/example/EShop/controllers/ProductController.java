@@ -24,11 +24,13 @@ public class ProductController {
     private final BasketService basketService;
 
     @GetMapping("/")
-    public String products(@RequestParam(name = "title", required = false) String title,Principal principal, Model model) {
+    public String products(@RequestParam(name = "title", required = false) String title, Principal principal, Model model) {
 
         model.addAttribute("products", productService.listProducts(title));
         model.addAttribute("user", productService.getUserByPrincipal(principal));
-
+        for (Product product : productService.listProducts(title)) {
+            model.addAttribute("images", product.getImages());
+        }
         return "products";
     }
 
@@ -43,7 +45,7 @@ public class ProductController {
     }
 
     @PostMapping("/product/create")
-    public String createProduct(@RequestParam("file1") MultipartFile file1,  Product product) throws IOException {
+    public String createProduct(@RequestParam("file1") MultipartFile file1, Product product) throws IOException {
         productService.saveProduct(product, file1);
         return "redirect:/";
     }

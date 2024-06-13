@@ -23,12 +23,14 @@
     <h4>products we have</h4>
     <#list products as product>
         <div>
-            <br><br><br><b>Навзание</b> ${product.title}<br>
+            <img src="/images/${product.previewImageId}" height="60px"/><br><br>
+            <b>Навзание</b> ${product.title}<br>
             <b>Описание</b> ${product.description}<br>
             <b>Цена</b> ${product.price}<br>
             <#if user?? && user.email??>
+
                 <form action="/basket/${user.id}" method="post">
-                    <input type="hidden" name="productId" value="${product.id}">
+                    <input type="hidden" name="productId" value="${product.id?c}">
                     <input type="hidden" name="_csrf" value="${_csrf.token}">
                     <#if product.count gte 6>
                         <b>В наличии</b><br>
@@ -42,7 +44,7 @@
                 </form>
             </#if>
             <#if user.isAdmin()>
-                <form action="/product/delete/${product.id}" method="post">
+                <form action="/product/delete/${product.id?c}" method="post">
                     <input type="hidden" name="_csrf" value="${_csrf.token}">
                     <input type="submit" value="Удалить товар"/>
                 </form>

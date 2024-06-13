@@ -31,13 +31,12 @@ public class Product {
     private int count;
 
     @Column(name = "price")
-    private String price;
+    private Long price;
 
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "product")
     private List<Image> images = new ArrayList<>();
     private Long previewImageId;
-
 
 
     public void addImageToProduct(Image image) {
@@ -70,7 +69,6 @@ public class Product {
         this.description = description;
     }
 
-
     public int getCount() {
         return count;
     }
@@ -79,5 +77,9 @@ public class Product {
         this.count = count;
     }
 
+    @Override
+    public String toString() {
+        return "Product{id=" + id + ", title='" + title + "', description='" + description + "', price=" + price + "', count=" + count + "}";
+    }
 
 }

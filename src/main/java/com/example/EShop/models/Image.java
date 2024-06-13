@@ -31,5 +31,8 @@ public class Image {
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     private Product product;
 
-
+    @Override
+    public String toString() {
+        return "Image{id=" + id + ", name='" + name + ", originalFileName='" + originalFileName + ", size='" + size + ", contentType='" + contentType + ", isPreviewImage='" + isPreviewImage + "'}";
+    }
 }
