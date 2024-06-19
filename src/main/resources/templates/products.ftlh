@@ -20,15 +20,18 @@
         <a href="/login">Войти</a>
     </#if>
     <hr>
-    <h4>products we have</h4>
-    <#list products as product>
+    <h4>Products we have</h4>
+    <#list products?sort_by("id") as product>
         <div>
-            <img src="/images/${product.previewImageId}" height="60px"/><br><br>
+
+        <p>Product ID: ${product.id?c}</p>
+        <p>Preview Image ID: ${product.previewImageId?c}</p>
+
+            <img src="/images/${product.previewImageId?c}"  height="60px"/><br><br>
             <b>Навзание</b> ${product.title}<br>
             <b>Описание</b> ${product.description}<br>
-            <b>Цена</b> ${product.price}<br>
+            <b>Цена</b> ${product.price?c}<br>
             <#if user?? && user.email??>
-
                 <form action="/basket/${user.id}" method="post">
                     <input type="hidden" name="productId" value="${product.id?c}">
                     <input type="hidden" name="_csrf" value="${_csrf.token}">
@@ -57,7 +60,7 @@
             <input type="hidden" name="_csrf" value="${_csrf.token}">
             Название объявления: <input type="text" name="title"/><br><br>
             Описание объявления: <input type="text" name="description"/><br><br>
-            Цена: <input type="text" name="price"/><br><br>
+            Цена: <input type="number" name="price"/><br><br>
             Колличество: <input type="number" name="count"/><br><br>
             Первая фотография: <input type="file" name="file1"/><br><br>
             <input type="submit" value="Добавить товар"/>

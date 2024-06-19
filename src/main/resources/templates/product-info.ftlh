@@ -7,8 +7,6 @@
 <h1>Подробнее о товаре</h1><hr>
 
 
-
-
 <#list images as img>
     <img src="/images/${img.id}" height="60px"/><br><br>
 </#list>

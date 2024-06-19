@@ -28,9 +28,7 @@ public class ProductController {
 
         model.addAttribute("products", productService.listProducts(title));
         model.addAttribute("user", productService.getUserByPrincipal(principal));
-        for (Product product : productService.listProducts(title)) {
-            model.addAttribute("images", product.getImages());
-        }
+
         return "products";
     }
 
