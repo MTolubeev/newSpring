@@ -6,9 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "baskets")
@@ -50,6 +48,7 @@ public class Basket {
     public void setProducts(List<Product> products) {
         this.products = products;
     }
+
     @Override
     public String toString() {
         return "Basket{" +

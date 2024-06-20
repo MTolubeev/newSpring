@@ -19,10 +19,10 @@ public class User implements UserDetails {
     private Long uid;
     @Column(name = "email", unique = true)
     private String email;
-    @Column(name = "phoneNumber")
-    private String phoneNumber;
     @Column(name = "name")
     private String name;
+    @Column(name = "surname")
+    private String surname;
     @Column(name = "active")
     private boolean active;
     @Column(name = "password", length = 1000)
@@ -34,10 +34,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 
-//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
-//    private List<Product> products = new ArrayList<>();
-//    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    private Basket baskets;
+
     private LocalDateTime dateOfCreated;
 
     @PrePersist
@@ -95,13 +92,6 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
 
     public String getName() {
         return name;
@@ -110,6 +100,7 @@ public class User implements UserDetails {
     public void setName(String name) {
         this.name = name;
     }
+
     @Override
     public String toString() {
         return "User{" +
@@ -119,4 +110,11 @@ public class User implements UserDetails {
     }
 
 
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
 }

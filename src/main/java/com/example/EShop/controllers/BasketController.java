@@ -40,6 +40,7 @@ public class BasketController {
         List<Product> products = basketService.getUserProducts(user);
         model.addAttribute("products", products);
         model.addAttribute("user", user);
+
         return "basket";
     }
 
@@ -64,8 +65,9 @@ public class BasketController {
 
         return "redirect:/";
     }
+
     @PostMapping("/{userId}/delete/{productId}")
-    public String deleteFromBasket(@PathVariable Long userId, @PathVariable Long productId, Model model ){
+    public String deleteFromBasket(@PathVariable Long userId, @PathVariable Long productId, Model model) {
         try {
             User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
             Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));

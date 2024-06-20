@@ -33,7 +33,6 @@ public class ProductService {
 
     @Transactional
     public void saveProduct(Product product, MultipartFile file1) throws IOException {
-
         Image image1;
 
         if (file1.getSize() != 0 && file1.getSize() > 0) {

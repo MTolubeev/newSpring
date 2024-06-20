@@ -7,12 +7,14 @@
     <h1>Главная страница</h1>
     <hr>
     <#if user?? && user.email??>
-        <h3>Имя пользователя: <i>${user.name}</i></h3>
+        <h3>Имя пользователя: <i>${user.surname} ${firstLetterName}. </i></h3>
+
+
         <form action="/logout" method="post">
             <input type="hidden" name="_csrf" value="${_csrf.token}">
             <input type="submit" value="Выйти"/>
         </form>
-        <a href="/basket/${user.id}">Корзина()</a>
+        <a href="/basket/${user.id}">Корзина(${basketSize?c})</a>
         <#if user.isAdmin()>
             <a href="/admin">Панель администратора</a>
         </#if>
@@ -24,8 +26,6 @@
     <#list products?sort_by("id") as product>
         <div>
 
-        <p>Product ID: ${product.id?c}</p>
-        <p>Preview Image ID: ${product.previewImageId?c}</p>
 
             <img src="/images/${product.previewImageId?c}"  height="60px"/><br><br>
             <b>Навзание</b> ${product.title}<br>

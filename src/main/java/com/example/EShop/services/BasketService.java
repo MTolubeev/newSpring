@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +21,7 @@ public class BasketService {
 
     @Transactional
     public void addProduct(User user, Product product) {
-
-
         Basket basket = basketRepository.findByUser(user);
-
-
         if (basket == null) {
             basket = new Basket();
             basket.setUser(user);
@@ -40,7 +35,7 @@ public class BasketService {
 
         products.add(product);
         // меняем колличество товара на - 1
-        product.setCount(product.getCount()-1);
+        product.setCount(product.getCount() - 1);
         basketRepository.save(basket);
     }
 
@@ -58,13 +53,20 @@ public class BasketService {
         Basket basket = basketRepository.findByUser(user);
         List<Product> products = basket.getProducts();
         products.remove(product);
-        product.setCount(product.getCount()+1);
+        product.setCount(product.getCount() + 1);
         basketRepository.save(basket);
 
     }
+
     @Transactional
-    public Long returnBasketSize(User user){
+    public int returnBasketSize(User user) {
         Basket basket = basketRepository.findByUser(user);
-        return basketRepository.count();
+        if (basket == null) {
+            basket = new Basket();
+        }
+        List<Product> productsInBasket = basket.getProducts();
+
+        return productsInBasket.size();
     }
+
 }
