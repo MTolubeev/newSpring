@@ -19,8 +19,8 @@ public class User implements UserDetails {
     private Long uid;
     @Column(name = "email", unique = true)
     private String email;
-    @Column(name = "name")
-    private String name;
+    @Column(name = "username")
+    private String username;
     @Column(name = "surname")
     private String surname;
     @Column(name = "active")
@@ -51,10 +51,7 @@ public class User implements UserDetails {
         return roles;
     }
 
-    @Override
-    public String getUsername() {
-        return email;
-    }
+
 
     @Override
     public boolean isAccountNonExpired() {
@@ -94,18 +91,18 @@ public class User implements UserDetails {
 
 
     public String getName() {
-        return name;
+        return username;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.username = username;
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + uid +
-                ", username='" + name + '\'' +
+                ", username='" + username + '\'' +
                 '}';
     }
 

@@ -7,7 +7,7 @@
 <h1>Shop <a href="/login">Войти</a></h1><hr>
 <h4>Регистрация</h4>
 <form action="/registration" method="post">
-    Имя пользователя: <input type="text" name="name"><br><br>
+    Имя пользователя: <input type="text" name="username"><br><br>
     Эл. почта: <input type="email" name="email"><br><br>
     Номер телефона: <input type="text" name="phoneNumber"><br><br>
     Пароль: <input type="password" name="password"><br><br>
