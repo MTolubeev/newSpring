@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
-  //  private final PasswordEncoder passwordEncoder;
+    //  private final PasswordEncoder passwordEncoder;
 //    @Autowired
 //    public void setUserRepository(UserRepository userRepository) {
 //        this.userRepository = userRepository;
@@ -34,10 +34,11 @@ public class UserService implements UserDetailsService {
 //        this.passwordEncoder = passwordEncoder;
 //    }
 
-    public Optional<User> findByUsername(String username) {
+    public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
-//    public boolean createUser(User user) {
+
+    //    public boolean createUser(User user) {
 //        String email = user.getEmail();
 //        if (userRepository.findByEmail(email) != null) return false;
 //        user.setActive(true);
@@ -80,18 +81,18 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
     public char returnFirstLetter(User user){
-        return user.getName().charAt(0);
+        return user.getUsername().charAt(0);
     }
 
-    @Override public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return org.springframework.security.core.userdetails.User
-                .withUsername(user.getUsername())
-                .password(user.getPassword())
-                .authorities(String.valueOf(user.getRoles().stream()
-                        .map(Role::name)
-                        .collect(Collectors.toList())))
-                .build();
+    @Override
+    @Transactional
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username);
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+                user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getAuthority())).collect(Collectors.toList())
+        );
     }
 }

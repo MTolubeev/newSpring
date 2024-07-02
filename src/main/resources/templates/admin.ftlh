@@ -25,7 +25,7 @@
             <th><#list user.roles as role>${role}</#list></th>
             <th>
                 <form action="/admin/user/ban/${user.id}" method="post">
-                    <input type="hidden" name="_csrf" value="${_csrf.token}">
+
                     <input type="submit" value="Бан">
                 </form>
             </th>

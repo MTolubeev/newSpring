@@ -6,12 +6,22 @@
 <body>
     <h1>Главная страница</h1>
     <hr>
+    <#if user??>
+        User exists!
+        <#if user.username??>
+            User email exists: ${user.username}
+        <#else>
+            User username does not exist
+        </#if>
+    <#else>
+        User does not exist
+    </#if>
     <#if user?? && user.email??>
         <h3>Имя пользователя: <i>${user.surname} ${firstLetterName}. </i></h3>
 
 
         <form action="/logout" method="post">
-            <input type="hidden" name="_csrf" value="${_csrf.token}">
+
             <input type="submit" value="Выйти"/>
         </form>
         <a href="/basket/${user.id}">Корзина(${basketSize?c})</a>
@@ -34,7 +44,7 @@
             <#if user?? && user.email??>
                 <form action="/basket/${user.id}" method="post">
                     <input type="hidden" name="productId" value="${product.id?c}">
-                    <input type="hidden" name="_csrf" value="${_csrf.token}">
+
                     <#if product.count gte 6>
                         <b>В наличии</b><br>
                         <input type="submit" value="Добавить в корзину"/>
@@ -48,7 +58,7 @@
             </#if>
             <#if user.isAdmin()>
                 <form action="/product/delete/${product.id?c}" method="post">
-                    <input type="hidden" name="_csrf" value="${_csrf.token}">
+
                     <input type="submit" value="Удалить товар"/>
                 </form>
             </#if>
@@ -57,7 +67,7 @@
     <#if user.isAdmin()>
         <h3>Создать новый товар</h3>
         <form action="/product/create" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="_csrf" value="${_csrf.token}">
+
             Название объявления: <input type="text" name="title"/><br><br>
             Описание объявления: <input type="text" name="description"/><br><br>
             Цена: <input type="number" name="price"/><br><br>

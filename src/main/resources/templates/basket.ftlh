@@ -21,7 +21,7 @@
                            <td>${product.price!}</td>
                            <td>
                                <form action="/basket/${user.id?c}/delete/${product.id?c}" method="post">
-                                   <input type="hidden" name="_csrf" value="${_csrf.token}">
+
                                    <input type="submit" value="Удалить товар"/>
                                </form>
                            </td>
