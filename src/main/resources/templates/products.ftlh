@@ -56,7 +56,7 @@
                     </#if>
                 </form>
             </#if>
-            <#if user.isAdmin()>
+            <#if user?? && user.isAdmin()>
                 <form action="/product/delete/${product.id?c}" method="post">
 
                     <input type="submit" value="Удалить товар"/>
@@ -64,7 +64,7 @@
             </#if>
         </div>
     </#list>
-    <#if user.isAdmin()>
+    <#if user?? && user.isAdmin()>
         <h3>Создать новый товар</h3>
         <form action="/product/create" method="post" enctype="multipart/form-data">
 

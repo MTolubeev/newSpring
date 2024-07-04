@@ -4,6 +4,8 @@ import com.example.EShop.models.Product;
 import com.example.EShop.services.BasketService;
 import com.example.EShop.services.ProductService;
 import com.example.EShop.services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +32,7 @@ public class ProductController {
             model.addAttribute("basketSize", basketService.returnBasketSize(productService.getUserByPrincipal(principal)));
             model.addAttribute("firstLetterName", userService.returnFirstLetter(productService.getUserByPrincipal(principal)));
         }
+
         return "products";
     }
 
