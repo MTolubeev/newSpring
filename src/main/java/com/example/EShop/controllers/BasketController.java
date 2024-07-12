@@ -7,6 +7,7 @@ import com.example.EShop.repositories.ProductRepository;
 import com.example.EShop.repositories.UserRepository;
 import com.example.EShop.services.BasketService;
 import com.example.EShop.services.UserService;
+import com.example.EShop.utils.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,26 +27,23 @@ public class BasketController {
 
     @GetMapping("/{userId}")
     public String getBasket(@PathVariable Long userId, Model model) {
-        if (userId == null) {
-            model.addAttribute("message", "User ID not found in session");
-            return "errorPage";
+        try {
+
+            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+            List<Product> products = basketService.getUserProducts(user);
+            model.addAttribute("products", products);
+            model.addAttribute("user", user);
+
+            return "basket";
+        } catch (Exception e) {
+            model.addAttribute("message", "Error fetching basket: " + e.getMessage());
+            return "redirect:/";
         }
-
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) {
-            model.addAttribute("message", "User not found");
-            return "errorPage";
-        }
-
-        List<Product> products = basketService.getUserProducts(user);
-        model.addAttribute("products", products);
-        model.addAttribute("user", user);
-
-        return "basket";
     }
 
     @PostMapping("/{userId}")
-    public String addToBasket(@RequestParam Long productId, @PathVariable Long userId, Model model) {
+    public String addToBasket(@RequestParam Long productId, @PathVariable Long userId, Model model, @RequestParam String token) {
 
 
         if (userId == null) {
@@ -63,7 +61,7 @@ public class BasketController {
             model.addAttribute("message", "Error adding product to basket: " + e.getMessage());
         }
 
-        return "redirect:/";
+        return "redirect:/?token=" + token;
     }
 
     @PostMapping("/{userId}/delete/{productId}")

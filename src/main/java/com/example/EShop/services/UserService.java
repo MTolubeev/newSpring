@@ -1,5 +1,6 @@
 package com.example.EShop.services;
 
+import com.example.EShop.dtos.RegistrationUserDto;
 import com.example.EShop.models.User;
 import com.example.EShop.models.enums.Role;
 import com.example.EShop.repositories.UserRepository;
@@ -22,33 +23,22 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
-    //  private final PasswordEncoder passwordEncoder;
-//    @Autowired
-//    public void setUserRepository(UserRepository userRepository) {
-//        this.userRepository = userRepository;
-//    }
-
-
-//    @Autowired
-//    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-//        this.passwordEncoder = passwordEncoder;
-//    }
+    private final PasswordEncoder passwordEncoder;
 
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
-    //    public boolean createUser(User user) {
-//        String email = user.getEmail();
-//        if (userRepository.findByEmail(email) != null) return false;
-//        user.setActive(true);
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        user.getRoles().add(Role.ROLE_USER);
-//        log.info("Saving new user with email: {}", email);
-//        userRepository.save(user);
-//        return true;
-//
-//    }
+    public User createNewUser(RegistrationUserDto registrationUserDto) {
+        User user = new User();
+        user.setUsername(registrationUserDto.getUsername());
+        user.setEmail(registrationUserDto.getEmail());
+        user.setSurname(registrationUserDto.getSurname());
+        user.setPassword(passwordEncoder.encode(registrationUserDto.getPassword()));
+        user.getRoles().add(Role.ROLE_USER);
+        user.setActive(true);
+        return userRepository.save(user);
+    }
 
     public List<User> list() {
         return userRepository.findAll();
@@ -80,7 +70,8 @@ public class UserService implements UserDetailsService {
         }
         userRepository.save(user);
     }
-    public char returnFirstLetter(User user){
+
+    public char returnFirstLetter(User user) {
         return user.getUsername().charAt(0);
     }
 

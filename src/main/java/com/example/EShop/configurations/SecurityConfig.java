@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,7 +28,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private UserService userService;
     private JwtRequestFilter jwtRequestFilter;
-
+    @Autowired
+    public SecurityConfig(@Lazy JwtRequestFilter jwtRequestFilter) {
+        this.jwtRequestFilter = jwtRequestFilter;
+    }
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
@@ -46,15 +50,15 @@ public class SecurityConfig {
                 .authorizeRequests((requests) -> requests
 
                         .requestMatchers("/basket/**", "/admin", "/admin/**").authenticated()
-                        .requestMatchers("/admin", "/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll()
 
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
 
-//                .logout((logout) -> logout.permitAll());
+                .logout((logout) -> logout.permitAll());
 
         return http.build();
     }

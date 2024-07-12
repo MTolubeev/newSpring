@@ -1,12 +1,17 @@
 package com.example.EShop.controllers;
 
 import com.example.EShop.models.Product;
+import com.example.EShop.models.User;
+import com.example.EShop.repositories.UserRepository;
 import com.example.EShop.services.BasketService;
 import com.example.EShop.services.ProductService;
 import com.example.EShop.services.UserService;
+import com.example.EShop.utils.JwtTokenUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,20 +27,24 @@ public class ProductController {
     private final ProductService productService;
     private final BasketService basketService;
     private final UserService userService;
+    private  final UserRepository userRepository;
+    private final JwtTokenUtils jwtTokenUtils;
 
     @GetMapping("/")
-    public String products(@RequestParam(name = "title", required = false) String title, Principal principal, Model model) {
-
+    public String products(@RequestParam(name = "title", required = false) String title,
+                           @RequestParam(name = "token", required = false) String token,
+                           Principal principal, Model model) {
         model.addAttribute("products", productService.listProducts(title));
-        model.addAttribute("user", productService.getUserByPrincipal(principal));
-        if (productService.getUserByPrincipal(principal).getEmail() != null) {
-            model.addAttribute("basketSize", basketService.returnBasketSize(productService.getUserByPrincipal(principal)));
-            model.addAttribute("firstLetterName", userService.returnFirstLetter(productService.getUserByPrincipal(principal)));
-        }
 
+        if (token != null) {
+            model.addAttribute("token", token);
+            User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
+            model.addAttribute("user", user);
+            model.addAttribute("basketSize", basketService.returnBasketSize(user));
+            model.addAttribute("firstLetterName", userService.returnFirstLetter(user));
+        }
         return "products";
     }
-
 
     @PostMapping("/product/create")
     public String createProduct(@RequestParam("file1") MultipartFile file1, Product product) throws IOException {
