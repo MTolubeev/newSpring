@@ -5,6 +5,7 @@ import com.example.EShop.dtos.RegistrationUserDto;
 import com.example.EShop.dtos.UserDto;
 
 import com.example.EShop.services.AuthService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import com.example.EShop.models.User;
@@ -32,7 +33,6 @@ public class UserController {
 
     @PostMapping("/login")
     public String auth(@RequestBody JwtRequest authRequest, Model model) {
-
         return authService.createAuthToken(authRequest, model);
     }
 
@@ -44,7 +44,6 @@ public class UserController {
     @PostMapping("/registration")
 
     public ResponseEntity<?> createNewUser(@RequestBody RegistrationUserDto registrationUserDto) {
-
         User user = userService.createNewUser(registrationUserDto);
         return ResponseEntity.ok(new UserDto(user.getId(), user.getUsername(), user.getEmail()));
     }

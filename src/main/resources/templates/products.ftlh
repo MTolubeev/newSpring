@@ -6,19 +6,9 @@
 <body>
     <h1>Главная страница</h1>
     <hr>
-    <#if user??>
-        User exists!
-        <#if user.username??>
-            User email exists: ${user.username}
-        <#else>
-            User username does not exist
-        </#if>
-    <#else>
-        User does not exist
-    </#if>
+
     <#if user?? && user.email??>
         <h3>Имя пользователя: <i>${user.surname} ${firstLetterName}. </i></h3>
-
 
         <form action="/logout" method="post">
 
@@ -32,13 +22,13 @@
         <a href="/login">Войти</a>
     </#if>
     <hr>
-    <h4>Products we have</h4>
+    <h4>Товары в наличии</h4>
     <#list products?sort_by("id") as product>
         <div>
 
 
             <img src="/images/${product.previewImageId?c}"  height="60px"/><br><br>
-            <b>Навзание</b> ${product.title}<br>
+            <b>Название</b> ${product.title}<br>
             <b>Описание</b> ${product.description}<br>
             <b>Цена</b> ${product.price?c}<br>
             <#if user?? && user.email??>

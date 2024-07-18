@@ -27,13 +27,13 @@ public class ProductController {
     private final ProductService productService;
     private final BasketService basketService;
     private final UserService userService;
-    private  final UserRepository userRepository;
+    private final UserRepository userRepository;
     private final JwtTokenUtils jwtTokenUtils;
 
     @GetMapping("/")
     public String products(@RequestParam(name = "title", required = false) String title,
                            @RequestParam(name = "token", required = false) String token,
-                           Principal principal, Model model) {
+                           Model model) {
         model.addAttribute("products", productService.listProducts(title));
 
         if (token != null) {
@@ -47,7 +47,9 @@ public class ProductController {
     }
 
     @PostMapping("/product/create")
-    public String createProduct(@RequestParam("file1") MultipartFile file1, Product product) throws IOException {
+    public String createProduct(@RequestParam("file1") MultipartFile file1,
+
+                                Product product) throws IOException {
         productService.saveProduct(product, file1);
         return "redirect:/";
     }

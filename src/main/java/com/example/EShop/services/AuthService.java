@@ -29,20 +29,18 @@ public class AuthService {
 
     public String createAuthToken(@RequestBody JwtRequest authRequest,Model model) {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userRepository.findByEmail(authRequest.getEmail()).getUsername(), authRequest.getPassword()));
         } catch (BadCredentialsException e) {
             model.addAttribute("error", "Неправильный логин или пароль");
             return "login";
         }
-        UserDetails userDetails = userService.loadUserByUsername(authRequest.getUsername());
+        UserDetails userDetails = userService.loadUserByUsername(userRepository.findByEmail(authRequest.getEmail()).getUsername());
         String token = jwtTokenUtils.generateToken(userDetails);
-        User user = userRepository.findByUsername(authRequest.getUsername());
+        User user = userRepository.findByUsername(userRepository.findByEmail(authRequest.getEmail()).getUsername());
 
         model.addAttribute("token", token);
         model.addAttribute("user", user);
         System.out.println("token : " + token);
-        return "redirect:/?token=" + token;
+        return "redirect:/";
     }
-
-
 }
