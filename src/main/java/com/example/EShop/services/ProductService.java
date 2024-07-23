@@ -37,7 +37,7 @@ public class ProductService {
 
         if (file1.getSize() != 0 && file1.getSize() > 0) {
             image1 = toImageEntity(file1);
-            image1.setPreviewImage(true);
+
             product.addImageToProduct(image1);
         }
 
@@ -71,4 +71,7 @@ public class ProductService {
     }
 
 
+//    public Product findById(Long productId) {
+//        return productRepository.findById(productId);
+//    }
 }

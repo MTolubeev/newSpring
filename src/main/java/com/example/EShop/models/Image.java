@@ -22,8 +22,7 @@ public class Image {
     private Long size;
     @Column(name = "contentType")
     private String contentType;
-    @Column(name = "isPreviewImage")
-    private boolean isPreviewImage;
+
 
 
     @Column(name = "bytes", columnDefinition = "bytea")
@@ -34,6 +33,6 @@ public class Image {
 
     @Override
     public String toString() {
-        return "Image{id=" + id + ", name='" + name + ", originalFileName='" + originalFileName + ", size='" + size + ", contentType='" + contentType + ", isPreviewImage='" + isPreviewImage + "'}";
+        return "Image{id=" + id + ", name='" + name + ", originalFileName='" + originalFileName + ", size='" + size + ", contentType='" + contentType +  "'}";
     }
 }

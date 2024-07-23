@@ -1,9 +1,11 @@
 package com.example.EShop.controllers;
 
+import com.example.EShop.models.Comment;
 import com.example.EShop.models.Product;
 import com.example.EShop.models.User;
 import com.example.EShop.repositories.UserRepository;
 import com.example.EShop.services.BasketService;
+import com.example.EShop.services.CommentService;
 import com.example.EShop.services.ProductService;
 import com.example.EShop.services.UserService;
 import com.example.EShop.utils.JwtTokenUtils;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class ProductController {
     private final ProductService productService;
     private final BasketService basketService;
     private final UserService userService;
+    private final CommentService commentService;
     private final UserRepository userRepository;
     private final JwtTokenUtils jwtTokenUtils;
 
@@ -35,7 +39,7 @@ public class ProductController {
                            @RequestParam(name = "token", required = false) String token,
                            Model model) {
         model.addAttribute("products", productService.listProducts(title));
-
+        model.addAttribute("comments", commentService.findAll());
         if (token != null) {
             model.addAttribute("token", token);
             User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
@@ -48,7 +52,6 @@ public class ProductController {
 
     @PostMapping("/product/create")
     public String createProduct(@RequestParam("file1") MultipartFile file1,
-
                                 Product product) throws IOException {
         productService.saveProduct(product, file1);
         return "redirect:/";
