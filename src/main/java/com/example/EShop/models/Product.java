@@ -33,6 +33,9 @@ public class Product {
     @Column(name = "price")
     private Long price;
 
+    @Column(name = "discountPrice")
+    private Long discountPrice;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Comment> comments;

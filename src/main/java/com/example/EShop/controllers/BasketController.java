@@ -24,6 +24,7 @@ public class BasketController {
     private final BasketService basketService;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final JwtTokenUtils jwtTokenUtils;
 
     @GetMapping("/{userId}")
     public String getBasket(@PathVariable Long userId, Model model) {
@@ -42,17 +43,13 @@ public class BasketController {
         }
     }
 
-    @PostMapping("/{userId}")
-    public String addToBasket(@RequestParam Long productId, @PathVariable Long userId, Model model, @RequestParam String token) {
+    @PostMapping("/addToBasket")
+    public String addToBasket(@RequestParam Long productId, @RequestHeader(value = "Authorization", required = false) String token, Model model) {
 
-
-        if (userId == null) {
-            model.addAttribute("message", "User ID not found in session");
-            return "errorPage";
-        }
+        User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
 
         try {
-            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
             Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
 
             basketService.addProduct(user, product);
@@ -61,13 +58,15 @@ public class BasketController {
             model.addAttribute("message", "Error adding product to basket: " + e.getMessage());
         }
 
-        return "redirect:/?token=" + token;
+        return "redirect:/";
     }
 
-    @PostMapping("/{userId}/delete/{productId}")
-    public String deleteFromBasket(@PathVariable Long userId, @PathVariable Long productId, Model model) {
+    @PostMapping("/delete/{productId}")
+    public String deleteFromBasket(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable Long productId, Model model) {
+        User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
+        Long userId = user.getId();
         try {
-            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
             Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
             basketService.deleteProduct(user, product);
             model.addAttribute("message", "Product removed from basket successfully");

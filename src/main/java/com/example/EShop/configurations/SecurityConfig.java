@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.disable())
                 .authorizeRequests((requests) -> requests
 
-                        .requestMatchers("/basket/**", "/admin", "/admin/**").authenticated()
+                        .requestMatchers( "/admin", "/admin/**").authenticated()
                         .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll()
 

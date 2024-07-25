@@ -36,7 +36,7 @@ public class ProductController {
 
     @GetMapping("/")
     public String products(@RequestParam(name = "title", required = false) String title,
-                           @RequestParam(name = "token", required = false) String token,
+                           @RequestHeader(value = "Authorization", required = false) String token,
                            Model model) {
         model.addAttribute("products", productService.listProducts(title));
         model.addAttribute("comments", commentService.findAll());

@@ -45,13 +45,15 @@ public class CommentController {
     private UserRepository userRepository;
     @Autowired
     private JwtTokenUtils jwtTokenUtils;
+
+
     @PostMapping("/addComment")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Comment> addComment(@RequestParam("productId") Long productId,
                                               @RequestParam("text") String text,
                                               @RequestParam("score") int score,
                                               @RequestParam(value = "image", required = false) MultipartFile image,
-                                              @RequestParam(name = "token", required = false) String token) throws IOException {
+                                              @RequestHeader("Authorization") String token) throws IOException {
 
         return commentService.addComment(productId, text, score, image,token);
     }
@@ -62,11 +64,11 @@ public class CommentController {
         return ResponseEntity.ok(commentService.findByProduct(product));
     }
 
-    @GetMapping("/product/{productId}/score/{score}")
-    public ResponseEntity<List<Comment>> getCommentsByScore(@PathVariable Long productId, @PathVariable int score) {
-        Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
-        return ResponseEntity.ok(commentService.findByProductAndScore(product, score));
-    }
+//    @GetMapping("/product/{productId}/score/{score}")
+//    public ResponseEntity<List<Comment>> getCommentsByScore(@PathVariable Long productId, @PathVariable int score) {
+//        Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
+//        return ResponseEntity.ok(commentService.findByProductAndScore(product, score));
+//    }
 
     @DeleteMapping("/{commentId}")
     @PreAuthorize("hasRole('ADMIN')")

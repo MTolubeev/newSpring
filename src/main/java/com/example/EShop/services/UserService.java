@@ -1,13 +1,11 @@
 package com.example.EShop.services;
 
-import com.example.EShop.dtos.RegistrationUserDto;
 import com.example.EShop.models.User;
 import com.example.EShop.models.enums.Role;
 import com.example.EShop.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -29,12 +27,12 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username);
     }
 
-    public User createNewUser(RegistrationUserDto registrationUserDto) {
+    public User createNewUser(String username, String surname, String email, String password) {
         User user = new User();
-        user.setUsername(registrationUserDto.getUsername());
-        user.setEmail(registrationUserDto.getEmail());
-        user.setSurname(registrationUserDto.getSurname());
-        user.setPassword(passwordEncoder.encode(registrationUserDto.getPassword()));
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setSurname(surname);
+        user.setPassword(passwordEncoder.encode(password));
         user.getRoles().add(Role.ROLE_USER);
         user.setActive(true);
         return userRepository.save(user);
