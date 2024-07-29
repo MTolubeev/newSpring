@@ -1,5 +1,6 @@
 package com.example.EShop.controllers;
 
+import com.example.EShop.dtos.ProductDto;
 import com.example.EShop.models.Comment;
 import com.example.EShop.models.Product;
 import com.example.EShop.models.User;
@@ -12,6 +13,8 @@ import com.example.EShop.utils.JwtTokenUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -48,6 +51,16 @@ public class ProductController {
             model.addAttribute("firstLetterName", userService.returnFirstLetter(user));
         }
         return "products";
+    }
+
+    //    @GetMapping("/product/getAll")
+//    public ResponseEntity<List<Product>> getAll(@RequestParam(name = "title", required = false) String title) {
+//        return ResponseEntity.ok(productService.listProducts(title));
+//    }
+    @GetMapping("/product/getAll")
+    public ResponseEntity<List<ProductDto>> getAllProducts() {
+        List<ProductDto> products = productService.findAllProducts();
+        return ResponseEntity.ok(products);
     }
 
     @PostMapping("/product/create")

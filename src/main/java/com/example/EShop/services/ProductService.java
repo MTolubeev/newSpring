@@ -1,5 +1,6 @@
 package com.example.EShop.services;
 
+import com.example.EShop.dtos.ProductDto;
 import com.example.EShop.models.Image;
 import com.example.EShop.models.Product;
 import com.example.EShop.models.User;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -24,54 +26,71 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final BasketRepository basketRepository;
-    private final List<Product> products = new ArrayList<>();
+    // private final List<Product> products = new ArrayList<>();
 
     public List<Product> listProducts(String title) {
         if (title != null) return productRepository.findByTitle(title);
-        return productRepository.findAll();
+        List<Product> products = productRepository.findAll();
+        return products;
     }
 
-    @Transactional
-    public void saveProduct(Product product, MultipartFile file1) throws IOException {
-        Image image1;
+    public List<ProductDto> findAllProducts() {
+        return productRepository.findAll().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
 
-        if (file1.getSize() != 0 && file1.getSize() > 0) {
-            image1 = toImageEntity(file1);
+    private ProductDto convertToDto(Product product) {
+        return new ProductDto(
+                product.getId(),
+                product.getTitle(),
+                product.getDescription(),
+                product.getCount(),
+                product.getPrice(),
+                product.getDiscountPrice()
+        );
+    }
+        @Transactional
+        public void saveProduct (Product product, MultipartFile file1) throws IOException {
+            Image image1;
 
-            product.addImageToProduct(image1);
+            if (file1.getSize() != 0 && file1.getSize() > 0) {
+                image1 = toImageEntity(file1);
+
+                product.addImageToProduct(image1);
+            }
+
+            log.info("Saving new Product. Title: {}", product.getTitle());
+            Product productFromDB = productRepository.save(product);
+            if (!productFromDB.getImages().isEmpty()) {
+                productFromDB.setPreviewImageId(productFromDB.getImages().get(0).getId());
+            }
+            productRepository.save(product);
         }
 
-        log.info("Saving new Product. Title: {}", product.getTitle());
-        Product productFromDB = productRepository.save(product);
-        if (!productFromDB.getImages().isEmpty()) {
-            productFromDB.setPreviewImageId(productFromDB.getImages().get(0).getId());
+        public User getUserByPrincipal (Principal principal){
+            if (principal == null) return new User();
+            return userRepository.findByEmail(principal.getName());
         }
-        productRepository.save(product);
-    }
 
-    public User getUserByPrincipal(Principal principal) {
-        if (principal == null) return new User();
-        return userRepository.findByEmail(principal.getName());
-    }
+        private Image toImageEntity (MultipartFile file) throws IOException {
+            Image image = new Image();
+            image.setName(file.getName());
+            image.setOriginalFileName(file.getOriginalFilename());
+            image.setContentType(file.getContentType());
+            image.setSize(file.getSize());
+            image.setBytes(file.getBytes());
+            return image;
+        }
 
-    private Image toImageEntity(MultipartFile file) throws IOException {
-        Image image = new Image();
-        image.setName(file.getName());
-        image.setOriginalFileName(file.getOriginalFilename());
-        image.setContentType(file.getContentType());
-        image.setSize(file.getSize());
-        image.setBytes(file.getBytes());
-        return image;
-    }
+        public void deleteProduct (Long id){
+            basketRepository.deleteProductFromBasketProducts(id);
+            productRepository.deleteById(id);
 
-    public void deleteProduct(Long id) {
-        basketRepository.deleteProductFromBasketProducts(id);
-        productRepository.deleteById(id);
-
-    }
+        }
 
 
 //    public Product findById(Long productId) {
 //        return productRepository.findById(productId);
 //    }
-}
+    }
