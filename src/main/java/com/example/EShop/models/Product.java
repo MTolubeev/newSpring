@@ -36,6 +36,12 @@ public class Product {
     @Column(name = "discountPrice")
     private Long discountPrice;
 
+    @Column(name = "base64Image")
+    private String base64Image;
+
+    @Column(name = "category")
+    private String category;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Comment> comments;
