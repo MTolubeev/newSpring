@@ -13,5 +13,6 @@ import lombok.NoArgsConstructor;
         private String description;
         private int count;
         private Long price;
+        private Long previewImageId;
         private Long discountPrice;
     }

@@ -22,20 +22,14 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
 
-    public String createAuthToken(String email, String password,Model model) {
+    public String createAuthToken(String email, String password) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userRepository.findByEmail(email).getUsername(), password));
         } catch (BadCredentialsException e) {
-            model.addAttribute("error", "Неправильный логин или пароль");
-            return "login";
+            throw new BadCredentialsException("Неправильный логин или пароль");
         }
         UserDetails userDetails = userService.loadUserByUsername(userRepository.findByEmail(email).getUsername());
-        String token = jwtTokenUtils.generateToken(userDetails);
-        User user = userRepository.findByUsername(userRepository.findByEmail(email).getUsername());
+        return jwtTokenUtils.generateToken(userDetails);
 
-        model.addAttribute("token", token);
-        model.addAttribute("user", user);
-        System.out.println("token : " + token);
-        return "redirect:/";
     }
 }

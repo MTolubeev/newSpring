@@ -2,26 +2,38 @@ package com.example.EShop.controllers;
 
 import com.example.EShop.dtos.UserDto;
 
+import com.example.EShop.repositories.UserRepository;
 import com.example.EShop.services.AuthService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
+import org.springframework.security.authentication.BadCredentialsException;
 import com.example.EShop.models.User;
 import com.example.EShop.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 
-@Controller
+@RestController
+@RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
     private final AuthService authService;
+    private final UserRepository userRepository;
 
 
     @PostMapping("/login")
-    public String auth(@RequestParam(name = "email") String email ,@RequestParam(name = "password") String password, Model model) {
-        return authService.createAuthToken(email, password, model);
+    public ResponseEntity<?> auth(@RequestParam(name = "email") String email ,@RequestParam(name = "password") String password) {
+
+        try {
+            String token = authService.createAuthToken(email, password);
+            System.out.println("TOKEN: " + token);
+            User user = userRepository.findByEmail(email);
+            return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, "Bearer " + token).body(user);
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Неправильный логин или пароль");
+        }
     }
 
     @GetMapping("/login")
@@ -30,7 +42,6 @@ public class UserController {
     }
 
     @PostMapping("/registration")
-
     public ResponseEntity<?> createNewUser(@RequestParam(name = "username") String username,
                                            @RequestParam(name = "surname") String surname,
                                            @RequestParam(name = "email") String email,

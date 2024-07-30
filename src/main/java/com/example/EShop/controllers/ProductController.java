@@ -10,25 +10,20 @@ import com.example.EShop.services.CommentService;
 import com.example.EShop.services.ProductService;
 import com.example.EShop.services.UserService;
 import com.example.EShop.utils.JwtTokenUtils;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
-
 public class ProductController {
     private final ProductService productService;
     private final BasketService basketService;
@@ -38,25 +33,30 @@ public class ProductController {
     private final JwtTokenUtils jwtTokenUtils;
 
     @GetMapping("/")
-    public String products(@RequestParam(name = "title", required = false) String title,
-                           @RequestHeader(value = "Authorization", required = false) String token,
-                           Model model) {
-        model.addAttribute("products", productService.listProducts(title));
-        model.addAttribute("comments", commentService.findAll());
-        if (token != null) {
-            model.addAttribute("token", token);
-            User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
-            model.addAttribute("user", user);
-            model.addAttribute("basketSize", basketService.returnBasketSize(user));
-            model.addAttribute("firstLetterName", userService.returnFirstLetter(user));
+    public ResponseEntity<?> products(@RequestParam(name = "title", required = false) String title,
+                                      @RequestHeader(value = "Authorization", required = false) String token) {
+        try {
+            List<ProductDto> products = productService.findAllProducts();
+            List<Comment> comments = commentService.findAll();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("products", products);
+            response.put("comments", comments);
+
+            if (token != null && !token.isEmpty()) {
+                User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
+                response.put("user", user);
+                response.put("basketSize", basketService.returnBasketSize(user));
+                response.put("firstLetterName", userService.returnFirstLetter(user));
+                return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, "Bearer " + token).body(response);
+            } else {
+                return ResponseEntity.ok(response);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching products");
         }
-        return "products";
     }
 
-    //    @GetMapping("/product/getAll")
-//    public ResponseEntity<List<Product>> getAll(@RequestParam(name = "title", required = false) String title) {
-//        return ResponseEntity.ok(productService.listProducts(title));
-//    }
     @GetMapping("/product/getAll")
     public ResponseEntity<List<ProductDto>> getAllProducts() {
         List<ProductDto> products = productService.findAllProducts();
@@ -64,15 +64,15 @@ public class ProductController {
     }
 
     @PostMapping("/product/create")
-    public String createProduct(@RequestParam("file1") MultipartFile file1,
-                                Product product) throws IOException {
+    public ResponseEntity<?> createProduct(@RequestParam("file1") MultipartFile file1,
+                                           @RequestBody Product product) throws IOException {
         productService.saveProduct(product, file1);
-        return "redirect:/";
+        return ResponseEntity.status(HttpStatus.CREATED).body("Product created successfully");
     }
 
     @PostMapping("/product/delete/{id}")
-    public String deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
-        return "redirect:/";
+        return ResponseEntity.ok("Product deleted successfully");
     }
 }

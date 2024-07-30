@@ -1,7 +1,5 @@
 package com.example.EShop.controllers;
 
-
-import com.example.EShop.models.Basket;
 import com.example.EShop.models.Order;
 import com.example.EShop.models.Product;
 import com.example.EShop.models.User;
@@ -11,16 +9,16 @@ import com.example.EShop.services.DefaultEmailService;
 import com.example.EShop.utils.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class EmailController {
 
@@ -34,8 +32,7 @@ public class EmailController {
         User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
         List<Product> usersProducts = basketService.getUserProducts(user);
         int totalPrice = 0;
-        List<Order> fullOrder = new ArrayList<Order>() ;
-
+        List<Order> fullOrder = new ArrayList<>();
 
         Set<Product> set = new HashSet<>();
         List<Product> duplicates = new ArrayList<>();
@@ -48,15 +45,14 @@ public class EmailController {
         for (int k = 0; k < usersProducts.size(); k++) {
             Order orderPart = new Order();
 
-           orderPart.setNameOfProduct(usersProducts.get(k).getTitle());
-           orderPart.setPrice(usersProducts.get(k).getPrice());
-            if(duplicates.contains(usersProducts.get(k))){
-               orderPart.setCountOfProducts(orderPart.getCountOfProducts() + 1);
+            orderPart.setNameOfProduct(usersProducts.get(k).getTitle());
+            orderPart.setPrice(usersProducts.get(k).getPrice());
+            if (duplicates.contains(usersProducts.get(k))) {
+                orderPart.setCountOfProducts(orderPart.getCountOfProducts() + 1);
             }
-            if(!fullOrder.contains(orderPart)) {
+            if (!fullOrder.contains(orderPart)) {
                 fullOrder.add(orderPart);
             }
-
         }
 
         String address = "lector1774@gmail.com";
@@ -65,6 +61,6 @@ public class EmailController {
                 "Ваш заказ на E-shop:",
                 fullOrder
         );
-        return ResponseEntity.ok("all right");
+        return ResponseEntity.ok("Email sent successfully");
     }
 }

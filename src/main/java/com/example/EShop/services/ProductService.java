@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +25,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final BasketRepository basketRepository;
-    // private final List<Product> products = new ArrayList<>();
+
 
     public List<Product> listProducts(String title) {
         if (title != null) return productRepository.findByTitle(title);
@@ -47,6 +46,7 @@ public class ProductService {
                 product.getDescription(),
                 product.getCount(),
                 product.getPrice(),
+                product.getPreviewImageId(),
                 product.getDiscountPrice()
         );
     }
