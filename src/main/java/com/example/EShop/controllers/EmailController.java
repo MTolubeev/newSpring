@@ -1,7 +1,6 @@
 package com.example.EShop.controllers;
 
-import com.example.EShop.models.Order;
-import com.example.EShop.models.Product;
+import com.example.EShop.dtos.ProductOrderDto;
 import com.example.EShop.models.User;
 import com.example.EShop.repositories.UserRepository;
 import com.example.EShop.services.BasketService;
@@ -13,10 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,37 +26,28 @@ public class EmailController {
     @GetMapping("/email")
     public ResponseEntity<String> sendEmail(@RequestHeader(value = "Authorization", required = false) String token) {
         User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
-        List<Product> usersProducts = basketService.getUserProducts(user);
+        List<ProductOrderDto> usersProducts = basketService.getUserProductDtos(user);
+
         int totalPrice = 0;
-        List<Order> fullOrder = new ArrayList<>();
+        StringBuilder emailContent = new StringBuilder("Ваш заказ на E-shop:\n\n");
 
-        Set<Product> set = new HashSet<>();
-        List<Product> duplicates = new ArrayList<>();
-        usersProducts.forEach(n -> {
-            if (!set.add(n)) {
-                duplicates.add(n);
-            }
-        });
-
-        for (int k = 0; k < usersProducts.size(); k++) {
-            Order orderPart = new Order();
-
-            orderPart.setNameOfProduct(usersProducts.get(k).getTitle());
-            orderPart.setPrice(usersProducts.get(k).getPrice());
-            if (duplicates.contains(usersProducts.get(k))) {
-                orderPart.setCountOfProducts(orderPart.getCountOfProducts() + 1);
-            }
-            if (!fullOrder.contains(orderPart)) {
-                fullOrder.add(orderPart);
-            }
+        for (ProductOrderDto productOrder : usersProducts) {
+            emailContent.append(productOrder.getTitle())
+                    .append(" - Количество: ").append(productOrder.getCount())
+                    .append(" - Цена: ").append(productOrder.getPrice() * productOrder.getCount())
+                    .append("\n");
+            totalPrice += (int) (productOrder.getPrice() * productOrder.getCount());
         }
+
+        emailContent.append("\nИтоговая стоимость: ").append(totalPrice);
 
         String address = "lector1774@gmail.com";
         emailService.sendSimpleEmail(
                 address,
-                "Ваш заказ на E-shop:",
-                fullOrder
+                "Ваш заказ на E-shop",
+                emailContent.toString()
         );
+
         return ResponseEntity.ok("Email sent successfully");
     }
 }

@@ -1,5 +1,6 @@
 package com.example.EShop.controllers;
 
+import com.example.EShop.dtos.CommentDto;
 import com.example.EShop.models.Comment;
 import com.example.EShop.models.Product;
 import com.example.EShop.repositories.CommentRepository;
@@ -13,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import java.util.stream.Collectors;
 import java.io.IOException;
 import java.util.List;
 
@@ -53,8 +54,25 @@ public class CommentController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
-    public ResponseEntity<List<Comment>> getAllComments() {
-        return ResponseEntity.ok(commentService.findAll());
+    @GetMapping("/getAllComments")
+    public ResponseEntity<List<CommentDto>> getAllComments() {
+        List<Comment> comments = commentRepository.findAll();
+        List<CommentDto> commentDtos = comments.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(commentDtos);
+    }
+
+    private CommentDto convertToDto(Comment comment) {
+        CommentDto dto = new CommentDto();
+        dto.setId(comment.getId());
+        dto.setText(comment.getText());
+        dto.setImages(comment.getImages());
+        dto.setScore(comment.getScore());
+        dto.setUserId(comment.getUser().getId());
+        dto.setUsername(comment.getUser().getUsername());
+        dto.setProductId(comment.getProduct().getId());
+        dto.setProductTitle(comment.getProduct().getTitle());
+        return dto;
     }
 }

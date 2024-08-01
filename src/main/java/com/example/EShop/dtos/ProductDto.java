@@ -1,21 +1,25 @@
 package com.example.EShop.dtos;
 
+import com.example.EShop.models.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public class ProductDto {
-        private Long id;
-        private String title;
-        private String description;
-        private int count;
-        private Long price;
-        private Long previewImageId;
-        private Long discountPrice;
-        private String category;
-        private String base64Image;
+import java.util.List;
 
-    }
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProductDto {
+    private Long id;
+    private String title;
+    private String description;
+    private int count;
+    private Long price;
+    private Long previewImageId;
+    private Long discountPrice;
+    private String category;
+    private List<Comment> comments;
+    private String base64Image;
+
+}

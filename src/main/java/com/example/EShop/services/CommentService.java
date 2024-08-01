@@ -1,5 +1,6 @@
 package com.example.EShop.services;
 
+import com.example.EShop.dtos.CommentDto;
 import com.example.EShop.models.Comment;
 import com.example.EShop.models.CommentImage;
 import com.example.EShop.models.Product;
@@ -29,9 +30,11 @@ import java.util.UUID;
 public class CommentService {
     @Autowired
     private CommentRepository commentRepository;
+
     private final UserRepository userRepository;
     private final JwtTokenUtils jwtTokenUtils;
     private final ProductRepository productRepository;
+
     public ResponseEntity<Comment> addComment(Long productId, String text, int score, MultipartFile image, String token) throws IOException {
         User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
         Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
@@ -56,6 +59,7 @@ public class CommentService {
         return ResponseEntity.ok(savedComment);
     }
 
+
     public Comment save(Comment comment) {
         return commentRepository.save(comment);
     }
@@ -75,7 +79,8 @@ public class CommentService {
     public void delete(Comment comment) {
         commentRepository.delete(comment);
     }
-    private String saveImage(MultipartFile image) throws IOException {
+
+    public String saveImage(MultipartFile image) throws IOException {
         String filename = UUID.randomUUID().toString() + "-" + image.getOriginalFilename();
         Path imagePath = Paths.get("images", filename);
         Files.copy(image.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);

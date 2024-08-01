@@ -19,12 +19,12 @@ public class DefaultEmailService {
     private final JavaMailSender emailSender;
 
 
-    public void sendSimpleEmail(String toAddress, String subject,  List<Order> order) {
+    public void sendSimpleEmail(String toAddress, String subject,  String order) {
 
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(toAddress);
         simpleMailMessage.setSubject(subject);
-        simpleMailMessage.setText(String.valueOf(order));
+        simpleMailMessage.setText(order);
         simpleMailMessage.setFrom(from);
         emailSender.send(simpleMailMessage);
     }

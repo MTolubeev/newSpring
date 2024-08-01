@@ -1,5 +1,6 @@
 package com.example.EShop.controllers;
 
+import com.example.EShop.dtos.ProductOrderDto;
 import com.example.EShop.models.Product;
 import com.example.EShop.models.User;
 import com.example.EShop.repositories.ProductRepository;
@@ -26,7 +27,7 @@ public class BasketController {
     public ResponseEntity<?> getBasket(@PathVariable Long userId) {
         try {
             User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-            List<Product> products = basketService.getUserProducts(user);
+            List<ProductOrderDto> products = basketService.getUserProductDtos(user);
 
             return ResponseEntity.ok(products);
         } catch (Exception e) {

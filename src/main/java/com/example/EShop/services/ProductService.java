@@ -56,6 +56,7 @@ public class ProductService {
                 product.getPreviewImageId(),
                 product.getDiscountPrice(),
                 product.getCategory(),
+                product.getComments(),
                 base64Image
         );
     }
