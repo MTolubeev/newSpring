@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -64,14 +65,18 @@ public class ProductController {
     }
 
     @PostMapping("/product/create")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createProduct(@RequestParam("file1") MultipartFile file1,
-                                           @RequestBody Product product) throws IOException {
+                                           @RequestBody Product product,
+                                           @RequestHeader(value = "Authorization", required = false) String token) throws IOException {
         productService.saveProduct(product, file1);
         return ResponseEntity.status(HttpStatus.CREATED).body("Product created successfully");
     }
 
     @PostMapping("/product/delete/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id,
+                                           @RequestHeader(value = "Authorization", required = false) String token) {
         productService.deleteProduct(id);
         return ResponseEntity.ok("Product deleted successfully");
     }

@@ -24,12 +24,17 @@ public class BasketController {
     private final JwtTokenUtils jwtTokenUtils;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<?> getBasket(@PathVariable Long userId) {
+    public ResponseEntity<?> getBasket(@PathVariable Long userId,
+                                       @RequestHeader(value = "Authorization") String token) {
         try {
             User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+            User userFromJwt = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
             List<ProductOrderDto> products = basketService.getUserProductDtos(user);
-
-            return ResponseEntity.ok(products);
+            if (user.getId() == userFromJwt.getId()) {
+                return ResponseEntity.ok(products);
+            } else {
+                return ResponseEntity.badRequest().body(" NO access");
+            }
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error fetching basket: " + e.getMessage());
         }

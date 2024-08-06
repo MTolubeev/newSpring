@@ -48,7 +48,8 @@ public class CommentController {
 
     @DeleteMapping("/{commentId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
+    public ResponseEntity<Void> deleteComment(@PathVariable Long commentId,
+                                              @RequestHeader(value = "Authorization", required = false) String token) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("Comment not found"));
         commentService.delete(comment);
         return ResponseEntity.ok().build();

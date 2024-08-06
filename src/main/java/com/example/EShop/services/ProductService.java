@@ -1,5 +1,6 @@
 package com.example.EShop.services;
 
+import com.example.EShop.dtos.CategoryDto;
 import com.example.EShop.dtos.ProductDto;
 import com.example.EShop.models.Image;
 import com.example.EShop.models.Product;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,8 +47,16 @@ public class ProductService {
     private ProductDto convertToDto(Product product) {
         Image image = imageRepository.findById(product.getPreviewImageId()).orElse(null);
         String base64Image = image != null ? Base64.getEncoder().encodeToString(image.getBytes()) : null;
+        List<CategoryDto> categories = new ArrayList<>();
+        String[] categoryStrings = product.getCategory().split(",");
+        for (String categoryString : categoryStrings) {
+            String[] categoryParts = categoryString.split("/");
+            String name = categoryParts.length > 0 ? categoryParts[0] : null;
+            String subcategory = categoryParts.length > 1 ? categoryParts[1] : null;
+            String subsubcategory = categoryParts.length > 2 ? categoryParts[2] : null;
 
-
+            categories.add(new CategoryDto(name, subcategory, subsubcategory));
+        }
         return new ProductDto(
                 product.getId(),
                 product.getTitle(),
@@ -55,7 +65,7 @@ public class ProductService {
                 product.getPrice(),
                 product.getPreviewImageId(),
                 product.getDiscountPrice(),
-                product.getCategory(),
+                categories,
                 product.getComments(),
                 base64Image
         );

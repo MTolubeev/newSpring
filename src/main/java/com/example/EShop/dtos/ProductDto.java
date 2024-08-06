@@ -18,7 +18,7 @@ public class ProductDto {
     private Long price;
     private Long previewImageId;
     private Long discountPrice;
-    private String category;
+    private List<CategoryDto> categories;
     private List<Comment> comments;
     private String base64Image;
 
