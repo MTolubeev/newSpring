@@ -38,7 +38,7 @@ public class Comment {
     private List<CommentImage> images;
 
 
-    @Column(name = "text")
+    @Column(name = "text", columnDefinition = "text")
     private String text;
 
     @Column(name = "score")
