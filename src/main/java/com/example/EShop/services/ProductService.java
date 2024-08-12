@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,13 +33,17 @@ public class ProductService {
     private final ImageRepository imageRepository;
 
 
-    public List<Product> listProducts(String title) {
-        if (title != null) return productRepository.findByTitle(title);
-        List<Product> products = productRepository.findAll();
-        return products;
-    }
 
-    public List<ProductDto> findAllProducts() {
+
+
+
+    public List<ProductDto> findAllProducts(Long id) {
+     if(id != null){
+         return productRepository.findById(id)
+                 .map(this::convertToDto)
+                 .map(Collections::singletonList)
+                 .orElse(Collections.emptyList());
+     }
         return productRepository.findAll().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());

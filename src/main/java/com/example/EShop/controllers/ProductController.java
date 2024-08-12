@@ -37,7 +37,7 @@ public class ProductController {
     public ResponseEntity<?> products(@RequestParam(name = "title", required = false) String title,
                                       @RequestHeader(value = "Authorization", required = false) String token) {
         try {
-            List<ProductDto> products = productService.findAllProducts();
+            List<ProductDto> products = productService.findAllProducts(null);
             List<Comment> comments = commentService.findAll();
 
             Map<String, Object> response = new HashMap<>();
@@ -57,10 +57,14 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching products");
         }
     }
-
     @GetMapping("/product/getAll")
     public ResponseEntity<List<ProductDto>> getAllProducts() {
-        List<ProductDto> products = productService.findAllProducts();
+        List<ProductDto> products = productService.findAllProducts(null);
+        return ResponseEntity.ok(products);
+    }
+    @GetMapping("/product/getAll/{id}")
+    public ResponseEntity<List<ProductDto>> getAllProducts(@PathVariable(required = false) Long id) {
+        List<ProductDto> products = productService.findAllProducts(id);
         return ResponseEntity.ok(products);
     }
 

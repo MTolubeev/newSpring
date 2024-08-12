@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    List<Product> findByTitle(String title);
+  //  Product findById(Long id);
 
     List<Product> findAll();
 
