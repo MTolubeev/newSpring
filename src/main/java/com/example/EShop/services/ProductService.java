@@ -36,18 +36,18 @@ public class ProductService {
 
 
 
+    public ProductDto findAllProducts(Long id) {
+        return productRepository.findById(id)
+                .map(this::convertToDto)
+                .orElse(null);  // Вернуть null, если продукт не найден
+    }
+    public List<ProductDto> findAllProducts() {
 
-    public List<ProductDto> findAllProducts(Long id) {
-     if(id != null){
-         return productRepository.findById(id)
-                 .map(this::convertToDto)
-                 .map(Collections::singletonList)
-                 .orElse(Collections.emptyList());
-     }
         return productRepository.findAll().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
+
 
     private ProductDto convertToDto(Product product) {
         Image image = imageRepository.findById(product.getPreviewImageId()).orElse(null);

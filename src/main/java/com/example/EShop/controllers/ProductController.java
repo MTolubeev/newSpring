@@ -37,7 +37,7 @@ public class ProductController {
     public ResponseEntity<?> products(@RequestParam(name = "title", required = false) String title,
                                       @RequestHeader(value = "Authorization", required = false) String token) {
         try {
-            List<ProductDto> products = productService.findAllProducts(null);
+            List<ProductDto> products = productService.findAllProducts();
             List<Comment> comments = commentService.findAll();
 
             Map<String, Object> response = new HashMap<>();
@@ -59,13 +59,13 @@ public class ProductController {
     }
     @GetMapping("/product/getAll")
     public ResponseEntity<List<ProductDto>> getAllProducts() {
-        List<ProductDto> products = productService.findAllProducts(null);
+        List<ProductDto> products = productService.findAllProducts();
         return ResponseEntity.ok(products);
     }
     @GetMapping("/product/getAll/{id}")
-    public ResponseEntity<List<ProductDto>> getAllProducts(@PathVariable Long id) {
-        List<ProductDto> products = productService.findAllProducts(id);
-        return ResponseEntity.ok(products);
+    public ResponseEntity<ProductDto> getAllProducts(@PathVariable Long id) {
+       ProductDto product = productService.findAllProducts(id);
+        return ResponseEntity.ok(product);
     }
 
     @PostMapping("/product/create")
