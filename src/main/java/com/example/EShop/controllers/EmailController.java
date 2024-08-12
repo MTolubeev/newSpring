@@ -39,9 +39,9 @@ public class EmailController {
             totalPrice += (int) (productOrder.getPrice() * productOrder.getCount());
         }
 
-        emailContent.append("\nИтоговая стоимость: ").append(totalPrice);
+        emailContent.append("\nИтоговая стоимость: ").append(totalPrice).append(" руб.");
 
-        String address = "lector1774@gmail.com";
+        String address = user.getEmail();
         emailService.sendSimpleEmail(
                 address,
                 "Ваш заказ на E-shop",
