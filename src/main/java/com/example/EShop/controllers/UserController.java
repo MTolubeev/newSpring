@@ -1,5 +1,6 @@
 package com.example.EShop.controllers;
 
+import com.example.EShop.dtos.AuthDto;
 import com.example.EShop.dtos.UserDto;
 
 import com.example.EShop.repositories.UserRepository;
@@ -30,7 +31,7 @@ public class UserController {
             String token = authService.createAuthToken(email, password);
             System.out.println("TOKEN: " + token);
             User user = userRepository.findByEmail(email);
-            return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, "Bearer " + token).body(user);
+            return ResponseEntity.ok(new AuthDto(user, token));
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Неправильный логин или пароль");
         }
