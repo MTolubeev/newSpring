@@ -1,14 +1,14 @@
 package com.example.EShop.services;
 
+import com.example.EShop.controllers.CommentController;
 import com.example.EShop.dtos.CategoryDto;
+import com.example.EShop.dtos.CommentDto;
 import com.example.EShop.dtos.ProductDto;
+import com.example.EShop.models.Comment;
 import com.example.EShop.models.Image;
 import com.example.EShop.models.Product;
 import com.example.EShop.models.User;
-import com.example.EShop.repositories.BasketRepository;
-import com.example.EShop.repositories.ImageRepository;
-import com.example.EShop.repositories.ProductRepository;
-import com.example.EShop.repositories.UserRepository;
+import com.example.EShop.repositories.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,23 +36,30 @@ public class ProductService {
 
 
 
+
     public ProductDto findAllProducts(Long id) {
         return productRepository.findById(id)
-                .map(this::convertToDto)
+                .map(this::convertProductToDto)
                 .orElse(null);  // Вернуть null, если продукт не найден
     }
     public List<ProductDto> findAllProducts() {
 
         return productRepository.findAll().stream()
-                .map(this::convertToDto)
+                .map(this::convertProductToDto)
                 .collect(Collectors.toList());
     }
 
 
-    private ProductDto convertToDto(Product product) {
+    private ProductDto convertProductToDto(Product product) {
         Image image = imageRepository.findById(product.getPreviewImageId()).orElse(null);
         String base64Image = image != null ? Base64.getEncoder().encodeToString(image.getBytes()) : null;
         List<CategoryDto> categories = new ArrayList<>();
+
+        List<Comment> commentsRaw = product.getComments();
+        List<CommentDto> comments = commentsRaw.stream()
+                .map(this::convertCommentToDto)
+                .collect(Collectors.toList());
+
         String[] categoryStrings = product.getCategory().split(",");
         for (String categoryString : categoryStrings) {
             String[] categoryParts = categoryString.split("/");
@@ -71,7 +78,7 @@ public class ProductService {
                 product.getPreviewImageId(),
                 product.getDiscountPrice(),
                 categories,
-                product.getComments(),
+                comments,
                 base64Image
         );
     }
@@ -116,7 +123,16 @@ public class ProductService {
     }
 
 
-//    public Product findById(Long productId) {
-//        return productRepository.findById(productId);
-//    }
+    private CommentDto convertCommentToDto(Comment comment) {
+        CommentDto dto = new CommentDto();
+        dto.setId(comment.getId());
+        dto.setText(comment.getText());
+        dto.setImages(comment.getImages());
+        dto.setScore(comment.getScore());
+        dto.setUserId(comment.getUser().getId());
+        dto.setUsername(comment.getUser().getUsername());
+        dto.setProductId(comment.getProduct().getId());
+        dto.setProductTitle(comment.getProduct().getTitle());
+        return dto;
+    }
 }

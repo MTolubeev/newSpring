@@ -64,6 +64,16 @@ public class CommentController {
         return ResponseEntity.ok(commentDtos);
     }
 
+@GetMapping("/{id}")
+public ResponseEntity <CommentDto> getOneComment(@PathVariable Long id) {
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> new RuntimeException("No comment with this id"));
+       CommentDto commentDto = convertToDto(comment);
+        return ResponseEntity.ok(commentDto);
+}
+
+
+
+
     private CommentDto convertToDto(Comment comment) {
         CommentDto dto = new CommentDto();
         dto.setId(comment.getId());
