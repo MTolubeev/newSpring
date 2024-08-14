@@ -1,0 +1,8 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+p,h2,button,li,ul,span{
+    font-family: "Inter", sans-serif;
+}
