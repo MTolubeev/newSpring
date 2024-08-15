@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import MyCard from "./MyCard.vue";
+import MyCard from "./CardItem.vue";
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
@@ -22,6 +22,8 @@ const fetchItems = async () => {
         imageUrl: `data:image/png;base64,${product.base64Image}`, 
       };
     });
+    console.log(items)
+
   } catch (err) {
     console.log(err);
   }

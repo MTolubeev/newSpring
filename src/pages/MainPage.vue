@@ -6,9 +6,9 @@
 </template>
 
 <script setup>
-import MyHeader from "@/components/MyHeader.vue";
-import MyDrawer from "@/components/MyDrawer.vue";
-import MyCardList from "@/components/MyCardList.vue";
+import MyHeader from "@/components/AppHeader.vue";
+import MyDrawer from "@/components/AppDrawer.vue";
+import MyCardList from "@/components/CardList.vue";
 import { useDrawer } from '@/composables/useHeader.js';
 
 const { isDrawerVisible, toggleDrawer, closeDrawer } = useDrawer();

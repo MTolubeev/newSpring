@@ -130,7 +130,7 @@ onMounted(() => {
   top: 0;
   right: 0;
   z-index: 10;
-  overflow-y: auto; /* Добавлено, чтобы список не вылезал за пределы экрана */
+  overflow-y: auto; 
 }
 
 h2,

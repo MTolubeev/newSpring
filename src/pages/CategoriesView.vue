@@ -45,10 +45,10 @@
 import { ref, computed, onMounted, watch } from "vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
-import MyCard from "@/components/MyCard.vue";
+import MyCard from "@/components/CardItem.vue";
 import { useDrawer } from "@/composables/useHeader.js";
-import MyHeader from "@/components/MyHeader.vue";
-import MyDrawer from "@/components/MyDrawer.vue";
+import MyHeader from "@/components/AppHeader.vue";
+import MyDrawer from "@/components/AppDrawer.vue";
 
 const { isDrawerVisible, toggleDrawer, closeDrawer } = useDrawer();
 const route = useRoute();
