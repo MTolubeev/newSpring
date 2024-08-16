@@ -26,21 +26,21 @@
                 </router-link>
                 <ul>
                   <li v-for="product in subsubcategory.products" :key="product.id">
-                    <router-link :to="{ path: `/product/${product.id}` }">
+                    <router-link :to="{ path: `/product-view/${product.id}` }">
                       {{ product.title }}
                     </router-link>
                   </li>
                 </ul>
               </li>
               <li v-for="product in subcategory.products" :key="product.id">
-                <router-link :to="{ path: `/product/${product.id}` }">
+                <router-link :to="{ path: `/product-view/${product.id}` }">
                   {{ product.title }}
                 </router-link>
               </li>
             </ul>
           </li>
           <li v-for="product in category.productsWithoutSubcategory" :key="product.id">
-            <router-link :to="{ path: `/product/${product.id}` }">
+            <router-link :to="{ path: `/product-view/${product.id}` }">
               {{ product.title }}
             </router-link>
           </li>
@@ -148,7 +148,7 @@ svg {
   cursor: pointer;
 }
 
-/* Удаление точек списка */
+
 ul {
   list-style-type: none;
   padding: 0;
@@ -165,26 +165,24 @@ a {
 a:focus {
   outline: none;
 }
-
-/* Эффект изменения цвета при наведении на ссылку */
 a:hover {
-  color: #007bff; /* Измените на желаемый цвет */
+  color: #007bff; 
 }
 
 li {
   margin-bottom: 0.5rem;
-  padding: 0.5rem; /* Добавлено для улучшения взаимодействия */
-  border-radius: 4px; /* Скругленные углы для лучшего визуального восприятия */
+  padding: 0.5rem; 
+  border-radius: 4px; 
 }
 
 ul ul {
-  padding-left: 1rem; /* Отступ для вложенных списков */
+  padding-left: 1rem; 
 }
 
-/* Удаление фона для списка и ссылок при наведении на родительский блок */
+
 .catalog:hover ul,
 .catalog:hover a {
-  background-color: transparent; /* Чтобы не было нежелательных эффектов при наведении на родительский блок */
+  background-color: transparent; 
 }
   </style>
   

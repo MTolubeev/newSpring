@@ -15,7 +15,7 @@
         /
       </span>
       <span v-if="productSubsubcategory !== 'None'">
-        <router-link
+        <router-link class="product__link"
           :to="{ path: `/category/${productCategory}/subcategory/${productSubcategory}/subsubcategory/${productSubsubcategory}`,}">
           {{ productSubsubcategory }}
         </router-link>
@@ -50,7 +50,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
 import { NCard } from "naive-ui";
@@ -58,6 +58,7 @@ import { useCartStore } from "@/store/cartStore";
 import MyHeader from "@/components/AppHeader.vue";
 import MyDrawer from "@/components/AppDrawer.vue";
 import { useDrawer } from '@/composables/useHeader.js';
+
 import CartButton from "@/components/CartButton.vue";
 
 
@@ -70,6 +71,7 @@ const inCart = ref(false);
 const fetchProduct = async (id) => {
   try {
     const response = await axios.get(`http://localhost:8080/product/getAll/${id}`);
+    console.log('Product data:', response.data);
     const productData = response.data;
 
     if (productData.base64Image) {
@@ -83,7 +85,12 @@ const fetchProduct = async (id) => {
   }
 };
 
-
+watch(() => route.params.productId, (newId) => {
+  if (newId) {
+    fetchProduct(newId);
+    closeDrawer();
+  }
+});
 const productCategory = computed(() => {
   return product.value?.categories?.[0]?.name || "Unknown";
 });
@@ -98,6 +105,7 @@ const productSubsubcategory = computed(() => {
 
 onMounted(() => {
   const productId = route.params.productId;
+  console.log('Loading product with ID:', productId);
   fetchProduct(productId);
 });
 
