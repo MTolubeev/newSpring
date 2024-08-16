@@ -39,7 +39,7 @@
           <span>Цена: <b>{{ product.price }} руб.</b></span>
           <span>Количество товаров осталось: <b>{{ product.count }}</b></span>
 
-          <CartButton :productId="product.id" />
+          <CartButton v-if="product" :productId="product.id" :product="product" />
         </div>
       </n-card>
     </div>
