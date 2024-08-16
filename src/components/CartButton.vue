@@ -32,14 +32,17 @@ const buttonType = computed(() => (inCart.value ? "default" : "success"));
 const buttonText = computed(() =>
   inCart.value ? "Удалить из корзины" : "Добавить в корзину"
 );
-
 const toggleCart = () => {
-  if (inCart.value) {
-    cartStore.removeFromCart(props.productId);
+  if (props.product && props.product.id) {
+    if (inCart.value) {
+      cartStore.removeFromCart(props.productId);
+    } else {
+      cartStore.addToCart(props.product);
+    }
+    inCart.value = !inCart.value;
   } else {
-    cartStore.addToCart(props.product);
+    console.error('Ошибка: некорректный товар в CartButton', props.product);
   }
-  inCart.value = !inCart.value;
 };
 
 watch(() => cartStore.cartItems,

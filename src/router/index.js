@@ -39,9 +39,9 @@ const routes = [
     props: true,
   },
   {
-    path: "/product/:productId",
-    component: ProductItem,
-    props: true
+    path: "/product-view/:productId",
+  component: ProductItem,
+  props: true
   }
 ]
 
