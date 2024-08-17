@@ -2,6 +2,9 @@ package com.example.EShop.utils;
 
 
 
+import com.example.EShop.models.CustomUserDetails;
+import com.example.EShop.models.User;
+import com.example.EShop.repositories.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -25,18 +28,24 @@ public class JwtTokenUtils {
     @Value("${jwt.expiration}")
     private Duration jwtExpiration;
 
-    public String generateToken(UserDetails userDetails) {
+
+    public String generateToken(CustomUserDetails customUserDetails) {
         Map<String, Object> claims = new HashMap<>();
-        List<String> rolesList = userDetails.getAuthorities().stream()
+        List<String> rolesList = customUserDetails.getAuthorities().stream()
+
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
         claims.put("roles", rolesList);
+        claims.put("id", customUserDetails.getId());
+        claims.put("surname", customUserDetails.getSurname());
+        claims.put("email", customUserDetails.getEmail());
 
         Date issuedDate = new Date();
         Date expiredDate = new Date(issuedDate.getTime() + jwtExpiration.toMillis());
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(userDetails.getUsername())
+                .setSubject(customUserDetails.getUsername())
+
                 .setIssuedAt(issuedDate)
                 .setExpiration(expiredDate)
                 .signWith(SignatureAlgorithm.HS256, secret)

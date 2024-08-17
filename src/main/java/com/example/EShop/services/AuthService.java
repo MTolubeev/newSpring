@@ -1,6 +1,7 @@
 package com.example.EShop.services;
 
 
+import com.example.EShop.models.CustomUserDetails;
 import com.example.EShop.models.User;
 import com.example.EShop.repositories.UserRepository;
 import com.example.EShop.utils.JwtTokenUtils;
@@ -28,8 +29,8 @@ public class AuthService {
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException("Неправильный логин или пароль");
         }
-        UserDetails userDetails = userService.loadUserByUsername(userRepository.findByEmail(email).getUsername());
-        return jwtTokenUtils.generateToken(userDetails);
+        CustomUserDetails customUserDetails = userService.loadUserByUsername(userRepository.findByEmail(email).getUsername());
+        return jwtTokenUtils.generateToken(customUserDetails);
 
     }
 }

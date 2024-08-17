@@ -1,5 +1,6 @@
 package com.example.EShop.services;
 
+import com.example.EShop.models.CustomUserDetails;
 import com.example.EShop.models.User;
 import com.example.EShop.models.enums.Role;
 import com.example.EShop.repositories.UserRepository;
@@ -75,12 +76,19 @@ public class UserService implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
 
-        return new org.springframework.security.core.userdetails.User(
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+
+        return new CustomUserDetails(
                 user.getUsername(),
                 user.getPassword(),
+                user.getSurname(),
+                user.getEmail(),
+                user.getId(),
                 user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getAuthority())).collect(Collectors.toList())
         );
     }

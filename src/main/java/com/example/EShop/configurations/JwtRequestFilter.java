@@ -1,5 +1,6 @@
 package com.example.EShop.configurations;
 
+import com.example.EShop.models.CustomUserDetails;
 import com.example.EShop.services.UserService;
 import com.example.EShop.utils.JwtTokenUtils;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -51,11 +52,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            CustomUserDetails customUserDetails = this.userDetailsService.loadUserByUsername(username);
             UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                    userDetails,
+                    customUserDetails,
                     null,
-                   userDetails.getAuthorities()
+                    customUserDetails.getAuthorities()
             );
             token
            .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
