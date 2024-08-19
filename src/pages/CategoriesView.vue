@@ -164,6 +164,7 @@ watch(
     subcategoryName.value = newParams.subcategoryName || "";
     subsubcategoryName.value = newParams.subsubcategoryName || "";
     fetchData();
+    closeDrawer();
   },
   { immediate: true }
 );
