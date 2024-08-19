@@ -81,7 +81,7 @@ const fetchProduct = async (id) => {
     product.value = productData;
     inCart.value = cartStore.isInCart(productData.id); 
   } catch (error) {
-    console.error("Ошибка при получении продукта:", error);
+    console.error("продукт не получили:", error);
   }
 };
 
@@ -105,7 +105,6 @@ const productSubsubcategory = computed(() => {
 
 onMounted(() => {
   const productId = route.params.productId;
-  console.log('Loading product with ID:', productId);
   fetchProduct(productId);
 });
 

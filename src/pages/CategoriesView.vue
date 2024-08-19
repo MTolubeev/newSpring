@@ -45,6 +45,7 @@
 import { ref, computed, onMounted, watch } from "vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
+import { useOrganizeProducts } from '@/composables/useOrganizeProducts.js';
 import MyCard from "@/components/CardItem.vue";
 import { useDrawer } from "@/composables/useHeader.js";
 import MyHeader from "@/components/AppHeader.vue";
@@ -56,6 +57,36 @@ const categories = ref([]);
 const categoryName = ref(route.params.categoryName);
 const subcategoryName = ref(route.params.subcategoryName || "");
 const subsubcategoryName = ref(route.params.subsubcategoryName || "");
+const { organizeProductsByCategories } = useOrganizeProducts();
+
+const filteredProducts = computed(() => {
+  const category = categories.value.find(cat => cat.name === categoryName.value);
+
+  if (!category) return [];
+
+  if (!subcategoryName.value) {
+    return [
+      ...category.productsWithoutSubcategory,
+      ...category.subcategories.flatMap(sub => [
+        ...sub.products,
+        ...sub.subsubcategories.flatMap(subsub => subsub.products),
+      ]),
+    ];
+  }
+
+  const subcategory = category.subcategories.find(sub => sub.name === subcategoryName.value);
+
+  if (!subcategory) return [];
+  if (!subsubcategoryName.value) {
+    return [
+      ...subcategory.products,
+      ...subcategory.subsubcategories.flatMap(subsub => subsub.products),
+    ];
+  }
+
+  const subsubcategory = subcategory.subsubcategories.find(subsub => subsub.name === subsubcategoryName.value);
+  return subsubcategory ? subsubcategory.products : [];
+});
 
 const fetchData = async () => {
   try {
@@ -74,88 +105,6 @@ const fetchData = async () => {
     console.error("Ошибка при получении данных:", error);
   }
 };
-
-const organizeProductsByCategories = (products) => {
-  const categoryMap = new Map();
-
-  products.forEach((product) => {
-    product.categories.forEach((cat) => {
-      let category = categoryMap.get(cat.name);
-      if (!category) {
-        category = {
-          name: cat.name,
-          subcategories: [],
-          productsWithoutSubcategory: [],
-        };
-        categoryMap.set(cat.name, category);
-      }
-
-      if (!cat.subcategory || cat.subcategory === "") {
-        category.productsWithoutSubcategory.push(product);
-      } else {
-        let subcategory = category.subcategories.find(
-          (sub) => sub.name === cat.subcategory
-        );
-        if (!subcategory) {
-          subcategory = {
-            name: cat.subcategory,
-            products: [],
-            subsubcategories: [],
-          };
-          category.subcategories.push(subcategory);
-        }
-
-        if (cat.subsubcategory) {
-          let subsubcategory = subcategory.subsubcategories.find(
-            (subsub) => subsub.name === cat.subsubcategory
-          );
-          if (!subsubcategory) {
-            subsubcategory = { name: cat.subsubcategory, products: [] };
-            subcategory.subsubcategories.push(subsubcategory);
-          }
-          subsubcategory.products.push(product);
-        } else {
-          subcategory.products.push(product);
-        }
-      }
-    });
-  });
-
-  return Array.from(categoryMap.values());
-};
-
-const filteredProducts = computed(() => {
-  const category = categories.value.find(
-    (cat) => cat.name === categoryName.value
-  );
-
-  if (!category) return [];
-
-  if (!subcategoryName.value) {
-    return [
-      ...category.productsWithoutSubcategory,
-      ...category.subcategories.flatMap((sub) => [
-        ...sub.products,
-        ...sub.subsubcategories.flatMap((subsub) => subsub.products),
-      ]),
-    ];
-  }
-  const subcategory = category.subcategories.find(
-    (sub) => sub.name === subcategoryName.value
-  );
-
-  if (!subcategory) return [];
-  if (!subsubcategoryName.value) {
-    return [
-      ...subcategory.products,
-      ...subcategory.subsubcategories.flatMap((subsub) => subsub.products),
-    ];
-  }
-  const subsubcategory = subcategory.subsubcategories.find(
-    (subsub) => subsub.name === subsubcategoryName.value
-  );
-  return subsubcategory ? subsubcategory.products : [];
-});
 
 watch(
   () => route.params,
