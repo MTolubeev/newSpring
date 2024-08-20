@@ -3,20 +3,24 @@
   <MyDrawer :isVisible="isDrawerVisible" @close-drawer="closeDrawer" />
   <div v-if="product">
     <h2 class="breadcrumb">
-      <router-link class="product__link" :to="{ path: `/category/${productCategory}` }">
+      <router-link
+          class="product__link"
+          :to="{ name: 'Category', params: { categoryName: productCategory } }">
         {{ productCategory }}
       </router-link>
       /
       <span v-if="productSubcategory !== 'None'">
-        <router-link class="product__link"
-          :to="{ path: `/category/${productCategory}/subcategory/${productSubcategory}`,}">
+        <router-link
+            class="product__link"
+            :to="{ name: 'Category', params: { categoryName: productCategory, subcategoryName: productSubcategory } }">
           {{ productSubcategory }}
         </router-link>
         /
       </span>
       <span v-if="productSubsubcategory !== 'None'">
-        <router-link class="product__link"
-          :to="{ path: `/category/${productCategory}/subcategory/${productSubcategory}/subsubcategory/${productSubsubcategory}`,}">
+        <router-link
+            class="product__link"
+            :to="{ name: 'Category', params: { categoryName: productCategory, subcategoryName: productSubcategory, subsubcategoryName: productSubsubcategory } }">
           {{ productSubsubcategory }}
         </router-link>
         /
@@ -27,10 +31,10 @@
       <n-card class="product-card">
         <div class="img-wrapper">
           <img
-            v-if="product.imageUrl"
-            :src="product.imageUrl"
-            alt="Product Image"
-            class="product-img"
+              v-if="product.imageUrl"
+              :src="product.imageUrl"
+              alt="Product Image"
+              class="product-img"
           />
         </div>
         <div class="card__info">

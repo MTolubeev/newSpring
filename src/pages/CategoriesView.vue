@@ -4,28 +4,22 @@
   <div class="paths">
     <h1>
       <router-link
-        class="path__link"
-        :to="{ path: `/category/${categoryName}` }"
-        >{{ categoryName }}</router-link
-      >
+          class="path__link"
+          :to="{ name: 'Category', params: { categoryName: categoryName } }">
+        {{ categoryName }}
+      </router-link>
       /
       <router-link
-        class="path__link"
-        v-if="subcategoryName"
-        :to="{
-          path: `/category/${categoryName}/subcategory/${subcategoryName}`,
-        }"
-      >
+          v-if="subcategoryName"
+          class="path__link"
+          :to="{ name: 'Category', params: { categoryName: categoryName, subcategoryName: subcategoryName } }">
         {{ subcategoryName }}
       </router-link>
       <span v-if="subsubcategoryName">
         /
         <router-link
-          class="path__link"
-          :to="{
-            path: `/category/${categoryName}/subcategory/${subcategoryName}/subsubcategory/${subsubcategoryName}`,
-          }"
-        >
+            class="path__link"
+            :to="{ name: 'Category', params: { categoryName: categoryName, subcategoryName: subcategoryName, subsubcategoryName: subsubcategoryName } }">
           {{ subsubcategoryName }}
         </router-link>
       </span>
@@ -33,12 +27,12 @@
   </div>
   <div class="cards">
     <MyCard
-      v-for="product in filteredProducts"
-      :key="product.id"
-      :item="product"
+        v-for="product in filteredProducts"
+        :key="product.id"
+        :item="product"
     ></MyCard>
   </div>
-  <router-link :to="{ path: '/' }">Вернуться к списку категорий</router-link>
+  <router-link :to="{ name: 'Home' }">Вернуться к списку категорий</router-link>
 </template>
 
 <script setup>

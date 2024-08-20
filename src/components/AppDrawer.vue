@@ -1,54 +1,54 @@
 <template>
-    <div v-if="isVisible" class="catalog">
-      <div class="cart">
-        <h2>каталог товаров</h2>
-        <svg
-          @click="$emit('close-drawer')" 
+  <div v-if="isVisible" class="catalog">
+    <div class="cart">
+      <h2>Каталог товаров</h2>
+      <svg
+          @click="$emit('close-drawer')"
           width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M1 7H14.7143" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-          <path d="M8.71436 1L14.7144 7L8.71436 13" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <ul>
+        <path d="M1 7H14.7143" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M8.71436 1L14.7144 7L8.71436 13" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <ul>
       <li v-for="category in categories" :key="category.name">
-        <router-link :to="{ path: `/category/${category.name}` }">
+        <router-link :to="{ name: 'Category', params: { categoryName: category.name } }">
           <strong>{{ category.name }}</strong>
         </router-link>
         <ul>
           <li v-for="subcategory in category.subcategories" :key="subcategory.name">
-            <router-link :to="{ path: `/category/${category.name}/subcategory/${subcategory.name}` }">
+            <router-link :to="{ name: 'Category', params: { categoryName: category.name, subcategoryName: subcategory.name } }">
               <strong>{{ subcategory.name }}</strong>
             </router-link>
             <ul>
               <li v-for="subsubcategory in subcategory.subsubcategories" :key="subsubcategory.name">
-                <router-link :to="{ path: `/category/${category.name}/subcategory/${subcategory.name}/subsubcategory/${subsubcategory.name}` }">
+                <router-link :to="{ name: 'Category', params: { categoryName: category.name, subcategoryName: subcategory.name, subsubcategoryName: subsubcategory.name } }">
                   <strong>{{ subsubcategory.name }}</strong>
                 </router-link>
                 <ul>
                   <li v-for="product in subsubcategory.products" :key="product.id">
-                    <router-link :to="{ path: `/product-view/${product.id}` }">
+                    <router-link :to="{ name: 'ProductView', params: { productId: product.id } }">
                       {{ product.title }}
                     </router-link>
                   </li>
                 </ul>
               </li>
               <li v-for="product in subcategory.products" :key="product.id">
-                <router-link :to="{ path: `/product-view/${product.id}` }">
+                <router-link :to="{ name: 'ProductView', params: { productId: product.id } }">
                   {{ product.title }}
                 </router-link>
               </li>
             </ul>
           </li>
           <li v-for="product in category.productsWithoutSubcategory" :key="product.id">
-            <router-link :to="{ path: `/product-view/${product.id}` }">
+            <router-link :to="{ name: 'ProductView', params: { productId: product.id } }">
               {{ product.title }}
             </router-link>
           </li>
         </ul>
       </li>
     </ul>
-    </div>
-  </template>
+  </div>
+</template>
   
   <script setup>
   import { defineProps, ref, onMounted } from 'vue';
