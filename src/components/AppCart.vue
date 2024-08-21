@@ -44,7 +44,7 @@ watch(() => cartStore.cartItems, updateCartItems, { deep: true });
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
 }
 .cart h3 {
   font-size: 24px;
@@ -61,5 +61,6 @@ watch(() => cartStore.cartItems, updateCartItems, { deep: true });
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+  gap: 20px;
 }
 </style>
