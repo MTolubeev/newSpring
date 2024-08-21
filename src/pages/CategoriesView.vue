@@ -32,7 +32,6 @@
         :item="product"
     ></MyCard>
   </div>
-  <router-link :to="{ name: 'Home' }">Вернуться к списку категорий</router-link>
 </template>
 
 <script setup>

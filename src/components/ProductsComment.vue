@@ -1,7 +1,7 @@
 <template>
   <div class="title__comments">
     <h2>Отзывы о товаре</h2>
-    <h3 class="open__comments" @click="toggleComments">
+    <h3 v-if="comments.length > 0" class="open__comments" @click="toggleComments">
       {{ showAll ? 'Скрыть отзывы' : 'Показать все отзывы' }}
     </h3>
   </div>
