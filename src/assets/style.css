@@ -3,6 +3,9 @@
     padding: 0;
     box-sizing: border-box;
 }
+body{
+    background-color: #F3E5AB;
+}
 p,h2,button,li,ul,span{
     font-family: "Inter", sans-serif;
 }

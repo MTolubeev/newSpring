@@ -14,6 +14,11 @@
         </router-link>
         <span>{{ cartItemCount }}</span>
       </div>
+      <div class="main">
+      <router-link to="/">
+        <n-button>Главная</n-button>
+      </router-link>
+    </div>
     </div>
     <div class="menu">
       <n-button @click="$emit('toggle-drawer')">Каталог</n-button>
@@ -51,9 +56,12 @@ header {
   gap: 30px;
 }
 .profile,
-.cart {
+.cart, .menu {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+.cart span{
+  width: 40px;
 }
 </style>

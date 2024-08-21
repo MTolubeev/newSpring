@@ -47,6 +47,8 @@
         </div>
       </n-card>
     </div>
+<ProductsComment :comments="product.comments" />
+
   </div>
   <div v-else>
     <p>Loading...</p>
@@ -62,7 +64,7 @@ import { useCartStore } from "@/store/cartStore";
 import MyHeader from "@/components/AppHeader.vue";
 import MyDrawer from "@/components/AppDrawer.vue";
 import { useDrawer } from '@/composables/useHeader.js';
-
+import ProductsComment from "@/components/ProductsComment.vue";
 import CartButton from "@/components/CartButton.vue";
 
 

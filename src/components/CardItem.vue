@@ -1,5 +1,5 @@
 <template>
-  <n-card size="huge" class="card" @click="navigateToproduct">
+  <n-card size="huge" class="card" @click="navigateToproduct" hoverable>
       <div class="card-content">
         <div class="image-container">
           <img :src="item.imageUrl" alt="png" />
