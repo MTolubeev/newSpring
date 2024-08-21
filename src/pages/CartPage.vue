@@ -1,9 +1,10 @@
 <template>
-    <div class="cRTT">
+      <div class="header">
     <MyHeader @toggle-drawer="toggleDrawer" />
     <MyDrawer :isVisible="isDrawerVisible" @close-drawer="closeDrawer" />
-    <AppCart/>
-</div>
+      </div>
+      <AppCart/>
+
 </template>
 
 <script setup>
@@ -18,8 +19,11 @@ const { isDrawerVisible, toggleDrawer, closeDrawer } = useDrawer();
 </script>
 
 <style scoped>
-.cRTT{
-    height: 100vh;
+.header{
+  top: 0;
+  position: fixed;
+  width: 100%;
+  z-index: 1;
 }
 
 </style>

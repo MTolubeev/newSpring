@@ -39,16 +39,13 @@ watch(() => cartStore.cartItems, updateCartItems, { deep: true });
 
 <style scoped>
 .cart {
-  text-align: center;
-  padding: 20px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
 }
-
-.cart img {
-  width: 100px;
-  height: auto;
-  margin-bottom: 20px;
-}
-
 .cart h3 {
   font-size: 24px;
   margin-bottom: 10px;
@@ -59,8 +56,10 @@ watch(() => cartStore.cartItems, updateCartItems, { deep: true });
 }
 
 .cart-items {
+  margin-top: 150px;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
 }
 </style>

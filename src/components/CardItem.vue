@@ -1,9 +1,10 @@
 <template>
   <n-card size="huge" class="card" @click="navigateToproduct">
       <div class="card-content">
-        <img :src="item.imageUrl" alt="png" />
+        <div class="image-container">
+          <img :src="item.imageUrl" alt="png" />
+        </div>
         <h3>{{ item.title }}</h3>
-        <p>{{ item.description }}</p>
         <div class="info_card">
           <span>
             Цена: <b>{{ item.price }} руб.</b>
@@ -13,7 +14,9 @@
           </span>
         </div>
       </div>
+    <div class="card__button">
     <CartButton :productId="item.id" :product="item" @click.stop />
+    </div>
   </n-card>
 </template>
 
@@ -57,52 +60,41 @@ const navigateToproduct = () =>{
   display: flex;
   flex-direction: column;
 }
-
-.card-link {
-  text-decoration: none;
-  color: inherit;
+.image-container {
+  width: 300px;
+  height: 300px;
 }
 
-.card img {
-  width: 150px; 
-  height: auto; 
-  max-height: 150px; 
+.image-container img {
+  width: 100%;
+  height: 100%;
   object-fit: contain; 
-  margin-bottom: 15px; 
 }
-
+.n-button{
+  width: 100%;
+}
+.card__button{
+  margin-top: 20px;
+}
 .card h3 {
   font-size: 24px;
   margin: 0 0 10px 0; 
 }
-
 .card p {
   font-size: 16px;
   margin: 0 0 20px 0; 
 }
-
 .info_card {
   display: flex;
   justify-content: space-between; 
   align-items: center;
   margin-top: auto;
 }
-
 .info_card span {
   font-size: 16px;
 }
-
 .info_card b {
   font-weight: bold;
 }
-
-.add-to-cart-button {
-  position: absolute;
-  bottom: 20px; 
-  left: 20px; 
-  right: 20px; 
-  margin-top: 0; 
-}
-
 </style>
 

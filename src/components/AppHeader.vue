@@ -44,6 +44,7 @@ header {
   justify-content: space-between;
   padding: 20px 40px;
   border-bottom: 1px solid grey;
+  background-color: #ffffff;
 }
 .info {
   display: flex;

@@ -28,22 +28,22 @@
       {{ product.title }}
     </h2>
     <div class="card__item">
-      <n-card class="product-card">
+      <n-card class="product-card" content-style="display: flex; flex-direction: row !important;">
         <div class="img-wrapper">
           <img
               v-if="product.imageUrl"
               :src="product.imageUrl"
               alt="Product Image"
-              class="product-img"
-          />
+              class="product-img"/>
         </div>
         <div class="card__info">
           <h1 class="product-title">{{ product.title }}</h1>
           <p class="product-description">{{ product.description }}</p>
+          <div class="card__pay">
           <span>Цена: <b>{{ product.price }} руб.</b></span>
           <span>Количество товаров осталось: <b>{{ product.count }}</b></span>
-
           <CartButton v-if="product" :productId="product.id" :product="product" />
+          </div>
         </div>
       </n-card>
     </div>
@@ -118,16 +118,14 @@ onMounted(() => {
 .breadcrumb {
   margin-bottom: 20px;
 }
-
 .card__item {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
 }
 
 .product-card {
-  width: 100%;
-  display: flex;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -135,22 +133,23 @@ onMounted(() => {
 
 .img-wrapper {
   flex: 1;
-  margin-right: 20px;
 }
 
 .product-img {
-  width: 300px;
-  border-radius: 10px;
+  width: 350px;
   object-fit: cover;
 }
 
 .card__info {
-  flex: 2;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
-
+.card__pay{
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
 .product-title {
   font-size: 28px;
   margin-bottom: 15px;
@@ -165,9 +164,10 @@ onMounted(() => {
 
 .n-button {
   align-self: flex-start;
+  width: 100%;
 }
 .n-card {
-  width: 800px;
+  width: 1000px;
 }
 .product__link{
   text-decoration: none;

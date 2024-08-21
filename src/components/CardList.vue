@@ -1,6 +1,7 @@
 <template>
+  <h2>Все товары</h2>
   <div class="cards">
-    <h2>Все товары</h2>
+
     <MyCard v-for="item in items" :key="item.id" :item="item"></MyCard>
   </div>
 </template>
@@ -33,10 +34,14 @@ onMounted(fetchItems);
 </script>
 
 <style scoped>
+h2{
+  text-align: center;
+  margin-top: 20px;
+}
 .cards {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
   margin-top: 20px;
   gap: 20px;
 }
