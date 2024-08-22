@@ -4,24 +4,24 @@
       <div class="profile">
         <img src="@/assets/Union.svg" alt="profile" />
         <router-link to="/signin">
-          <n-button>Войти</n-button>
+          <n-button style="--n-border-hover: 1px solid #fff;">Войти</n-button>
         </router-link>
       </div>
       <div class="cart">
         <img src="@/assets/cart.svg" alt="cart" />
         <router-link to="/cart">
-          <n-button>Корзина</n-button>
+          <n-button style="--n-border-hover: 1px solid #fff;">Корзина</n-button>
         </router-link>
         <span>{{ cartItemCount }}</span>
       </div>
       <div class="main">
       <router-link to="/">
-        <n-button>Главная</n-button>
+        <n-button style="--n-border-hover: 1px solid #fff; --n-text-color-focus: #f0f0f0; --n-border-focus: 1px solid #f0f0f0">Главная</n-button>
       </router-link>
     </div>
     </div>
     <div class="menu">
-      <n-button @click="$emit('toggle-drawer')">Каталог</n-button>
+      <n-button style="--n-border-hover: 1px solid #fff;" @click="$emit('toggle-drawer')">Каталог</n-button>
     </div>
   </header>
 </template>
@@ -48,8 +48,7 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 20px 40px;
-  border-bottom: 1px solid grey;
-  background-color: #ffffff;
+  background-color: #465a86;
 }
 .info {
   display: flex;
@@ -63,5 +62,12 @@ header {
 }
 .cart span{
   width: 40px;
+  color: #fff;
+}
+.n-button{
+  color: #fff;
+}
+.n-button:hover{
+  color: #f0f0f0;
 }
 </style>

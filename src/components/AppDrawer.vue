@@ -4,9 +4,9 @@
       <h2>Каталог товаров</h2>
       <svg
           @click="$emit('close-drawer')"
-          width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1 7H14.7143" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M8.71436 1L14.7144 7L8.71436 13" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          width="16" height="14" viewBox="0 0 16 14" fill="#fff" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1 7H14.7143" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M8.71436 1L14.7144 7L8.71436 13" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
     <ul>
@@ -53,6 +53,7 @@
   <script setup>
   import { defineProps, ref, onMounted } from 'vue';
   import axios from 'axios';
+  
   import { useOrganizeProducts } from '@/composables/useOrganizeProducts';
   
   const categories = ref([]);
@@ -89,17 +90,22 @@
   position: fixed;
   height: 100%;
   width: 24rem;
-  background-color: #98fb98;
+  background-color: #465a86;
   padding: 1.75rem 2.5rem;
   top: 0;
   right: 0;
   z-index: 10;
-  overflow-y: auto; 
+  border-left: 3px solid #f0f0f0;
+
+}
+.catalog a{
+  color: #fff;
 }
 
 h2,
 span {
   font-family: Arial, Helvetica, sans-serif;
+  color: #fff;
 }
 
 .cart {

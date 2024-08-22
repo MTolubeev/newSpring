@@ -1,5 +1,5 @@
 <template>
-  <n-button :type="buttonType" @click="toggleCart">
+  <n-button :style="buttonStyle" @click="toggleCart">
     {{ buttonText }}
   </n-button>
 </template>
@@ -28,10 +28,18 @@ onMounted(() => {
   inCart.value = cartStore.isInCart(props.productId);
 });
 
-const buttonType = computed(() => (inCart.value ? "default" : "success"));
+// const buttonType = computed(() => (inCart.value ? "default" : "success"));
+
 const buttonText = computed(() =>
   inCart.value ? "Удалить из корзины" : "Добавить в корзину"
 );
+
+const buttonStyle = computed(() =>({
+  backgroundColor: inCart.value ? "#2d4373" : "#3B5998",
+  color: "#fff"
+}))
+
+
 const toggleCart = () => {
   if (props.product && props.product.id) {
     if (inCart.value) {
