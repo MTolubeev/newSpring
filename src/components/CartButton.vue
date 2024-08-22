@@ -29,7 +29,7 @@ onMounted(() => {
 });
 
 const buttonText = computed(() =>
-  inCart.value ? "Удалить из корзины" : "Добавить в корзину"
+    inCart.value ? "Удалить из корзины" : "Добавить в корзину"
 );
 
 const buttonStyle = computed(() =>({
@@ -52,10 +52,10 @@ const toggleCart = () => {
 };
 
 watch(() => cartStore.cartItems,
-  () => {
-    inCart.value = cartStore.isInCart(props.productId);
-  },
-  { immediate: true }
+    () => {
+      inCart.value = cartStore.isInCart(props.productId);
+    },
+    { immediate: true }
 );
 
 </script>

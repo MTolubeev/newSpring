@@ -16,17 +16,17 @@ export const useCartStore = defineStore("cart", () => {
   const addToCart = (item) => {
     if (!cartItems.value.find((cartItem) => cartItem.id === item.id)) {
       cartItems.value.push(item);
-      saveCartToLocalStorage(); 
+      saveCartToLocalStorage();
     }
   };
 
   const removeFromCart = (itemId) => {
     cartItems.value = cartItems.value.filter((item) => item.id !== itemId);
-    saveCartToLocalStorage(); 
+    saveCartToLocalStorage();
   };
 
   const isInCart = (itemId) =>
-    cartItems.value.some((item) => item.id === itemId);
+      cartItems.value.some((item) => item.id === itemId);
 
   loadCartFromLocalStorage();
 
