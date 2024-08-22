@@ -3,9 +3,13 @@
     <div class="info">
       <div class="profile">
         <img src="@/assets/Union.svg" alt="profile" />
-        <router-link to="/signin">
+        <router-link v-if="!user" to="/signin">
           <n-button style="--n-border-hover: 1px solid #fff;">Войти</n-button>
         </router-link>
+        <div v-else>
+          <span>{{ user.sub }}</span>
+          <n-button @click="logout" style="--n-border-hover: 1px solid #fff;">Выйти</n-button>
+        </div>
       </div>
       <div class="cart">
         <img src="@/assets/cart.svg" alt="cart" />
@@ -30,16 +34,50 @@
 import { ref, onMounted, watch } from "vue";
 import { useCartStore } from "@/store/cartStore";
 import { NButton } from "naive-ui";
+import { useRouter } from "vue-router";
+
+
+const router = useRouter();
 
 const cartStore = useCartStore();
 const cartItemCount = ref(cartStore.cartItems.length);
+const user = ref(null);
+
+const decodeToken = (token) => {
+  const base64Url = token.split(".")[1];
+  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  const jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split("")
+      .map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+      .join("")
+  );
+  return JSON.parse(jsonPayload);
+};
+const fetchUser = () => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    user.value = decodeToken(token);
+    console.log("Декодированный пользователь:", user.value);
+  }else{
+    console.log("Токен не найден. Пользователь не авторизован.");
+  }
+};
+const logout = () => {
+  localStorage.removeItem("token");
+  user.value = null;
+  router.push("/signin");
+};
 
 const updateCartItemCount = () => {
   cartItemCount.value = cartStore.cartItems.length;
 };
 watch(() => cartStore.cartItems.length, updateCartItemCount);
 
-onMounted(updateCartItemCount);
+onMounted(() => {
+  fetchUser();
+  updateCartItemCount();
+});
 </script>
 
 <style scoped>

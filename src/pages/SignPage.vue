@@ -1,23 +1,53 @@
 <template>
-    <div class="modal-overlay">
+  <div class="modal-overlay">
     <div class="modal-content">
       <h2>Вход в личный аккаунт</h2>
       <p>нет аккаунта? создайте!</p>
-      <router-link to="/registration"><n-button type="warning">Создать аккаунт</n-button></router-link>
-      <form>
-        <input type="email" placeholder="Email" required />
-        <input type="password" placeholder="Пароль" required />
+      <router-link to="/registration">
+        <n-button type="warning">Создать аккаунт</n-button>
+      </router-link>
+      <form @submit.prevent="login">
+        <input type="email" v-model="loginEmail" placeholder="Email" required autocomplete="email" />
+        <input type="password" v-model="loginPassword" placeholder="Пароль" required  autocomplete="current-password" />
         <div class="buttons">
-          <n-button type="success">Войти</n-button>
+          <button type="submit">Войти</button>
         </div>
       </form>
     </div>
+    <p v-if="message">{{ message }}</p>
   </div>
-
 </template>
+
 <script setup>
 import { NButton } from 'naive-ui';
+ import api from '../services/api';
+import { ref } from 'vue';
+ import { useRouter } from 'vue-router';
 
+ const route = useRouter();
+const loginEmail = ref('');
+const loginPassword = ref('');
+const message = ref('');
+
+
+
+const login = async () => {
+  console.log('Login function triggered'); 
+  try {
+    const response = await api.post('/user/login', null, {
+      params: {
+        email: loginEmail.value,
+        password: loginPassword.value,
+      },
+    });
+    console.log("Полученный токен:", response.data.token);
+    localStorage.setItem('token', response.data.token);
+    route.push('/');
+  } catch (error) {
+    console.error('Ошибка:', error); 
+    message.value = 'Ошибка входа: ' + (error.response?.data || 'Неизвестная ошибка');
+  }
+};
 </script>
 
 <style scoped>
