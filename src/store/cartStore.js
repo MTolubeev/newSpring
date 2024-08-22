@@ -5,12 +5,12 @@ export const useCartStore = defineStore("cart", () => {
   const cartItems = ref([]);
 
   const loadCartFromLocalStorage = () => {
-    const storedItems = JSON.parse(sessionStorage.getItem("cartItems")) || [];
+    const storedItems = JSON.parse(localStorage.getItem("cartItems")) || [];
     cartItems.value = storedItems;
   };
 
   const saveCartToLocalStorage = () => {
-    sessionStorage.setItem("cartItems", JSON.stringify(cartItems.value));
+    localStorage.setItem("cartItems", JSON.stringify(cartItems.value));
   };
 
   const addToCart = (item) => {
