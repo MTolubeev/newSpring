@@ -28,8 +28,6 @@ onMounted(() => {
   inCart.value = cartStore.isInCart(props.productId);
 });
 
-// const buttonType = computed(() => (inCart.value ? "default" : "success"));
-
 const buttonText = computed(() =>
   inCart.value ? "Удалить из корзины" : "Добавить в корзину"
 );

@@ -3,7 +3,7 @@
     <div class="info">
       <div class="profile">
         <img src="@/assets/Union.svg" alt="profile" />
-        <router-link v-if="!user" to="/signin">
+        <router-link v-if="!userStore.user.value" to="/signin">
           <n-button style="--n-border-hover: 1px solid #fff;">Войти</n-button>
         </router-link>
         <div v-else>
@@ -31,42 +31,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
-import { useCartStore } from "@/store/cartStore";
-import { NButton } from "naive-ui";
-import { useRouter } from "vue-router";
-
+import { ref, onMounted, watch } from 'vue';
+import { useCartStore } from '@/store/cartStore';
+import { useUserStore } from '@/store/userStore';
+import { useRouter } from 'vue-router';
+import  { NButton } from "naive-ui";
 
 const router = useRouter();
-
 const cartStore = useCartStore();
+const userStore = useUserStore();
 const cartItemCount = ref(cartStore.cartItems.length);
-const user = ref(null);
+const user = ref(userStore.user)
 
-const decodeToken = (token) => {
-  const base64Url = token.split(".")[1];
-  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-  const jsonPayload = decodeURIComponent(
-    atob(base64)
-      .split("")
-      .map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-      .join("")
-  );
-  return JSON.parse(jsonPayload);
-};
-const fetchUser = () => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    user.value = decodeToken(token);
-    console.log("Декодированный пользователь:", user.value);
-  }else{
-    console.log("Токен не найден. Пользователь не авторизован.");
-  }
-};
 const logout = () => {
-  localStorage.removeItem("token");
-  user.value = null;
-  router.push("/signin");
+  userStore.logout();
+  router.push('/signin');
 };
 
 const updateCartItemCount = () => {
@@ -74,10 +53,15 @@ const updateCartItemCount = () => {
 };
 watch(() => cartStore.cartItems.length, updateCartItemCount);
 
+const logUserInfo = () => {
+    console.log('User from store:', userStore.user.value);
+};
 onMounted(() => {
-  fetchUser();
+  userStore.fetchUser();
   updateCartItemCount();
+  logUserInfo()
 });
+
 </script>
 
 <style scoped>
@@ -97,6 +81,10 @@ header {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+.profile span{
+  color: #fff;
+  margin-right: 10px;
 }
 .cart span{
   width: 40px;

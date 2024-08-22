@@ -19,33 +19,24 @@
 </template>
 
 <script setup>
-import { NButton } from 'naive-ui';
- import api from '../services/api';
 import { ref } from 'vue';
- import { useRouter } from 'vue-router';
+import { useUserStore } from '@/store/userStore';
+import { useRouter } from 'vue-router';
+import  {NButton} from "naive-ui";
 
- const route = useRouter();
+const userStore = useUserStore();
+const router = useRouter();
+
 const loginEmail = ref('');
 const loginPassword = ref('');
 const message = ref('');
 
-
-
 const login = async () => {
-  console.log('Login function triggered'); 
   try {
-    const response = await api.post('/user/login', null, {
-      params: {
-        email: loginEmail.value,
-        password: loginPassword.value,
-      },
-    });
-    console.log("Полученный токен:", response.data.token);
-    localStorage.setItem('token', response.data.token);
-    route.push('/');
+    await userStore.login(loginEmail.value, loginPassword.value);
+    router.push('/');
   } catch (error) {
-    console.error('Ошибка:', error); 
-    message.value = 'Ошибка входа: ' + (error.response?.data || 'Неизвестная ошибка');
+    message.value = error.message;
   }
 };
 </script>
