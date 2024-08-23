@@ -4,9 +4,9 @@
       <img width="200px" :src="item.imageUrl" alt="Product Image" v-if="item.imageUrl" class="product-image" />
       <span><strong>{{ item.price }} руб.</strong></span>
       <div class="controls">
-        <button @click="decrementCount">-</button>
+        <n-button @click="decrementCount">-</n-button>
         <span>{{ localCount }}</span>
-        <button @click="incrementCount">+</button>
+        <n-button @click="incrementCount">+</n-button>
       </div>
     </n-card>
   </template>
@@ -14,7 +14,7 @@
   <script setup>
   import { defineProps, ref, defineEmits, watch } from 'vue';
   import { useCartStore } from '@/store/cartStore';
-  import { NCard } from 'naive-ui';
+  import { NCard, NButton } from 'naive-ui';
   
   const props = defineProps({
     item: {
@@ -56,18 +56,19 @@ watch(() => props.item.count, (newCount) => {
   display: flex;
   align-items: center;
 }
-
 .controls button {
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px; 
   margin: 0 5px;
   text-align: center;
-  line-height: 30px;
-  font-size: 16px;
+  font-size: 18px; 
   cursor: pointer;
 }
 
 .controls span {
-  font-size: 16px;
+  font-size: 18px;
+  width: 40px; 
+  text-align: center; 
+  font-family: 'Arial', sans-serif;
 }
 </style>
