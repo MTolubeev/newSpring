@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useCartStore } from '@/store/cartStore';
 import { useUserStore } from '@/store/userStore';
 import { useRouter } from 'vue-router';
@@ -40,8 +40,8 @@ import { NButton } from "naive-ui";
 const router = useRouter();
 const cartStore = useCartStore();
 const userStore = useUserStore();
-const cartItems = ref([]); // Локальная переменная для хранения данных корзины
-const cartItemCount = ref(0); // Количество товаров в корзине
+// const cartItems = ref([]); 
+const cartItemCount = ref(0); 
 const user = ref(userStore.user);
 
 const logout = () => {
@@ -49,22 +49,16 @@ const logout = () => {
   router.push('/signin');
 };
 
-const fetchCartItems = async () => {
-  try {
-    const token = localStorage.getItem("token");
-    if (user.value) {
-      const products = await cartStore.fetchCart(user.value.id, token);
-      cartItems.value = products;
-      cartItemCount.value = products.length; // Обновляем количество товаров
-    }
-  } catch (err) {
-    console.error("Failed to fetch cart items:", err);
-  }
-};
+watch(() => cartStore.cartItems, (newItems) => {
+  cartItemCount.value = newItems.length;
+}, { immediate: true });
 
-onMounted(() => {
-  userStore.fetchUser();
-  fetchCartItems();
+onMounted(async () => {
+  await userStore.fetchUser();
+  if (user.value) {
+    const token = localStorage.getItem("token");
+    await cartStore.fetchCart(user.value.id, token);
+  }
 });
 </script>
 

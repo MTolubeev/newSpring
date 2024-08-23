@@ -5,11 +5,16 @@
 </template>
 
 <script setup>
-import { computed, ref, defineProps} from "vue";
-import { useCartStore } from "@/store/cartStore";
+import { defineProps, ref, computed, onMounted } from "vue";
+import { useCartStore } from '@/store/cartStore';
+import { useUserStore } from '@/store/userStore'
+const { user, fetchUser } = useUserStore(); 
+const cartStore = useCartStore();
+const inCart = ref(false)
 import { NButton } from "naive-ui";
 
-const props = defineProps({
+
+ const props  = defineProps({
   productId: {
     type: Number,
     required: true,
@@ -20,42 +25,47 @@ const props = defineProps({
   }
 });
 
-const cartStore = useCartStore();
-const inCart = ref(false);
 
 
-// onMounted(() => {
-//   inCart.value = cartStore.isInCart(props.productId);
-// });
-
-//const buttonText = computed(() =>
-//     inCart.value ? "Удалить из корзины" : "Добавить в корзину"
-// );
-
-const buttonStyle = computed(() =>({
-  backgroundColor: inCart.value ? "#2d4373" : "#3B5998",
-  color: "#fff"
-}))
-
-
-const toggleCart = () => {
-  if (props.product && props.product.id) {
-    if (inCart.value) {
-      cartStore.removeFromCart(props.productId);
-    } else {
-      cartStore.addToCart(props.product);
+const toggleCart = async() =>{
+  try{
+    const token = localStorage.getItem("token");
+    if(!inCart.value){
+      await cartStore.addToCart(props.productId, token)
+      inCart.value = true;
+    }else{
+      await cartStore.removeFromcart(props.productId, token);
+      inCart.value = false;
     }
-    inCart.value = !inCart.value;
-  } else {
-    console.error('Ошибка: некорректный товар в CartButton', props.product);
+    updateInCartStatus();
+  }catch(error){
+    console.log(error)
+  }
+}
+
+const buttonText = computed(() =>
+     inCart.value ? "Удалить из корзины" : "Добавить в корзину"
+ );
+
+ const buttonStyle = computed(() =>({
+   backgroundColor: inCart.value ? "#2d4373" : "#3B5998",
+   color: "#fff"
+ }))
+
+ const updateInCartStatus = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    await fetchUser();
+    const userId = user.value?.id;
+    if (userId) {
+      const cart = await cartStore.fetchCart(userId, token);
+      inCart.value = cart.some(item => item.id === props.productId);
+    }
+  } catch (error) {
+    console.error("Error fetching user or cart:", error);
   }
 };
-
-// watch(() => cartStore.cartItems,
-//     () => {
-//       inCart.value = cartStore.isInCart(props.productId);
-//     },
-//     { immediate: true }
-// );
-
+onMounted(() => {
+  updateInCartStatus();
+});
 </script>

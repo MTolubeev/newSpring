@@ -60,7 +60,7 @@ import { ref, onMounted, computed, watch } from "vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
 import { NCard } from "naive-ui";
-import { useCartStore } from "@/store/cartStore"; 
+// import { useCartStore } from "@/store/cartStore"; 
 import MyHeader from "@/components/AppHeader.vue";
 import MyDrawer from "@/components/AppDrawer.vue";
 import { useDrawer } from '@/composables/useHeader.js';
@@ -71,8 +71,8 @@ import CartButton from "@/components/CartButton.vue";
 const { isDrawerVisible, toggleDrawer, closeDrawer } = useDrawer();
 const route = useRoute();
 const product = ref(null);
-const cartStore = useCartStore(); 
-const inCart = ref(false);
+// const cartStore = useCartStore(); 
+
 
 const fetchProduct = async (id) => {
   try {
@@ -85,7 +85,6 @@ const fetchProduct = async (id) => {
     }
 
     product.value = productData;
-    inCart.value = cartStore.isInCart(productData.id); 
   } catch (error) {
     console.error("продукт не получили:", error);
   }
