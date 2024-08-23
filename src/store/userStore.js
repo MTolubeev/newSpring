@@ -16,7 +16,6 @@ export const useUserStore = () => {
                     .join("")
             );
             const decoded = JSON.parse(jsonPayload);
-            console.log('Decoded token:', decoded);
             return decoded;
         } catch (error) {
             console.error('Error decoding token:', error);
@@ -28,7 +27,7 @@ export const useUserStore = () => {
         const token = localStorage.getItem("token");
         if (token) {
             user.value = decodeToken(token);
-            console.log('Fetched user:', user.value); // Добавьте это для отладки
+            // console.log('Fetched user:', user.value); // Добавьте это для отладки
         } else {
             user.value = null;
         }

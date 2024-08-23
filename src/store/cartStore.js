@@ -1,39 +1,22 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import axios from "axios"; // Для отправки запросов
 
 export const useCartStore = defineStore("cart", () => {
-  const cartItems = ref([]);
-
-  const loadCartFromLocalStorage = () => {
-    const storedItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-    cartItems.value = storedItems;
-  };
-
-  const saveCartToLocalStorage = () => {
-    localStorage.setItem("cartItems", JSON.stringify(cartItems.value));
-  };
-
-  const addToCart = (item) => {
-    if (!cartItems.value.find((cartItem) => cartItem.id === item.id)) {
-      cartItems.value.push(item);
-      saveCartToLocalStorage();
+  const fetchCart = async (userId, token) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/basket/${userId}`, {
+        headers: {
+          Authorization: token, // Передаем токен в заголовке
+        },
+      });
+      return response.data; // Возвращаем данные корзины
+    } catch (error) {
+      console.error("Ошибка получения корзины:", error.response?.data || error.message);
+      throw error;
     }
   };
 
-  const removeFromCart = (itemId) => {
-    cartItems.value = cartItems.value.filter((item) => item.id !== itemId);
-    saveCartToLocalStorage();
-  };
-
-  const isInCart = (itemId) =>
-      cartItems.value.some((item) => item.id === itemId);
-
-  loadCartFromLocalStorage();
-
   return {
-    cartItems,
-    addToCart,
-    removeFromCart,
-    isInCart,
+    fetchCart, // Экспортируем метод для получения корзины
   };
 });

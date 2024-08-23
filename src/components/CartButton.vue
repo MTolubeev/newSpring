@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { computed, ref, defineProps, watch, onMounted } from "vue";
+import { computed, ref, defineProps} from "vue";
 import { useCartStore } from "@/store/cartStore";
 import { NButton } from "naive-ui";
 
@@ -24,13 +24,13 @@ const cartStore = useCartStore();
 const inCart = ref(false);
 
 
-onMounted(() => {
-  inCart.value = cartStore.isInCart(props.productId);
-});
+// onMounted(() => {
+//   inCart.value = cartStore.isInCart(props.productId);
+// });
 
-const buttonText = computed(() =>
-    inCart.value ? "Удалить из корзины" : "Добавить в корзину"
-);
+//const buttonText = computed(() =>
+//     inCart.value ? "Удалить из корзины" : "Добавить в корзину"
+// );
 
 const buttonStyle = computed(() =>({
   backgroundColor: inCart.value ? "#2d4373" : "#3B5998",
@@ -51,11 +51,11 @@ const toggleCart = () => {
   }
 };
 
-watch(() => cartStore.cartItems,
-    () => {
-      inCart.value = cartStore.isInCart(props.productId);
-    },
-    { immediate: true }
-);
+// watch(() => cartStore.cartItems,
+//     () => {
+//       inCart.value = cartStore.isInCart(props.productId);
+//     },
+//     { immediate: true }
+// );
 
 </script>
