@@ -41,11 +41,11 @@ public class BasketController {
     }
 
     @PostMapping("/addToBasket")
-    public ResponseEntity<?> addToBasket(@RequestParam Product product,
+    public ResponseEntity<?> addToBasket(@RequestParam Long productId,
                                          @RequestHeader(value = "Authorization") String token) {
         try {
             User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
-          //  Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
+            Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
 
             basketService.addProduct(user, product);
             return ResponseEntity.ok("Product added to basket successfully");
