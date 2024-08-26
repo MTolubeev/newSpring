@@ -2,15 +2,15 @@
   <div class="modal-overlay">
     <div class="modal-content">
       <h2>Регистрация нового пользователя</h2>
-      <p>если аккаунт уже существует, то войдите</p>
+      <p>Если аккаунт уже существует, то войдите</p>
       <router-link to="/signin"><n-button type="warning">Войти в аккаунт</n-button></router-link>
-      <form>
-        <input type="text" placeholder="Имя" required />
-        <input type="text" placeholder="Фамилия" required />
-        <input type="email" placeholder="Email" required />
-        <input type="password" placeholder="Пароль" required />
+      <form @submit.prevent="register">
+        <input v-model="username" type="text" placeholder="Имя" required  />
+        <input v-model="surname" type="text" placeholder="Фамилия" required />
+        <input v-model="email" type="email" placeholder="Email" required />
+        <input v-model="password" type="password" placeholder="Пароль" required />
         <div class="buttons">
-          <n-button type="success">Зарегистрироваться</n-button>
+          <button type="submit">Зарегистрироваться</button>
         </div>
       </form>
     </div>
@@ -18,7 +18,30 @@
 </template>
 
 <script setup>
-import { NButton } from "naive-ui";
+import { ref } from 'vue';
+import api from '../services/api';
+import { NButton } from 'naive-ui';
+
+const username = ref('');
+const surname = ref('');
+const email = ref('');
+const password = ref('');
+
+const register = async () => {
+  try {
+    const response = await api.post('/user/registration', null, {
+      params: {
+        username: username.value,
+        surname: surname.value,
+        email: email.value,
+        password: password.value,
+      },
+    });
+    console.log('Пользователь зарегистрирован:', response.data);
+  } catch (error) {
+   console.log(error)
+  }
+};
 </script>
 
 <style scoped>
@@ -32,7 +55,6 @@ import { NButton } from "naive-ui";
   align-items: center;
  
 }
-
 .modal-content {
   display: flex;
   flex-direction: column;
@@ -45,7 +67,6 @@ import { NButton } from "naive-ui";
   box-sizing: border-box;
   gap: 10px;
 }
-
 .modal-content h2 {
   margin-top: 0;
 }
@@ -54,10 +75,8 @@ import { NButton } from "naive-ui";
   flex-direction: column;
   gap: 10px;
 }
-.modal-content input[type="text"],
-.modal-content input[type="email"],
-.modal-content input[type="password"] {
-  width: calc(100% - 20px);
+input {
+  width: 100%;
   padding: 10px;
   margin: 10px 0;
   border: 1px solid #ddd;

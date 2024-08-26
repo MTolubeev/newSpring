@@ -3,9 +3,9 @@ import api from '../services/api';
 
 export const useUserStore = () => {
     const user = ref(null);
+    const role = ref(null);
 
     const decodeToken = (token) => {
-        console.log('Original token:', token);
         try {
             const base64Url = token.split(".")[1];
             const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
@@ -16,6 +16,14 @@ export const useUserStore = () => {
                     .join("")
             );
             const decoded = JSON.parse(jsonPayload);
+            console.log('Decoded token payload:', decoded);
+            if (Array.isArray(decoded.roles)) {
+                role.value = decoded.roles[0] || null;
+                console.log('Detected role:', role.value);
+            } else {
+                console.error('Roles is not an array');
+                role.value = null;
+            }
             return decoded;
         } catch (error) {
             console.error('Error decoding token:', error);
@@ -27,7 +35,6 @@ export const useUserStore = () => {
         const token = localStorage.getItem("token");
         if (token) {
             user.value = decodeToken(token);
-            // console.log('Fetched user:', user.value); // Добавьте это для отладки
         } else {
             user.value = null;
         }
@@ -48,7 +55,8 @@ export const useUserStore = () => {
     const logout = () => {
         localStorage.removeItem('token');
         user.value = null;
+        role.value = null;
     };
 
-    return { user, fetchUser, login, logout };
+    return { user, fetchUser, login, logout, role };
 };

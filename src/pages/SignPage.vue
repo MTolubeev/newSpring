@@ -10,7 +10,7 @@
         <input type="email" v-model="loginEmail" placeholder="Email" required autocomplete="email" />
         <input type="password" v-model="loginPassword" placeholder="Пароль" required  autocomplete="current-password" />
         <div class="buttons">
-          <button type="submit">Войти</button>
+          <button class="registr" type="submit">Войти</button>
         </div>
       </form>
     </div>
@@ -61,29 +61,31 @@ const login = async () => {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   width: 500px;
-  box-sizing: border-box;
   gap: 10px;
 }
 
 .modal-content h2 {
   margin-top: 0;
 }
-
-.modal-content input[type="text"],
-.modal-content input[type="email"],
-.modal-content input[type="password"] {
-  width: calc(100% - 20px);
+form{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+input {
+  width: 100%;
   padding: 10px;
   margin: 10px 0;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
-
-.modal-content button {
+.registr {
   width: 100%;
+  display: flex;
+  justify-content: center;
   padding: 10px;
   font-size: 16px;
   cursor: pointer;
 }
-
 </style>

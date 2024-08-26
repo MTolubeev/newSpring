@@ -5,6 +5,7 @@ import RegistrPage from '@/pages/RegistrPage.vue';
 import CategoriesView from '@/pages/CategoriesView.vue';
 import ProductItem from '@/pages/ProductItem.vue';
 import SignPage from '@/pages/SignPage.vue';
+import TestAdmin from '@/pages/TestAdmin.vue';
 
 const routes = [
   {
@@ -38,6 +39,11 @@ const routes = [
     name: 'ProductView',
     component: ProductItem,
     props: true
+  },
+  {
+    path: '/test',
+    name: TestAdmin,
+    component: TestAdmin
   }
 ];
 

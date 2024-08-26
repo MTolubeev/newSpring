@@ -3,12 +3,13 @@
     <div class="info">
       <div class="profile">
         <img src="@/assets/Union.svg" alt="profile" />
-        <router-link v-if="!userStore.user.value" to="/signin">
+        <router-link v-if="!user" to="/signin">
           <n-button style="--n-border-hover: 1px solid #fff;">Войти</n-button>
         </router-link>
         <div v-else>
           <span>{{ user.sub }}</span>
           <n-button @click="logout" style="--n-border-hover: 1px solid #fff;">Выйти</n-button>
+          <router-link to="/test">юсда</router-link>
         </div>
       </div>
       <div class="cart">
@@ -31,7 +32,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useCartStore } from '@/store/cartStore';
 import { useUserStore } from '@/store/userStore';
 import { useRouter } from 'vue-router';
@@ -40,8 +41,9 @@ import { NButton } from "naive-ui";
 const router = useRouter();
 const cartStore = useCartStore();
 const userStore = useUserStore();
-const cartItemCount = ref(0); 
-const user = ref(userStore.user);
+const cartItemCount = ref(0);
+ 
+const user = computed(() => userStore.user.value);
 
 const logout = () => {
   userStore.logout();

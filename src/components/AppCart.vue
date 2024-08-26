@@ -1,6 +1,7 @@
 <template>
     <div class="cart" v-if="cartItems.length">
       <h2>Ваша корзина</h2>
+      <div class="cart__info">
       <div class="products__list">
      <BasketItem v-for="item in cartItems" :key="item.id" :item="item"
      @updateItem="updateCartItem" />
@@ -8,7 +9,9 @@
       <div class="info__controll">
         <span>Всего товаров:{{ totalItems }}</span>
         <span>Общая сумма: {{ totalPrice }} ₽</span>
+        <n-button class="button" type="success">Оформить заказ</n-button>
       </div>
+    </div>
     </div>
     <div v-else class="cart__empty">
       <h2>Корзина пустая</h2>
@@ -22,6 +25,7 @@ import { ref, onMounted, watch, computed } from "vue";
 import { useCartStore } from "@/store/cartStore";
 import { useUserStore } from "@/store/userStore";
 import BasketItem from "./BasketItem.vue";
+import { NButton } from 'naive-ui'
 
 const cartStore = useCartStore();
 const { user, fetchUser } = useUserStore();
@@ -63,6 +67,24 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.button{
+  margin-top: auto;
+}
+.cart__info{
+  display: flex;
+  justify-content: space-around;
+}
+.info__controll{
+  background-color: #fff;
+  width: 600px;
+  height: 400px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.info__controll span{
+  font-size: 30px;
+}
 .cart__empty{
   display: flex;
   height: 100vh;
@@ -81,5 +103,8 @@ p{
 }
 h2{
   text-align: center;
+}
+.n-card{
+  width: 600px;
 }
 </style>
