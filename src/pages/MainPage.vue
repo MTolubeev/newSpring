@@ -1,8 +1,8 @@
 <template>
   <MyHeader @toggle-drawer="toggleDrawer" />
   <MyDrawer :isVisible="isDrawerVisible" @close-drawer="closeDrawer" />
-  <n-button v-if="isAdmin" @click="showModal = true" @close="showModal.value = false;" class="button__add" type="warning">Добавить новый товар</n-button>
-  <AddProduct v-if="showModal" /> 
+  <n-button v-if="isAdmin" @click="showModal = true" class="button__add" type="warning">Добавить новый товар</n-button>
+  <AddProduct v-if="showModal" @close="closeModal" /> 
     <MyCardList />
   
 </template>
@@ -22,11 +22,10 @@ const { isDrawerVisible, toggleDrawer, closeDrawer } = useDrawer();
 
 const showModal = ref(false);
 
-// const closeModal = () => {
-//   console.log("dfs")
-//   showModal.value = false;
-  
-// };
+ const closeModal = () => {
+   console.log("dfs")
+  showModal.value = false;
+   };
 
 const role = computed(() => userStore.role.value);
 const isAdmin = computed(() => role.value === 'ROLE_ADMIN')
