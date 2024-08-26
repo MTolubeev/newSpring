@@ -7,11 +7,14 @@
 <script setup>
 import { defineProps, ref, computed, onMounted } from "vue";
 import { useCartStore } from '@/store/cartStore';
-import { useUserStore } from '@/store/userStore'
-const { user, fetchUser } = useUserStore(); 
+import { useUserStore } from '@/store/userStore';
+import { NButton } from "naive-ui";
+import { useRouter } from "vue-router";
+const  router = useRouter();
+const { user, fetchUser } = useUserStore();
 const cartStore = useCartStore();
 const inCart = ref(false)
-import { NButton } from "naive-ui";
+
 
 
  const props  = defineProps({
@@ -34,8 +37,7 @@ const toggleCart = async() =>{
       await cartStore.addToCart(props.productId, token)
       inCart.value = true;
     }else{
-      await cartStore.removeFromcart(props.productId, token);
-      inCart.value = false;
+      router.push('/cart');
     }
     updateInCartStatus();
   }catch(error){
@@ -44,12 +46,12 @@ const toggleCart = async() =>{
 }
 
 const buttonText = computed(() =>
-     inCart.value ? "Удалить из корзины" : "Добавить в корзину"
+     inCart.value ? "Перейти в корзину" : "Добавить в корзину"
  );
 
  const buttonStyle = computed(() =>({
-   backgroundColor: inCart.value ? "#2d4373" : "#3B5998",
-   color: "#fff"
+   backgroundColor: inCart.value ? "#f0f0f0" : "#3B5998",
+   color: inCart.value ?  "#000" : "#fff",
  }))
 
  const updateInCartStatus = async () => {

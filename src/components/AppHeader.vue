@@ -40,7 +40,6 @@ import { NButton } from "naive-ui";
 const router = useRouter();
 const cartStore = useCartStore();
 const userStore = useUserStore();
-// const cartItems = ref([]); 
 const cartItemCount = ref(0); 
 const user = ref(userStore.user);
 
@@ -49,9 +48,14 @@ const logout = () => {
   router.push('/signin');
 };
 
-watch(() => cartStore.cartItems, (newItems) => {
-  cartItemCount.value = newItems.length;
-}, { immediate: true });
+
+watch(
+    () => cartStore.cartItems,
+    (newItems) => {
+      cartItemCount.value = newItems.reduce((total, item) => total + item.count, 0);
+    },
+    { immediate: true, deep: true }
+);
 
 onMounted(async () => {
   await userStore.fetchUser();

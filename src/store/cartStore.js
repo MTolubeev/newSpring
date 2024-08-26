@@ -29,6 +29,10 @@ export const useCartStore = defineStore('cart', () => {
 
   const addToCart = async (productId, token) => {
     try {
+      const existingItem = cartItems.value.find(i => i.id === productId);
+      if (existingItem) {
+          existingItem.count++;
+      }
       const response = await axios.post(`http://localhost:8080/basket/addToBasket`, null, {
         params: {
           productId
@@ -38,35 +42,64 @@ export const useCartStore = defineStore('cart', () => {
         }
       });
 
-      await fetchCart(response.data.userId, token);  
+      await fetchCart(response.data.userId, token);
       return response.data;
+
     } catch (error) {
       console.log(error);
     }
   };
 
-  const removeFromcart = async (productId, token) => {
+  const removeFromCart = async (productId, token) => {
     try {
-      const response = await axios.post(`http://localhost:8080/basket/delete/${productId}`, null, {
-        params: {
-          productId
-        },
+      const existingItem = cartItems.value.find(i => i.id === productId);
+      if (existingItem) {
+        if (existingItem.count > 1) {
+          existingItem.count--;
+        } else {
+          cartItems.value = cartItems.value.filter(i => i.id !== productId);
+        }
+        await axios.post(`http://localhost:8080/basket/delete/${productId}`, null, {
         headers: {
           Authorization: token
         }
       });
-
-      await fetchCart(response.data.userId, token);  
-      return response.data;
-    } catch (error) {
-      console.log(error);
     }
-  };
+
+    return existingItem;
+  } catch (error) {
+    console.error("Ошибка удаления товара из корзины:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+
+// const removeAllFromCart = async (productId, token) => {
+  //   try {
+  //     // Удаляем товар из локального состояния корзины
+  //     cartItems.value = cartItems.value.filter(i => i.id !== productId);
+  //
+  //     // Отправляем запрос на сервер для удаления товара из корзины
+  //     await axios.post(`http://localhost:8080/basket/delete/${productId}`, null, {
+  //       headers: {
+  //         Authorization: token
+  //       }
+  //     });
+  //   } catch (error) {
+  //     console.error("Ошибка удаления товара из корзины:", error.response?.data || error.message);
+  //     throw error;
+  //   }
+  // };
+  const getTotalCount = () =>{
+    return cartItems.value.reduce((total, item)=> total + item.count, 0)
+  }
 
   return {
     cartItems,
     fetchCart,
     addToCart,
-    removeFromcart
+    removeFromCart,
+    getTotalCount,
+    // removeAllFromCart
   };
 });

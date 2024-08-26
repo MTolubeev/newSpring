@@ -1,13 +1,13 @@
 <template>
-    <n-card>
-      <h4>{{ item.title }}</h4>
+    <n-card content-style="display: flex; flex-direction:column; gap:20px">
+      <h2>{{ item.title }}</h2>
       <img width="200px" :src="item.imageUrl" alt="Product Image" v-if="item.imageUrl" class="product-image" />
-      <span><strong>{{ item.price }} руб.</strong></span>
       <div class="controls">
         <n-button @click="decrementCount">-</n-button>
         <span>{{ localCount }}</span>
         <n-button @click="incrementCount">+</n-button>
       </div>
+      <span class="item__price"><strong>{{ item.price }} руб.</strong></span>
     </n-card>
   </template>
   
@@ -27,7 +27,6 @@
 
   const cartStore = useCartStore();
   const token = localStorage.getItem('token');
-  
   const localCount = ref(props.item.count);
   
   const incrementCount = async () => {
@@ -37,21 +36,29 @@
       emit('updateItem', { ...props.item, count: localCount.value });
     }
   };
-  
-const decrementCount = async () => {
-if (localCount.value > 1) {
-    localCount.value--;
-    await cartStore.removeFromcart(props.item.id, token);
-    emit('updateItem', { ...props.item, count: localCount.value });
-}
-};
-  
+
+  const decrementCount = async () => {
+    if (localCount.value > 0) {
+      localCount.value--;
+      await cartStore.removeFromCart(props.item.id, token);
+      emit('updateItem', { ...props.item, count: localCount.value });
+    }
+  };
+  // const removeItem = async () => {
+  //   try {
+  //     await cartStore.removeAllFromCart(props.item.id, token); // Удаляем товар полностью
+  //     emit('updateItem', { ...props.item, count: 0 }); // Обновляем родительский компонент
+  //   } catch (error) {
+  //     console.error('Ошибка удаления товара:', error);
+  //   }
+  // };
 watch(() => props.item.count, (newCount) => {
     localCount.value = newCount;
 });
 </script>
 
 <style scoped>
+
 .controls {
   display: flex;
   align-items: center;
@@ -70,5 +77,8 @@ watch(() => props.item.count, (newCount) => {
   width: 40px; 
   text-align: center; 
   font-family: 'Arial', sans-serif;
+}
+.item__price{
+  font-size: 20px;
 }
 </style>
