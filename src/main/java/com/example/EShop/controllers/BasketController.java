@@ -66,4 +66,16 @@ public class BasketController {
             return ResponseEntity.badRequest().body("Error removing product from basket: " + e.getMessage());
         }
     }
+    @PostMapping("/deleteFull/{productId}")
+    public ResponseEntity<?> deleteFullFromBasket(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable Long productId) {
+        try {
+            User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
+            Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
+
+            basketService.deleteFullProduct(user, product);
+            return ResponseEntity.ok("Product removed from basket successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error removing product from basket: " + e.getMessage());
+        }
+    }
 }

@@ -89,6 +89,19 @@ public class BasketService {
     }
 
     @Transactional
+    public void deleteFullProduct(User user, Product product) {
+        Basket basket = basketRepository.findByUser(user);
+        List<Product> products = basket.getProducts();
+        while (products.contains(product)) {
+            products.remove(product);
+
+            product.setCount(product.getCount() + 1);
+        }
+        basketRepository.save(basket);
+
+    }
+
+    @Transactional
     public int returnBasketSize(User user) {
         Basket basket = basketRepository.findByUser(user);
         if (basket == null) {

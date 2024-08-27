@@ -79,7 +79,10 @@ public class CommentService {
     public void delete(Comment comment) {
         commentRepository.delete(comment);
     }
-
+    public void deleteImage(Comment comment) {
+            comment.setImages(null);
+            commentRepository.save(comment);
+    }
     public String saveImage(MultipartFile image) throws IOException {
         String filename = UUID.randomUUID().toString() + "-" + image.getOriginalFilename();
         Path imagePath = Paths.get("images", filename);

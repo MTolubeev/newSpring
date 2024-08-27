@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.stream.Collectors;
 import java.io.IOException;
 import java.util.List;
@@ -55,6 +56,16 @@ public class CommentController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/deleteImage/{commentId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteCommentImage(@PathVariable Long commentId,
+                                                   @RequestHeader(value = "Authorization") String token) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        commentService.deleteImage(comment);
+        return ResponseEntity.ok().build();
+    }
     @GetMapping("/getAllComments")
     public ResponseEntity<List<CommentDto>> getAllComments() {
         List<Comment> comments = commentRepository.findAll();
@@ -64,14 +75,12 @@ public class CommentController {
         return ResponseEntity.ok(commentDtos);
     }
 
-@GetMapping("/{id}")
-public ResponseEntity <CommentDto> getOneComment(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<CommentDto> getOneComment(@PathVariable Long id) {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new RuntimeException("No comment with this id"));
-       CommentDto commentDto = convertToDto(comment);
+        CommentDto commentDto = convertToDto(comment);
         return ResponseEntity.ok(commentDto);
-}
-
-
+    }
 
 
     private CommentDto convertToDto(Comment comment) {
