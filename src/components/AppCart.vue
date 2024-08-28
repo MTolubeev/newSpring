@@ -1,10 +1,14 @@
 <template>
-    <div class="cart" v-if="cartItems.length">
-      <h2>Ваша корзина</h2>
-      <div class="cart__info">
+  <div class="cart" v-if="cartItems.length">
+    <h2>Ваша корзина</h2>
+    <div class="cart__info">
       <div class="products__list">
-     <BasketItem v-for="item in cartItems" :key="item.id" :item="item"
-     @updateItem="updateCartItem" />
+        <BasketItem
+          v-for="item in cartItems"
+          :key="item.id"
+          :item="item"
+          @updateItem="updateCartItem"
+        />
       </div>
       <div class="info__controll">
         <span>Всего товаров:{{ totalItems }}</span>
@@ -12,69 +16,79 @@
         <n-button class="button" type="success">Оформить заказ</n-button>
       </div>
     </div>
-    </div>
-    <div v-else class="cart__empty">
-      <h2>Корзина пустая</h2>
-    <img src="@/assets/corob.svg" alt="Пустая корзина">
-      <p>Ввойдите или зарегестрируйтесь, чтобы вы смогли добалять товары в корзину</p>
-    </div>
+  </div>
+  <div v-else class="cart__empty">
+    <h2>Корзина пустая</h2>
+    <img src="@/assets/corob.svg" alt="Пустая корзина" />
+    <p>
+      Ввойдите или зарегестрируйтесь, чтобы вы смогли добалять товары в корзину
+    </p>
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useCartStore } from "@/store/cartStore";
 import { useUserStore } from "@/store/userStore";
 import BasketItem from "./BasketItem.vue";
-import { NButton } from 'naive-ui'
+import { NButton } from "naive-ui";
 
 const cartStore = useCartStore();
-const { user, fetchUser } = useUserStore();
-
-const cartItems = ref([]);
-const error = ref("");
+const userStore = useUserStore();
+const user = computed(() => userStore.user.value);
 
 const totalItems = computed(() => {
   return cartStore.cartItems.reduce((total, item) => total + item.count, 0);
 });
+
 const totalPrice = computed(() => {
-  return cartStore.cartItems.reduce((total, item) => total + item.price * item.count, 0);
+  return cartStore.cartItems.reduce(
+    (total, item) => total + item.price * item.count,
+    0
+  );
 });
+
 const updateCartItem = (updatedItem) => {
-  const index = cartItems.value.findIndex(item => item.id === updatedItem.id);
-  if (index !== -1) {
-    cartItems.value[index] = updatedItem; 
+  if (updatedItem === null) {
+    cartStore.cartItems = cartStore.cartItems.filter(
+      (item) => item.id !== undefined
+    );
+  } else {
+    const index = cartStore.cartItems.findIndex(
+      (item) => item.id === updatedItem.id
+    );
+    if (index !== -1) {
+      cartStore.cartItems[index] = updatedItem;
+    }
   }
 };
 
-watch(() => cartStore.cartItems, (newItems) => {
-  cartItems.value = [...newItems];
-}, { deep: true });
-
 onMounted(async () => {
-  fetchUser();
-  if (user.value) {
-    const token = localStorage.getItem("token");
-    try {
-      const products = await cartStore.fetchCart(user.value.id, token);
-      cartItems.value = products;
-    } catch (err) {
-      error.value = "Failed to load cart: " + err.message;
+  try {
+    await userStore.fetchUser();
+    if (user.value && user.value.id) {
+      const token = localStorage.getItem("token");
+      await cartStore.fetchCart(user.value.id, token);
+    } else {
+      console.error("User not authenticated or user ID is missing.");
     }
-  } else {
-    error.value = "User not authenticated.";
+  } catch (err) {
+    console.error("Failed to load user or cart:", err.message);
   }
 });
+
+const cartItems = computed(() => cartStore.cartItems);
 </script>
 
 <style scoped>
-.button{
+.button {
   margin-top: auto;
 }
-.cart__info{
+.cart__info {
   display: flex;
   justify-content: space-around;
 }
-.info__controll{
+.info__controll {
   background-color: #fff;
   width: 600px;
   height: 400px;
@@ -82,10 +96,10 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
 }
-.info__controll span{
+.info__controll span {
   font-size: 30px;
 }
-.cart__empty{
+.cart__empty {
   display: flex;
   height: 100vh;
   align-items: center;
@@ -93,18 +107,18 @@ onMounted(async () => {
   justify-content: center;
   gap: 20px;
 }
-p{
+p {
   text-align: center;
   width: 350px;
   font-size: 16px;
 }
-.cart{
+.cart {
   margin-top: 100px;
 }
-h2{
+h2 {
   text-align: center;
 }
-.n-card{
+.n-card {
   width: 600px;
 }
 </style>

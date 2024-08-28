@@ -4,59 +4,69 @@
       <div class="profile">
         <img src="@/assets/Union.svg" alt="profile" />
         <router-link v-if="!user" to="/signin">
-          <n-button style="--n-border-hover: 1px solid #fff;">Войти</n-button>
+          <n-button style="--n-border-hover: 1px solid #fff">Войти</n-button>
         </router-link>
         <div v-else>
           <span>{{ user.sub }}</span>
-          <n-button @click="logout" style="--n-border-hover: 1px solid #fff;">Выйти</n-button>
-          <router-link to="/test">юсда</router-link>
+          <n-button @click="logout" style="--n-border-hover: 1px solid #fff">
+            Выйти
+            </n-button>
         </div>
       </div>
       <div class="cart">
         <img src="@/assets/cart.svg" alt="cart" />
         <router-link to="/cart">
-          <n-button style="--n-border-hover: 1px solid #fff;">Корзина</n-button>
+          <n-button style="--n-border-hover: 1px solid #fff">Корзина</n-button>
         </router-link>
         <span>{{ cartItemCount }}</span>
       </div>
       <div class="main">
-      <router-link to="/">
-        <n-button style="--n-border-hover: 1px solid #fff; --n-text-color-focus: #f0f0f0; --n-border-focus: 1px solid #f0f0f0">Главная</n-button>
-      </router-link>
-    </div>
+        <router-link to="/">
+          <n-button
+            style="
+              --n-border-hover: 1px solid #fff;
+              --n-text-color-focus: #f0f0f0;
+              --n-border-focus: 1px solid #f0f0f0;">
+            Главная</n-button>
+        </router-link>
+      </div>
     </div>
     <div class="menu">
-      <n-button style="--n-border-hover: 1px solid #fff;" @click="$emit('toggle-drawer')">Каталог</n-button>
+      <n-button
+        style="--n-border-hover: 1px solid #fff"
+        @click="$emit('toggle-drawer')">
+        Каталог
+      </n-button>
     </div>
   </header>
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue';
-import { useCartStore } from '@/store/cartStore';
-import { useUserStore } from '@/store/userStore';
-import { useRouter } from 'vue-router';
+import { ref, onMounted, watch, computed } from "vue";
+import { useCartStore } from "@/store/cartStore";
+import { useUserStore } from "@/store/userStore";
+import { useRouter } from "vue-router";
 import { NButton } from "naive-ui";
 
 const router = useRouter();
 const cartStore = useCartStore();
 const userStore = useUserStore();
 const cartItemCount = ref(0);
- 
+
 const user = computed(() => userStore.user.value);
 
 const logout = () => {
   userStore.logout();
-  router.push('/signin');
+  router.push("/signin");
 };
 
-
 watch(
-    () => cartStore.cartItems,
-    (newItems) => {
-      cartItemCount.value = newItems.reduce((total, item) => total + item.count, 0);
-    },
-    { immediate: true, deep: true }
+  () => cartStore.cartItems,
+  (newItems) => {
+    cartItemCount.value = newItems.reduce(
+      (total, item) => total + item.count, 0);
+  },
+  { immediate: true, deep: true }
 );
 
 onMounted(async () => {
@@ -81,23 +91,24 @@ header {
   gap: 30px;
 }
 .profile,
-.cart, .menu {
+.cart,
+.menu {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-.profile span{
+.profile span {
   color: #fff;
   margin-right: 10px;
 }
-.cart span{
+.cart span {
   width: 40px;
   color: #fff;
 }
-.n-button{
+.n-button {
   color: #fff;
 }
-.n-button:hover{
+.n-button:hover {
   color: #f0f0f0;
 }
 </style>

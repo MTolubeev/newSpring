@@ -1,7 +1,6 @@
 <template>
   <h2>Все товары</h2>
   <div class="cards">
-
     <MyCard v-for="item in items" :key="item.id" :item="item"></MyCard>
   </div>
 </template>
@@ -20,11 +19,9 @@ const fetchItems = async () => {
     items.value = response.data.map((product) => {
       return {
         ...product,
-        imageUrl: `data:image/png;base64,${product.base64Image}`, 
+        imageUrl: `data:image/png;base64,${product.base64Image}`,
       };
     });
-    console.log(items)
-
   } catch (err) {
     console.log(err);
   }
@@ -34,7 +31,7 @@ onMounted(fetchItems);
 </script>
 
 <style scoped>
-h2{
+h2 {
   text-align: center;
   margin-top: 20px;
 }

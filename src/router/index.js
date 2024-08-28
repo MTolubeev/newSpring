@@ -1,55 +1,49 @@
-import { createRouter, createWebHashHistory } from 'vue-router';
-import MyHome from '@/pages/MainPage.vue';
-import CartPage from '@/pages/CartPage.vue';
-import RegistrPage from '@/pages/RegistrPage.vue';
-import CategoriesView from '@/pages/CategoriesView.vue';
-import ProductItem from '@/pages/ProductItem.vue';
-import SignPage from '@/pages/SignPage.vue';
-import TestAdmin from '@/pages/TestAdmin.vue';
+import { createRouter, createWebHashHistory } from "vue-router";
+import MyHome from "@/pages/MainPage.vue";
+import CartPage from "@/pages/CartPage.vue";
+import RegistrPage from "@/pages/RegistrPage.vue";
+import CategoriesView from "@/pages/CategoriesView.vue";
+import ProductItem from "@/pages/ProductItem.vue";
+import SignPage from "@/pages/SignPage.vue";
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: MyHome
+    path: "/",
+    name: "Home",
+    component: MyHome,
   },
   {
-    path: '/cart',
-    name: 'Cart',
-    component: CartPage
+    path: "/cart",
+    name: "Cart",
+    component: CartPage,
   },
   {
-    path: '/registration',
-    name: 'Register',
-    component: RegistrPage
+    path: "/registration",
+    name: "Register",
+    component: RegistrPage,
   },
   {
-    path: '/signin',
-    name: 'SignIn',
-    component: SignPage
+    path: "/signin",
+    name: "SignIn",
+    component: SignPage,
   },
   {
-    path: '/category/:categoryName/:subcategoryName?/:subsubcategoryName?',
-    name: 'Category',
+    path: "/category/:categoryName/:subcategoryName?/:subsubcategoryName?",
+    name: "Category",
     component: CategoriesView,
-    props: true
+    props: true,
   },
   {
-    path: '/product-view/:productId',
-    name: 'ProductView',
+    path: "/product-view/:productId",
+    name: "ProductView",
     component: ProductItem,
-    props: true
+    props: true,
   },
-  {
-    path: '/test',
-    name: TestAdmin,
-    component: TestAdmin
-  }
 ];
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes
+  routes,
 });
 
 export default router;
