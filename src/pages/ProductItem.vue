@@ -47,7 +47,7 @@
         </div>
       </n-card>
     </div>
-<ProductsComment :comments="product.comments" />
+<ProductsComment :comments="product.comments" :productId="product.id" />
 
   </div>
   <div v-else>

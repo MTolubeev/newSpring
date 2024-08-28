@@ -27,7 +27,8 @@
       positive-text="Удалить"
       negative-text="Отмена"
       @positive-click="deleteProduct"
-      @negative-click="closeConfirmDialog">
+      @negative-click="closeConfirmDialog"
+      :closable="false">
       Вы уверены, что хотите удалить этот продукт?
     </n-dialog>
   </div>
@@ -55,12 +56,10 @@ const openConfirmDialog = (event) => {
   confirmDialogVisible.value = true;
 };
 
-
 const closeConfirmDialog = () => {
   confirmDialogVisible.value = false;
 };
 
-// Удалить продукт
 const deleteProduct = async () => {
   try {
     await axios.post(`http://localhost:8080/product/delete/${props.item.id}`);

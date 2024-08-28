@@ -29,7 +29,7 @@ const openModal = () =>{
  const closeModal = () => {
   showModal.value = false;
   document.body.style.overflow = '';
-   };
+};
 
 const role = computed(() => userStore.role.value);
 const isAdmin = computed(() => role.value === 'ROLE_ADMIN')

@@ -5,6 +5,7 @@
       {{ showAll ? 'Скрыть отзывы' : 'Показать все отзывы' }}
     </h3>
   </div>
+  <button @click="handleWriteReview" class="write-review-btn">Написать отзыв</button>
   <div class="comments__wrapper">
     <div v-if="comments.length > 0" class="comments__items"> 
       <n-card v-for="comment in displayedComments" :key="comment.id">
@@ -31,11 +32,17 @@
       <h3>Комментариев пока что нет</h3>
     </div>
   </div>
+  <WriteReviewModal v-model:show="showReviewModal" :productId="productId" />
 </template>
 
 <script setup>
-import { defineProps, ref, computed } from 'vue';
+import { defineProps, ref, computed, onMounted } from 'vue';
 import { NCard } from 'naive-ui';
+import WriteReviewModal from './WriteReviewModal.vue';
+import { useUserStore } from '@/store/userStore';
+
+const userStore = useUserStore();
+const user = computed(() => userStore.user.value);
 
 const maxStars = 5;
 
@@ -43,10 +50,15 @@ const props = defineProps({
   comments: {
     type: Array,
     required: true
+  },
+  productId: {
+    type: Number,
+    required: true
   }
 });
 
 const showAll = ref(false);
+const showReviewModal = ref(false);
 
 const toggleComments = () => {
   showAll.value = !showAll.value;
@@ -54,6 +66,16 @@ const toggleComments = () => {
 
 const displayedComments = computed(() => {
   return showAll.value ? props.comments : props.comments.slice(0, 3);
+});
+const handleWriteReview = () => {
+  if (user.value) {
+    showReviewModal.value = true; 
+  } else {
+    alert('Вы не авторизованы. Пожалуйста, войдите, чтобы оставить отзыв.'); 
+  }
+};
+onMounted(async () => {
+  await userStore.fetchUser(); 
 });
 </script>
 
