@@ -3,13 +3,16 @@ package com.example.EShop.controllers;
 import com.example.EShop.dtos.CommentDto;
 import com.example.EShop.models.Comment;
 import com.example.EShop.models.Product;
+import com.example.EShop.models.User;
 import com.example.EShop.repositories.CommentRepository;
 import com.example.EShop.repositories.ProductRepository;
+import com.example.EShop.repositories.UserRepository;
 import com.example.EShop.services.CommentService;
 import com.example.EShop.services.ProductService;
 import com.example.EShop.services.UserService;
 import com.example.EShop.utils.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +33,7 @@ public class CommentController {
     private final CommentRepository commentRepository;
     private final ProductRepository productRepository;
     private final JwtTokenUtils jwtTokenUtils;
+    private final UserRepository userRepository;
 
     @PostMapping("/add")
     @PreAuthorize("isAuthenticated()")
@@ -56,6 +60,21 @@ public class CommentController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/usersComment/{commentId}")
+    public ResponseEntity<?> deleteCommentByUser(@PathVariable Long commentId,
+                                                 @RequestHeader(value = "Authorization") String token) {
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("Comment not found"));
+        User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
+        if (comment.getUser().getId() == user.getId()) {
+            commentService.delete(comment);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("That's not your comment.");
+        }
+
+    }
+
     @DeleteMapping("/deleteImage/{commentId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteCommentImage(@PathVariable Long commentId,
@@ -66,6 +85,21 @@ public class CommentController {
         commentService.deleteImage(comment);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/usersComment/deleteImage/{commentId}")
+    public ResponseEntity<?> deleteCommentImageByUser(@PathVariable Long commentId,
+                                                      @RequestHeader(value = "Authorization") String token) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+        User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
+        if (comment.getUser().getId() == user.getId()) {
+            commentService.deleteImage(comment);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("That's not your comment.");
+        }
+    }
+
     @GetMapping("/getAllComments")
     public ResponseEntity<List<CommentDto>> getAllComments() {
         List<Comment> comments = commentRepository.findAll();

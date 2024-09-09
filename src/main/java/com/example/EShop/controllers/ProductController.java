@@ -1,5 +1,6 @@
 package com.example.EShop.controllers;
 
+import com.example.EShop.dtos.CategoryDto;
 import com.example.EShop.dtos.ProductDto;
 import com.example.EShop.models.Comment;
 import com.example.EShop.models.Product;
@@ -83,5 +84,13 @@ public class ProductController {
                                            @RequestHeader(value = "Authorization", required = false) String token) {
         productService.deleteProduct(id);
         return ResponseEntity.ok("Product deleted successfully");
+    }
+    @PostMapping("/{productId}/categories/reorder")
+    public ResponseEntity<Void> reorderCategories(
+            @PathVariable Long productId,
+            @RequestBody List<CategoryDto> newOrder) {
+
+        productService.reorderCategories(productId, newOrder);
+        return ResponseEntity.ok().build();
     }
 }

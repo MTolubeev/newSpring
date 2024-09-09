@@ -12,4 +12,7 @@ public class CategoryDto {
     private String name;
     private String subcategory;
     private String subsubcategory;
+    private Integer order;
+    private Integer subcategoryOrder;
+    private Integer subsubcategoryOrder;
 }

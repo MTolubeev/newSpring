@@ -42,6 +42,9 @@ public class Product {
     @Column(name = "category")
     private String category;
 
+    @Column(name = "categoryOrder")
+    private String categoryOrder;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Comment> comments;
