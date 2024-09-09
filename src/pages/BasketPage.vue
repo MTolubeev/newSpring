@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import AppCart from '@/components/AppCart.vue';
+import AppCart from '@/components/AppBasket.vue';
 import MyHeader from '@/components/AppHeader.vue';
 import MyDrawer from '@/components/AppDrawer.vue';
 import { useDrawer } from '@/composables/useHeader.js';

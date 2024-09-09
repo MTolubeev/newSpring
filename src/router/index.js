@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import MyHome from "@/pages/MainPage.vue";
-import CartPage from "@/pages/CartPage.vue";
+import CartPage from "@/pages/BasketPage.vue";
 import RegistrPage from "@/pages/RegistrPage.vue";
 import CategoriesView from "@/pages/CategoriesView.vue";
 import ProductItem from "@/pages/ProductItem.vue";

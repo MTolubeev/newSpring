@@ -5,6 +5,7 @@ export const useUserStore = () => {
   const role = ref(null);
 
   const decodeToken = (token) => {
+    console.log("токен изначальный " + token);
     try {
       const base64Url = token.split(".")[1];
       const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");

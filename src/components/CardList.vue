@@ -1,7 +1,12 @@
 <template>
   <h2>Все товары</h2>
   <div class="cards">
-    <MyCard v-for="item in items" :key="item.id" :item="item"></MyCard>
+    <MyCard
+      v-for="item in items"
+      :key="item.id"
+      :item="item"
+      @delete="handleDelete"
+    ></MyCard>
   </div>
 </template>
 
@@ -26,7 +31,9 @@ const fetchItems = async () => {
     console.log(err);
   }
 };
-
+const handleDelete = (itemId) => {
+  items.value = items.value.filter((item) => item.id !== itemId);
+};
 onMounted(fetchItems);
 </script>
 

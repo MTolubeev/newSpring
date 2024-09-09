@@ -16,7 +16,9 @@
     </div>
     <div class="card__button">
       <CartButton :productId="item.id" :product="item" @click.stop />
-      <n-button @click.stop="openConfirmDialog">Удалить</n-button>
+      <n-button v-if="isAdmin" @click.stop="openConfirmDialog"
+        >Удалить товар из общего списка</n-button
+      >
     </div>
   </n-card>
 
@@ -28,18 +30,24 @@
       negative-text="Отмена"
       @positive-click="deleteProduct"
       @negative-click="closeConfirmDialog"
-      :closable="false">
+      :closable="false"
+    >
       Вы уверены, что хотите удалить этот продукт?
     </n-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, defineProps } from "vue";
+import { ref, defineProps, defineEmits, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { NCard, NButton, NDialog } from "naive-ui";
-import CartButton from "./CartButton.vue";
+import CartButton from "./BasketButton.vue";
+import { useUserStore } from "@/store/userStore";
 import axios from "axios";
+const userStore = useUserStore();
+
+const role = computed(() => userStore.role.value);
+const isAdmin = computed(() => role.value === "ROLE_ADMIN");
 
 const props = defineProps({
   item: {
@@ -48,11 +56,12 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(['delete']);
 const router = useRouter();
 const confirmDialogVisible = ref(false);
 
 const openConfirmDialog = (event) => {
-  event.stopPropagation(); 
+  event.stopPropagation();
   confirmDialogVisible.value = true;
 };
 
@@ -64,16 +73,20 @@ const deleteProduct = async () => {
   try {
     await axios.post(`http://localhost:8080/product/delete/${props.item.id}`);
     closeConfirmDialog();
+    emit('delete', props.item.id);
   } catch (error) {
     console.error("Ошибка при удалении продукта", error);
     closeConfirmDialog();
   }
 };
 
-
 const navigateToproduct = () => {
   router.push({ path: `/product-view/${props.item.id}` });
 };
+
+onMounted(async () => {
+  await userStore.fetchUser();
+});
 </script>
 
 <style scoped>
@@ -132,19 +145,19 @@ const navigateToproduct = () => {
   font-weight: bold;
 }
 .dialog-overlay {
-  position: fixed; 
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); 
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9998; 
+  z-index: 9998;
 }
 
 .confirm-dialog {
-  z-index: 9999; 
+  z-index: 9999;
 }
 </style>

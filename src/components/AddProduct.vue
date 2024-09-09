@@ -14,8 +14,7 @@
             type="text"
             v-model="product.title"
             placeholder="Название"
-            required
-          />
+            required/>
         </div>
 
         <div class="form-group">
@@ -24,8 +23,7 @@
             type="number"
             placeholder="Цена"
             v-model.number="product.price"
-            required
-          />
+            required/>
         </div>
 
         <div class="form-group">
@@ -33,8 +31,7 @@
           <input
             type="number"
             placeholder="Скидочная цена"
-            v-model="product.discountPrice"
-          />
+            v-model="product.discountPrice"/>
         </div>
 
         <div class="form-group">
@@ -48,8 +45,7 @@
             type="text"
             placeholder="Категория"
             v-model="product.category"
-            required
-          />
+            required/>
         </div>
 
         <div class="form-group">
@@ -57,8 +53,7 @@
           <input
             type="number"
             placeholder="Количество"
-            v-model="product.count"
-          />
+            v-model="product.count"/>
         </div>
 
         <button class="create__product" type="submit">Создать товар</button>
@@ -116,7 +111,7 @@ async function uploadFile() {
         }
       );
       console.log(response.data);
-      message.value = "Ваш продукт создан!";
+      message.value = "Ваш продукт создан! Обновите страницу";
     } catch (error) {
       console.error("Error uploading file:", error.response?.data || error);
       message.value = "Неудалось создать продукт";

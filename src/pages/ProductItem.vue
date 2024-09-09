@@ -65,7 +65,7 @@ import MyHeader from "@/components/AppHeader.vue";
 import MyDrawer from "@/components/AppDrawer.vue";
 import { useDrawer } from '@/composables/useHeader.js';
 import ProductsComment from "@/components/ProductsComment.vue";
-import CartButton from "@/components/CartButton.vue";
+import CartButton from "@/components/BasketButton.vue";
 
 
 const { isDrawerVisible, toggleDrawer, closeDrawer } = useDrawer();
