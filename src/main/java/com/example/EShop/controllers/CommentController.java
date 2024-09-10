@@ -2,6 +2,7 @@ package com.example.EShop.controllers;
 
 import com.example.EShop.dtos.CommentDto;
 import com.example.EShop.models.Comment;
+import com.example.EShop.models.CommentImage;
 import com.example.EShop.models.Product;
 import com.example.EShop.models.User;
 import com.example.EShop.repositories.CommentRepository;
@@ -18,6 +19,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.io.IOException;
 import java.util.List;
@@ -37,13 +43,65 @@ public class CommentController {
 
     @PostMapping("/add")
     @PreAuthorize("isAuthenticated()")
+//    public ResponseEntity<Comment> addComment(@RequestParam("productId") Long productId,
+//                                              @RequestParam("text") String text,
+//                                              @RequestParam("score") int score,
+//                                              @RequestParam("image") MultipartFile image,
+//                                              @RequestHeader("Authorization") String token) throws IOException {
+//        return commentService.addComment(productId, text, score, image, token);
+//    }
     public ResponseEntity<Comment> addComment(@RequestParam("productId") Long productId,
                                               @RequestParam("text") String text,
                                               @RequestParam("score") int score,
-                                              @RequestParam(value = "image", required = false) MultipartFile image,
+                                              @RequestParam(value = ("image"), required = false) MultipartFile image,
                                               @RequestHeader("Authorization") String token) throws IOException {
-        return commentService.addComment(productId, text, score, image, token);
+        User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
+        Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
+
+        Comment comment = new Comment();
+        comment.setUser(user);
+        comment.setProduct(product);
+        comment.setText(text);
+        comment.setScore(score);
+
+        if (image != null && !image.isEmpty()) {
+            String imageUrl = saveImage(image);
+            CommentImage commentImage = new CommentImage();
+            commentImage.setImageUrl(imageUrl);
+            commentImage.setComment(comment);
+            comment.getImages().add(commentImage);
+        }
+
+        Comment savedComment = commentRepository.save(comment);
+        return ResponseEntity.ok(savedComment);
     }
+
+
+
+    public String saveImage(MultipartFile image) throws IOException {
+
+        String fileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
+        String uploadDir = "/resources/templates/static/images";
+
+        // Создаем директорию, если её нет
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+
+        Path filePath = Paths.get(uploadDir, fileName);
+        Files.write(filePath, image.getBytes());
+
+        // Возвращаем путь для записи в БД
+        return "/images/" + fileName;
+    }
+
+
+
+
+
+
 
     @GetMapping("/product/{productId}")
     public ResponseEntity<List<Comment>> getComments(@PathVariable Long productId) {

@@ -33,10 +33,6 @@ public class ProductService {
     private final ImageRepository imageRepository;
 
 
-
-
-
-
     public ProductDto findAllProducts(Long id) {
         return productRepository.findById(id)
                 .map(this::convertProductToDto)
