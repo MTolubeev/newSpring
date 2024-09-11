@@ -154,9 +154,14 @@ const fetchData = async () => {
 };
 
 const updateProductFields = async (productId, updates) => {
+  if (!productId) {
+    console.error('Product ID is undefined');
+    return;
+  }
+
   try {
-    await axios.patch(`http://localhost:8082/products/${productId}`, updates);
-    console.log(`Продукт с id ${productId} успешно обновлён.`);
+    const response = await axios.put(`http://localhost:8082/products/${productId}`, updates);
+    console.log(`Продукт с id ${productId} успешно обновлён.`, response.data);
   } catch (error) {
     console.error(`Ошибка при обновлении продукта с id ${productId}:`, error);
   }
@@ -165,23 +170,29 @@ const updateProductFields = async (productId, updates) => {
 const saveOrder = async () => {
   try {
     for (const category of categories.value) {
-      await updateProductFields(category.id, {
-        order: category.order,
-        subcategoryOrder: category.subcategoryOrder,
-        subsubcategoryOrder: category.subsubcategoryOrder
-      });
-
-      for (const subcategory of category.subcategories) {
-        await updateProductFields(subcategory.id, {
-          order: subcategory.order,
-          subcategoryOrder: subcategory.subcategoryOrder
+      if (category.id) {
+        await updateProductFields(category.id, {
+          order: category.order,
+          subcategoryOrder: category.subcategoryOrder,
+          subsubcategoryOrder: category.subsubcategoryOrder
         });
 
-        for (const subsubcategory of subcategory.subsubcategories) {
-          await updateProductFields(subsubcategory.id, {
-            order: subsubcategory.order,
-            subsubcategoryOrder: subsubcategory.subsubcategoryOrder
-          });
+        for (const subcategory of category.subcategories) {
+          if (subcategory.id) {
+            await updateProductFields(subcategory.id, {
+              order: subcategory.order,
+              subcategoryOrder: subcategory.subcategoryOrder
+            });
+
+            for (const subsubcategory of subcategory.subsubcategories) {
+              if (subsubcategory.id) {
+                await updateProductFields(subsubcategory.id, {
+                  order: subsubcategory.order,
+                  subsubcategoryOrder: subsubcategory.subsubcategoryOrder
+                });
+              }
+            }
+          }
         }
       }
     }
