@@ -85,7 +85,7 @@ public class ProductController {
         productService.deleteProduct(id);
         return ResponseEntity.ok("Product deleted successfully");
     }
-    @PostMapping("/{productId}/categories/reorder")
+    @PutMapping ("/{productId}/categories/reorder")
     public ResponseEntity<Void> reorderCategories(
             @PathVariable Long productId,
             @RequestBody List<CategoryDto> newOrder) {

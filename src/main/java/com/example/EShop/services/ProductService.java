@@ -147,21 +147,50 @@ public class ProductService {
         return dto;
     }
     public void reorderCategories(Long productId, List<CategoryDto> newOrder) {
-        Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        StringBuilder newCategoryOrder = new StringBuilder();
-        StringBuilder newCategoryString = new StringBuilder();
+        StringBuilder categoryBuilder = new StringBuilder();
+        StringBuilder categoryOrderBuilder = new StringBuilder();
 
-        for (CategoryDto category : newOrder) {
-            newCategoryString.append(category.getName()).append("/")
-                    .append(category.getSubcategory()).append("/")
-                    .append(category.getSubsubcategory()).append(",");
-            newCategoryOrder.append(category.getOrder()).append(",");
+        for (CategoryDto categoryDto : newOrder) {
+            // Строим строку категории
+            String category = categoryDto.getName();
+            if (categoryDto.getSubcategory() != null) {
+                category += "/" + categoryDto.getSubcategory();
+            }
+            if (categoryDto.getSubsubcategory() != null) {
+                category += "/" + categoryDto.getSubsubcategory();
+            }
+            if (categoryBuilder.length() > 0) {
+                categoryBuilder.append(","); // Добавляем запятую для разделения категорий
+            }
+            categoryBuilder.append(category);
+
+            // Строим строку порядка
+            String order = categoryDto.getOrder().toString();
+            if (categoryDto.getSubcategoryOrder() != null) {
+                order += "," + categoryDto.getSubcategoryOrder().toString();
+            }
+            if (categoryDto.getSubsubcategoryOrder() != null) {
+                order += "," + categoryDto.getSubsubcategoryOrder().toString();
+            }
+            if (categoryOrderBuilder.length() > 0) {
+                categoryOrderBuilder.append(";"); // Добавляем точку с запятой для разделения порядков
+            }
+            categoryOrderBuilder.append(order);
         }
 
-        product.setCategory(newCategoryString.toString());
-        product.setCategoryOrder(newCategoryOrder.toString());
+        // Устанавливаем строки в продукт
+        product.setCategory(categoryBuilder.toString());
+        product.setCategoryOrder(categoryOrderBuilder.toString());
 
+        // Сохраняем обновленный продукт
         productRepository.save(product);
     }
+
+
+
+
+
 }
