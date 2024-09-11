@@ -25,116 +25,167 @@
           stroke-linejoin="round"
         />
       </svg>
+      <button @click="saveOrder" class="save-button">Сохранить</button>
     </div>
-    <ul>
-      <li v-for="category in categories" :key="category.name">
-        <router-link
-          :to="{ name: 'Category', params: { categoryName: category.name } }"
-        >
-          <strong>{{ category.name }}</strong>
-        </router-link>
-        <ul>
-          <li
-            v-for="subcategory in category.subcategories"
-            :key="subcategory.name"
-          >
-            <router-link
-              :to="{
-                name: 'Category',
-                params: {
-                  categoryName: category.name,
-                  subcategoryName: subcategory.name,
-                },
-              }"
-            >
-              <strong>{{ subcategory.name }}</strong>
-            </router-link>
-            <ul>
-              <li
-                v-for="subsubcategory in subcategory.subsubcategories"
-                :key="subsubcategory.name"
-              >
-                <router-link
-                  :to="{
-                    name: 'Category',
-                    params: {
-                      categoryName: category.name,
-                      subcategoryName: subcategory.name,
-                      subsubcategoryName: subsubcategory.name,
-                    },
-                  }"
-                >
-                  <strong>{{ subsubcategory.name }}</strong>
-                </router-link>
-                <ul>
-                  <li
-                    v-for="product in subsubcategory.products"
-                    :key="product.id"
+
+    <!-- Drag and Drop для категорий -->
+    <Draggable v-model="categories" :group="{ name: 'categories' }" @end="onDragEnd" item-key="name">
+      <template #item="{ element }">
+        <li>
+          <router-link :to="{ name: 'Category', params: { categoryName: element.name } }">
+            <strong>{{ element.name }}</strong>
+          </router-link>
+
+          <!-- Drag and Drop для подкатегорий -->
+          <Draggable v-model="element.subcategories" :group="{ name: 'subcategories' }" item-key="name">
+            <template #item="{ element: subcategory }">
+              <ul>
+                <li>
+                  <router-link
+                    :to="{
+                      name: 'Category',
+                      params: {
+                        categoryName: element.name,
+                        subcategoryName: subcategory.name,
+                      },
+                    }"
                   >
-                    <router-link
-                      :to="{
-                        name: 'ProductView',
-                        params: { productId: product.id },
-                      }"
-                    >
-                      {{ product.title }}
-                    </router-link>
-                  </li>
-                </ul>
-              </li>
-              <li v-for="product in subcategory.products" :key="product.id">
-                <router-link
-                  :to="{
-                    name: 'ProductView',
-                    params: { productId: product.id },
-                  }"
-                >
-                  {{ product.title }}
-                </router-link>
-              </li>
-            </ul>
-          </li>
-          <li
-            v-for="product in category.productsWithoutSubcategory"
-            :key="product.id"
-          >
-            <router-link
-              :to="{ name: 'ProductView', params: { productId: product.id } }"
-            >
-              {{ product.title }}
-            </router-link>
-          </li>
-        </ul>
-      </li>
-    </ul>
+                    <strong>{{ subcategory.name }}</strong>
+                  </router-link>
+
+                  <Draggable v-model="subcategory.subsubcategories" :group="{ name: 'subsubcategories' }" item-key="name">
+                    <template #item="{ element: subsubcategory }">
+                      <ul>
+                        <li>
+                          <router-link
+                            :to="{
+                              name: 'Category',
+                              params: {
+                                categoryName: element.name,
+                                subcategoryName: subcategory.name,
+                                subsubcategoryName: subsubcategory.name,
+                              },
+                            }"
+                          >
+                            <strong>{{ subsubcategory.name }}</strong>
+                          </router-link>
+
+                          <!-- Drag and Drop для продуктов в под-подкатегории -->
+                          <Draggable v-model="subsubcategory.products" :group="{ name: 'products' }" item-key="id">
+                            <template #item="{ element: product }">
+                              <ul>
+                                <li>
+                                  <router-link :to="{ name: 'ProductView', params: { productId: product.id } }">
+                                    {{ product.title }}
+                                  </router-link>
+                                </li>
+                              </ul>
+                            </template>
+                          </Draggable>
+                        </li>
+                      </ul>
+                    </template>
+                  </Draggable>
+
+                  <!-- Drag and Drop для продуктов в подкатегории -->
+                  <Draggable v-model="subcategory.products" :group="{ name: 'products' }" item-key="id">
+                    <template #item="{ element: product }">
+                      <ul>
+                        <li>
+                          <router-link :to="{ name: 'ProductView', params: { productId: product.id } }">
+                            {{ product.title }}
+                          </router-link>
+                        </li>
+                      </ul>
+                    </template>
+                  </Draggable>
+                </li>
+              </ul>
+            </template>
+          </Draggable>
+
+          <!-- Drag and Drop для продуктов без подкатегории -->
+          <Draggable v-model="element.productsWithoutSubcategory" :group="{ name: 'products' }" item-key="id">
+            <template #item="{ element: product }">
+              <ul>
+                <li>
+                  <router-link :to="{ name: 'ProductView', params: { productId: product.id } }">
+                    {{ product.title }}
+                  </router-link>
+                </li>
+              </ul>
+            </template>
+          </Draggable>
+        </li>
+      </template>
+    </Draggable>
   </div>
 </template>
 
 <script setup>
-import { defineProps, ref, onMounted } from "vue";
-import axios from "axios";
-// import draggable from 'vuedraggable';
-import { useOrganizeProducts } from "@/composables/useOrganizeProducts";
+import { defineProps, ref, onMounted } from 'vue';
+import axios from 'axios';
+import Draggable from 'vuedraggable'; // Импортируем draggable
+import { useOrganizeProducts } from '@/composables/useOrganizeProducts';
 
 const categories = ref([]);
 const { organizeProductsByCategories } = useOrganizeProducts();
 
 defineProps({
-  isVisible: Boolean,
+  isVisible: Boolean
 });
 
 const fetchData = async () => {
   try {
-    const response = await axios.get("http://localhost:8082/products");
+    const response = await axios.get('http://localhost:8082/products');
     const products = response.data;
 
     if (Array.isArray(products)) {
       categories.value = organizeProductsByCategories(products);
     } else {
-      console.error("Неправильный формат данных:", products);
+      console.error('Неправильный формат данных:', products);
     }
   } catch (error) {
-    console.error("Ошибка при получении данных:", error);
+    console.error('Ошибка при получении данных:', error);
+  }
+};
+
+// Метод для обработки завершения перетаскивания
+const onDragEnd = (event) => {
+  console.log('Элемент был перемещен:', event);
+};
+
+// Метод для сохранения обновленного порядка
+const saveOrder = async () => {
+  try {
+    // Создание запроса с обновленными данными
+    const updatedCategories = categories.value.map((category, categoryIndex) => {
+      // Обновление порядка категорий
+      category.order = categoryIndex + 1;
+      category.subcategories.forEach((subcategory, subcategoryIndex) => {
+        // Обновление порядка подкатегорий
+        subcategory.subcategoryOrder = subcategoryIndex + 1;
+        subcategory.subsubcategories.forEach((subsubcategory, subsubcategoryIndex) => {
+          // Обновление порядка под-подкатегорий
+          subsubcategory.subsubcategoryOrder = subsubcategoryIndex + 1;
+          subsubcategory.products.forEach((product, productIndex) => {
+            // Обновление порядка продуктов
+            product.order = productIndex + 1;
+          });
+        });
+      });
+      return category;
+    });
+
+    // Отправка обновленных данных на сервер
+    await axios.put('http://localhost:8082/products', { products: updatedCategories }, {
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+    console.log('Обновленный порядок сохранен успешно.');
+  } catch (error) {
+    console.error('Ошибка при сохранении порядка:', error);
   }
 };
 
@@ -144,6 +195,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Ваши стили остаются без изменений */
 .catalog {
   display: flex;
   flex-direction: column;
