@@ -176,7 +176,7 @@ public class ProductService {
                 order += "," + categoryDto.getSubsubcategoryOrder().toString();
             }
             if (categoryOrderBuilder.length() > 0) {
-                categoryOrderBuilder.append(";"); // Добавляем точку с запятой для разделения порядков
+                categoryOrderBuilder.append("/"); // Добавляем точку с запятой для разделения порядков
             }
             categoryOrderBuilder.append(order);
         }
