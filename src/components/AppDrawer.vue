@@ -25,7 +25,6 @@
           stroke-linejoin="round"
         />
       </svg>
-      <button @click="saveOrder" class="save-button">Сохранить</button>
     </div>
 
     <!-- Drag and Drop для категорий -->
@@ -119,6 +118,9 @@
         </li>
       </template>
     </Draggable>
+
+    <!-- Кнопка сохранения -->
+    <button @click="saveOrder">Сохранить изменения</button>
   </div>
 </template>
 
@@ -135,6 +137,7 @@ defineProps({
   isVisible: Boolean
 });
 
+// Функция для получения данных с сервера
 const fetchData = async () => {
   try {
     const response = await axios.get('http://localhost:8082/products');
@@ -150,40 +153,40 @@ const fetchData = async () => {
   }
 };
 
-// Метод для обработки завершения перетаскивания
-const onDragEnd = (event) => {
-  console.log('Элемент был перемещен:', event);
+const updateProductFields = async (productId, updates) => {
+  try {
+    await axios.patch(`http://localhost:8082/products/${productId}`, updates);
+    console.log(`Продукт с id ${productId} успешно обновлён.`);
+  } catch (error) {
+    console.error(`Ошибка при обновлении продукта с id ${productId}:`, error);
+  }
 };
 
-// Метод для сохранения обновленного порядка
 const saveOrder = async () => {
   try {
-    // Создание запроса с обновленными данными
-    const updatedCategories = categories.value.map((category, categoryIndex) => {
-      // Обновление порядка категорий
-      category.order = categoryIndex + 1;
-      category.subcategories.forEach((subcategory, subcategoryIndex) => {
-        // Обновление порядка подкатегорий
-        subcategory.subcategoryOrder = subcategoryIndex + 1;
-        subcategory.subsubcategories.forEach((subsubcategory, subsubcategoryIndex) => {
-          // Обновление порядка под-подкатегорий
-          subsubcategory.subsubcategoryOrder = subsubcategoryIndex + 1;
-          subsubcategory.products.forEach((product, productIndex) => {
-            // Обновление порядка продуктов
-            product.order = productIndex + 1;
-          });
-        });
+    for (const category of categories.value) {
+      await updateProductFields(category.id, {
+        order: category.order,
+        subcategoryOrder: category.subcategoryOrder,
+        subsubcategoryOrder: category.subsubcategoryOrder
       });
-      return category;
-    });
 
-    // Отправка обновленных данных на сервер
-    await axios.put('http://localhost:8082/products', { products: updatedCategories }, {
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
-    console.log('Обновленный порядок сохранен успешно.');
+      for (const subcategory of category.subcategories) {
+        await updateProductFields(subcategory.id, {
+          order: subcategory.order,
+          subcategoryOrder: subcategory.subcategoryOrder
+        });
+
+        for (const subsubcategory of subcategory.subsubcategories) {
+          await updateProductFields(subsubcategory.id, {
+            order: subsubcategory.order,
+            subsubcategoryOrder: subsubcategory.subsubcategoryOrder
+          });
+        }
+      }
+    }
+
+    console.log('Изменения успешно сохранены.');
   } catch (error) {
     console.error('Ошибка при сохранении порядка:', error);
   }
@@ -193,6 +196,8 @@ onMounted(() => {
   fetchData();
 });
 </script>
+
+
 
 <style scoped>
 /* Ваши стили остаются без изменений */
