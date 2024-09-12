@@ -42,11 +42,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from "vue";
-import { useCartStore } from "@/store/cartStore";
-import { useUserStore } from "@/store/userStore";
-import { useRouter } from "vue-router";
-import { NButton } from "naive-ui";
+import { ref, onMounted, watch, computed } from 'vue';
+import { useCartStore } from '@/store/cartStore';
+import { useUserStore } from '@/store/userStore';
+import { useRouter } from 'vue-router';
+import { NButton } from 'naive-ui';
 
 const router = useRouter();
 const cartStore = useCartStore();

@@ -1,8 +1,9 @@
 <template>
   <div class="modal-overlay">
     <div class="modal-content">
+      <button @click="closeModal" class="close-button">✖</button>
       <h2>Вход в личный аккаунт</h2>
-      <p>нет аккаунта? создайте!</p>
+      <p>Нет аккаунта? создайте!</p>
       <router-link to="/registration">
         <n-button type="warning">Создать аккаунт</n-button>
       </router-link>
@@ -21,23 +22,27 @@
 <script setup>
 import { ref } from 'vue';
 import { useUserStore } from '@/store/userStore';
-import { useRouter } from 'vue-router';
-import  {NButton} from "naive-ui";
+import { NButton } from 'naive-ui';
 
 const userStore = useUserStore();
-const router = useRouter();
 
 const loginEmail = ref('');
 const loginPassword = ref('');
 const message = ref('');
 
+
+
 const login = async () => {
   try {
     await userStore.login(loginEmail.value, loginPassword.value);
-    router.push('/');
+    window.history.back();
   } catch (error) {
     message.value = error.message;
   }
+};
+
+const closeModal = () => {
+  window.history.back(); 
 };
 </script>
 
@@ -53,6 +58,7 @@ const login = async () => {
 }
 
 .modal-content {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -87,5 +93,15 @@ input {
   padding: 10px;
   font-size: 16px;
   cursor: pointer;
+}
+.close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+  position: absolute;
+  top: 10px;
+  right: 20px;
 }
 </style>

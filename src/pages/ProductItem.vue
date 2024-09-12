@@ -47,7 +47,7 @@
         </div>
       </n-card>
     </div>
-<ProductsComment :comments="product.comments" :productId="product.id" />
+  <ProductsComment :comments="product.comments" :productId="product.id" />
 
   </div>
   <div v-else>
@@ -60,7 +60,6 @@ import { ref, onMounted, computed, watch } from "vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
 import { NCard } from "naive-ui";
-// import { useCartStore } from "@/store/cartStore"; 
 import MyHeader from "@/components/AppHeader.vue";
 import MyDrawer from "@/components/AppDrawer.vue";
 import { useDrawer } from '@/composables/useHeader.js';
@@ -71,7 +70,6 @@ import CartButton from "@/components/BasketButton.vue";
 const { isDrawerVisible, toggleDrawer, closeDrawer } = useDrawer();
 const route = useRoute();
 const product = ref(null);
-// const cartStore = useCartStore(); 
 
 
 const fetchProduct = async (id) => {

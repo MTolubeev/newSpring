@@ -20,18 +20,16 @@
   <div v-else class="cart__empty">
     <h2>Корзина пустая</h2>
     <img src="@/assets/corob.svg" alt="Пустая корзина" />
-    <p>
-      Ввойдите или зарегестрируйтесь, чтобы вы смогли добалять товары в корзину
-    </p>
+    <p>Ввойдите или зарегестрируйтесь, чтобы вы смогли добалять товары в корзину</p>
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted } from "vue";
-import { useCartStore } from "@/store/cartStore";
-import { useUserStore } from "@/store/userStore";
-import BasketItem from "./BasketItem.vue";
-import { NButton } from "naive-ui";
+import { computed, onMounted } from 'vue';
+import { useCartStore } from '@/store/cartStore';
+import { useUserStore } from '@/store/userStore';
+import BasketItem from './BasketItem.vue';
+import { NButton } from 'naive-ui';
 
 const cartStore = useCartStore();
 const userStore = useUserStore();

@@ -27,16 +27,30 @@
       </svg>
     </div>
 
-    <!-- Drag and Drop для категорий -->
-    <Draggable v-model="categories" :group="{ name: 'categories' }" @end="onDragEnd" item-key="name">
+    <n-button v-if="!editMode && isAdmin" type="primary" size="small" @click="enableEditMode">
+      Включить режим редактирования
+    </n-button>
+
+
+    <Draggable 
+      v-model="categories" 
+      :group="{ name: 'categories' }" 
+      @end="onDragEnd" 
+      item-key="name" 
+      :disabled="!editMode" 
+    >
       <template #item="{ element }">
         <li>
           <router-link :to="{ name: 'Category', params: { categoryName: element.name } }">
             <strong>{{ element.name }}</strong>
           </router-link>
 
-          <!-- Drag and Drop для подкатегорий -->
-          <Draggable v-model="element.subcategories" :group="{ name: 'subcategories' }" item-key="name">
+          <Draggable 
+            v-model="element.subcategories" 
+            :group="{ name: 'subcategories' }" 
+            item-key="name" 
+            :disabled="!editMode"
+          >
             <template #item="{ element: subcategory }">
               <ul>
                 <li>
@@ -52,13 +66,17 @@
                     <strong>{{ subcategory.name }}</strong>
                   </router-link>
 
-                  <Draggable v-model="subcategory.subsubcategories" :group="{ name: 'subsubcategories' }" item-key="name">
+                  <Draggable 
+                    v-model="subcategory.subsubcategories" 
+                    :group="{ name: 'subsubcategories' }" 
+                    item-key="name" 
+                    :disabled="!editMode"
+                  >
                     <template #item="{ element: subsubcategory }">
                       <ul>
                         <li>
                           <router-link
-                            :to="{
-                              name: 'Category',
+                            :to="{ name: 'Category',
                               params: {
                                 categoryName: element.name,
                                 subcategoryName: subcategory.name,
@@ -69,8 +87,12 @@
                             <strong>{{ subsubcategory.name }}</strong>
                           </router-link>
 
-                          <!-- Drag and Drop для продуктов в под-подкатегории -->
-                          <Draggable v-model="subsubcategory.products" :group="{ name: 'products' }" item-key="id">
+                          <Draggable 
+                            v-model="subsubcategory.products" 
+                            :group="{ name: 'products' }" 
+                            item-key="id" 
+                            :disabled="!editMode"
+                          >
                             <template #item="{ element: product }">
                               <ul>
                                 <li>
@@ -86,8 +108,12 @@
                     </template>
                   </Draggable>
 
-                  <!-- Drag and Drop для продуктов в подкатегории -->
-                  <Draggable v-model="subcategory.products" :group="{ name: 'products' }" item-key="id">
+                  <Draggable 
+                    v-model="subcategory.products" 
+                    :group="{ name: 'products' }" 
+                    item-key="id" 
+                    :disabled="!editMode"
+                  >
                     <template #item="{ element: product }">
                       <ul>
                         <li>
@@ -103,8 +129,12 @@
             </template>
           </Draggable>
 
-          <!-- Drag and Drop для продуктов без подкатегории -->
-          <Draggable v-model="element.productsWithoutSubcategory" :group="{ name: 'products' }" item-key="id">
+          <Draggable 
+            v-model="element.productsWithoutSubcategory" 
+            :group="{ name: 'products' }" 
+            item-key="id" 
+            :disabled="!editMode"
+          >
             <template #item="{ element: product }">
               <ul>
                 <li>
@@ -118,26 +148,30 @@
         </li>
       </template>
     </Draggable>
-
-    <!-- Кнопка сохранения -->
-    <button @click="saveOrder">Сохранить изменения</button>
+    <n-button v-if="editMode" type="warning" @click="saveOrder">Сохранить изменения</n-button>
   </div>
 </template>
 
 <script setup>
-import { defineProps, ref, onMounted } from 'vue';
+import { defineProps, ref, onMounted, computed } from 'vue';
 import axios from 'axios';
-import Draggable from 'vuedraggable'; // Импортируем draggable
+import { useUserStore } from "@/store/userStore";
+import Draggable from 'vuedraggable'; 
+import { NButton } from 'naive-ui';
 import { useOrganizeProducts } from '@/composables/useOrganizeProducts';
-
+const userStore = useUserStore();
 const categories = ref([]);
+const editMode = ref(false);  
 const { organizeProductsByCategories } = useOrganizeProducts();
 
 defineProps({
   isVisible: Boolean
 });
 
-// Функция для получения данных с сервера
+const enableEditMode = () => {
+  editMode.value = true;
+};
+
 const fetchData = async () => {
   try {
     const response = await axios.get('http://localhost:8080/product/getAll');
@@ -153,12 +187,12 @@ const fetchData = async () => {
   }
 };
 
-// Функция для сбора изменений по категориям и продуктам
+
 const collectChanges = () => {
   let changes = [];
 
   const processCategory = (category) => {
-    // Добавляем изменения для продуктов без подкатегорий
+
     for (const product of category.productsWithoutSubcategory) {
       changes.push({
         name: category.name,
@@ -171,7 +205,7 @@ const collectChanges = () => {
       });
     }
 
-    // Сбор изменений для подкатегорий
+
     for (const subcategory of category.subcategories) {
       for (const product of subcategory.products) {
         changes.push({
@@ -185,7 +219,7 @@ const collectChanges = () => {
         });
       }
 
-      // Сбор изменений для подподкатегорий
+
       for (const subsubcategory of subcategory.subsubcategories) {
         for (const product of subsubcategory.products) {
           changes.push({
@@ -209,13 +243,12 @@ const collectChanges = () => {
   return changes;
 };
 
-// Функция для отправки изменений на сервер
+
 const saveOrder = async () => {
   try {
-    // Собираем все изменения
+
     const changes = collectChanges();
 
-    // Создаем массив запросов по продуктам
     const productChanges = changes.reduce((acc, change) => {
       if (!acc[change.productId]) {
         acc[change.productId] = [];
@@ -231,36 +264,33 @@ const saveOrder = async () => {
       return acc;
     }, {});
 
-    // Выводим данные для отладки
+
     console.log('Product Changes:', productChanges);
 
-    // Создаем массив запросов
+ 
     const requests = Object.keys(productChanges).map(productId => {
-      return axios.put(
-        `http://localhost:8082/products/${productId}/categories/reorder`,
+      return axios.put(`http://localhost:8082/products/${productId}/categories/reorder`,
         productChanges[productId]
       );
     });
 
-    // Выполняем все запросы параллельно
+  
     await Promise.all(requests);
     console.log('Изменения успешно сохранены.');
   } catch (error) {
     console.error('Ошибка при сохранении порядка:', error);
   }
 };
-
+const role = computed(() => userStore.role.value);
+const isAdmin = computed(() => role.value === 'ROLE_ADMIN')
 
 onMounted(() => {
+  userStore.fetchUser();
   fetchData();
 });
 </script>
 
-
-
-
 <style scoped>
-/* Ваши стили остаются без изменений */
 .catalog {
   display: flex;
   flex-direction: column;

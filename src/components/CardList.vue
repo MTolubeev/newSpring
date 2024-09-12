@@ -11,9 +11,9 @@
 </template>
 
 <script setup>
-import MyCard from "./CardItem.vue";
-import { ref, onMounted } from "vue";
-import axios from "axios";
+import MyCard from './CardItem.vue';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
 const items = ref([]);
 
