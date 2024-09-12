@@ -58,14 +58,16 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching products");
         }
     }
+
     @GetMapping("/product/getAll")
     public ResponseEntity<List<ProductDto>> getAllProducts() {
         List<ProductDto> products = productService.findAllProducts();
         return ResponseEntity.ok(products);
     }
+
     @GetMapping("/product/getAll/{id}")
     public ResponseEntity<ProductDto> getAllProducts(@PathVariable Long id) {
-       ProductDto product = productService.findAllProducts(id);
+        ProductDto product = productService.findAllProducts(id);
         return ResponseEntity.ok(product);
     }
 
@@ -85,12 +87,18 @@ public class ProductController {
         productService.deleteProduct(id);
         return ResponseEntity.ok("Product deleted successfully");
     }
-    @PutMapping ("/{productId}/categories/reorder")
-    public ResponseEntity<Void> reorderCategories(
-            @PathVariable Long productId,
-            @RequestBody List<CategoryDto> newOrder) {
 
-        productService.reorderCategories(productId, newOrder);
+    @PutMapping("/product/categories/reorder")
+    public ResponseEntity<Void> reorderCategories(
+            @RequestBody HashMap<Long, List<CategoryDto>> productCategories) {
+
+        for (Map.Entry<Long, List<CategoryDto>> entry : productCategories.entrySet()) {
+            Long productId = entry.getKey();
+            List<CategoryDto> newOrder = entry.getValue();
+
+            productService.reorderCategories(productId, newOrder);
+        }
+
         return ResponseEntity.ok().build();
     }
 }

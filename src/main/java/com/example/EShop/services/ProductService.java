@@ -166,7 +166,6 @@ public class ProductService {
             }
             categoryBuilder.append(category);
 
-
             String order = categoryDto.getOrder().toString();
             if (categoryDto.getSubcategoryOrder() != null) {
                 order += "," + categoryDto.getSubcategoryOrder().toString();
@@ -185,4 +184,5 @@ public class ProductService {
 
         productRepository.save(product);
     }
+
 }
