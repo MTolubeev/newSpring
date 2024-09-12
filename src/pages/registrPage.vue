@@ -4,7 +4,9 @@
       <button @click="closeModal" class="close-button">✖</button>
       <h2>Регистрация нового пользователя</h2>
       <p>Если аккаунт уже существует, то войдите</p>
-      <router-link to="/signin"><n-button type="warning">Войти в аккаунт</n-button></router-link>
+      <router-link to="/signin">
+        <n-button type="warning">Войти в аккаунт</n-button>
+      </router-link>
       <form @submit.prevent="register">
         <input v-model="username" type="text" placeholder="Имя" required  />
         <input v-model="surname" type="text" placeholder="Фамилия" required />
@@ -22,6 +24,7 @@
 import { ref } from 'vue';
 import api from '../services/api';
 import { NButton } from 'naive-ui';
+import router from '@/router';
 
 const username = ref('');
 const surname = ref('');
@@ -44,7 +47,7 @@ const register = async () => {
   }
 };
 const closeModal = () => {
-  window.history.back(); 
+  router.push('/')
 };
 </script>
 
