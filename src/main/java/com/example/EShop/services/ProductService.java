@@ -38,6 +38,7 @@ public class ProductService {
                 .map(this::convertProductToDto)
                 .orElse(null);  // Вернуть null, если продукт не найден
     }
+
     public List<ProductDto> findAllProducts() {
 
         return productRepository.findAll().stream()
@@ -57,7 +58,7 @@ public class ProductService {
                 .collect(Collectors.toList());
 
         String[] categoryStrings = product.getCategory().split(",");
-        String[] categoryOrders = product.getCategoryOrder().split(",");
+        String[] categoryOrders = product.getCategoryOrder().split("/");
 
         for (int i = 0; i < categoryStrings.length; i++) {
             String[] categoryParts = categoryStrings[i].split("/");
@@ -65,17 +66,23 @@ public class ProductService {
             String subcategory = categoryParts.length > 1 ? categoryParts[1] : null;
             String subsubcategory = categoryParts.length > 2 ? categoryParts[2] : null;
 
+            String[] orderStrings = categoryOrders[i].split(",");
+            Integer[] orderInt = new Integer[orderStrings.length];
+            for (int k = 0; k < orderStrings.length; k++) {
+                orderInt[k] = Integer.parseInt(orderStrings[k]);
+            }
+
             // Получение порядков для каждой категории
-            Integer order = categoryOrders.length > 0 && i < categoryOrders.length ? Integer.parseInt(categoryOrders[i]) : null;
+            Integer order = categoryOrders.length > 0 && i < categoryOrders.length ? orderInt[0] : null;
             Integer subcategoryOrder = null;
             Integer subsubcategoryOrder = null;
 
             // Если нужно добавить порядки подкатегорий
             if (categoryParts.length > 1) {
-                subcategoryOrder = (categoryOrders.length > 1 && i < categoryOrders.length) ? Integer.parseInt(categoryOrders[i + 1]) : null;
+                subcategoryOrder = (orderInt.length > 1 && i < orderInt.length) ? orderInt[1] : null;
             }
             if (categoryParts.length > 2) {
-                subsubcategoryOrder = (categoryOrders.length > 2 && i < categoryOrders.length) ? Integer.parseInt(categoryOrders[i + 2]) : null;
+                subsubcategoryOrder = (orderInt.length > 2 && i < orderInt.length) ? orderInt[2] : null;
             }
 
             categories.add(new CategoryDto(name, subcategory, subsubcategory, order, subcategoryOrder, subsubcategoryOrder));
@@ -146,6 +153,7 @@ public class ProductService {
         dto.setProductTitle(comment.getProduct().getTitle());
         return dto;
     }
+
     public void reorderCategories(Long productId, List<CategoryDto> newOrder) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -188,9 +196,6 @@ public class ProductService {
         // Сохраняем обновленный продукт
         productRepository.save(product);
     }
-
-
-
 
 
 }
