@@ -140,7 +140,7 @@ defineProps({
 // Функция для получения данных с сервера
 const fetchData = async () => {
   try {
-    const response = await axios.get('http://localhost:8082/products');
+    const response = await axios.get('http://localhost:8080/product/getAll');
     const products = response.data;
 
     if (Array.isArray(products)) {
@@ -153,60 +153,109 @@ const fetchData = async () => {
   }
 };
 
-const updateProductFields = async (productId, updates) => {
-  if (!productId) {
-    console.error('Product ID is undefined');
-    return;
-  }
+// Функция для сбора изменений по категориям и продуктам
+const collectChanges = () => {
+  let changes = [];
 
-  try {
-    const response = await axios.put(`http://localhost:8082/products/${productId}`, updates);
-    console.log(`Продукт с id ${productId} успешно обновлён.`, response.data);
-  } catch (error) {
-    console.error(`Ошибка при обновлении продукта с id ${productId}:`, error);
-  }
-};
+  const processCategory = (category) => {
+    // Добавляем изменения для продуктов без подкатегорий
+    for (const product of category.productsWithoutSubcategory) {
+      changes.push({
+        name: category.name,
+        subcategory: null,
+        subsubcategory: null,
+        order: category.order,
+        subcategoryOrder: null,
+        subsubcategoryOrder: null,
+        productId: product.id
+      });
+    }
 
-const saveOrder = async () => {
-  try {
-    for (const category of categories.value) {
-      if (category.id) {
-        await updateProductFields(category.id, {
+    // Сбор изменений для подкатегорий
+    for (const subcategory of category.subcategories) {
+      for (const product of subcategory.products) {
+        changes.push({
+          name: category.name,
+          subcategory: subcategory.name,
+          subsubcategory: null,
           order: category.order,
-          subcategoryOrder: category.subcategoryOrder,
-          subsubcategoryOrder: category.subsubcategoryOrder
+          subcategoryOrder: subcategory.order,
+          subsubcategoryOrder: null,
+          productId: product.id
         });
+      }
 
-        for (const subcategory of category.subcategories) {
-          if (subcategory.id) {
-            await updateProductFields(subcategory.id, {
-              order: subcategory.order,
-              subcategoryOrder: subcategory.subcategoryOrder
-            });
-
-            for (const subsubcategory of subcategory.subsubcategories) {
-              if (subsubcategory.id) {
-                await updateProductFields(subsubcategory.id, {
-                  order: subsubcategory.order,
-                  subsubcategoryOrder: subsubcategory.subsubcategoryOrder
-                });
-              }
-            }
-          }
+      // Сбор изменений для подподкатегорий
+      for (const subsubcategory of subcategory.subsubcategories) {
+        for (const product of subsubcategory.products) {
+          changes.push({
+            name: category.name,
+            subcategory: subcategory.name,
+            subsubcategory: subsubcategory.name,
+            order: category.order,
+            subcategoryOrder: subcategory.order,
+            subsubcategoryOrder: subsubcategory.order,
+            productId: product.id
+          });
         }
       }
     }
+  };
 
+  for (const category of categories.value) {
+    processCategory(category);
+  }
+
+  return changes;
+};
+
+// Функция для отправки изменений на сервер
+const saveOrder = async () => {
+  try {
+    // Собираем все изменения
+    const changes = collectChanges();
+
+    // Создаем массив запросов по продуктам
+    const productChanges = changes.reduce((acc, change) => {
+      if (!acc[change.productId]) {
+        acc[change.productId] = [];
+      }
+      acc[change.productId].push({
+        name: change.name,
+        subcategory: change.subcategory,
+        subsubcategory: change.subsubcategory,
+        order: change.order,
+        subcategoryOrder: change.subcategoryOrder,
+        subsubcategoryOrder: change.subsubcategoryOrder
+      });
+      return acc;
+    }, {});
+
+    // Выводим данные для отладки
+    console.log('Product Changes:', productChanges);
+
+    // Создаем массив запросов
+    const requests = Object.keys(productChanges).map(productId => {
+      return axios.put(
+        `http://localhost:8082/products/${productId}/categories/reorder`,
+        productChanges[productId]
+      );
+    });
+
+    // Выполняем все запросы параллельно
+    await Promise.all(requests);
     console.log('Изменения успешно сохранены.');
   } catch (error) {
     console.error('Ошибка при сохранении порядка:', error);
   }
 };
 
+
 onMounted(() => {
   fetchData();
 });
 </script>
+
 
 
 
