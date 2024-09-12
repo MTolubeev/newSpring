@@ -1,6 +1,7 @@
 <template>
   <div class="modal-overlay">
     <div class="modal-content">
+      <button @click="closeModal" class="close-button">✖</button>
       <h2>Регистрация нового пользователя</h2>
       <p>Если аккаунт уже существует, то войдите</p>
       <router-link to="/signin"><n-button type="warning">Войти в аккаунт</n-button></router-link>
@@ -42,6 +43,9 @@ const register = async () => {
    console.log(error)
   }
 };
+const closeModal = () => {
+  window.history.back(); 
+};
 </script>
 
 <style scoped>
@@ -56,6 +60,7 @@ const register = async () => {
  
 }
 .modal-content {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -88,5 +93,15 @@ input {
   padding: 10px;
   font-size: 16px;
   cursor: pointer;
+}
+.close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+  position: absolute;
+  top: 10px;
+  left: 220px;
 }
 </style>
