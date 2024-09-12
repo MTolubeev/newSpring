@@ -69,14 +69,6 @@ public class BasketService {
         basketRepository.save(basket);
     }
 
-    @Transactional
-    public List<Product> getUserProducts(User user) {
-        Basket basket = basketRepository.findByUser(user);
-        if (basket != null && basket.getProducts() != null) {
-            return basket.getProducts();
-        }
-        return new ArrayList<>();
-    }
 
     @Transactional
     public void deleteProduct(User user, Product product) {

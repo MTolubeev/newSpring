@@ -50,13 +50,13 @@ public class ProductService {
     private ProductDto convertProductToDto(Product product) {
         Image image = imageRepository.findById(product.getPreviewImageId()).orElse(null);
         String base64Image = image != null ? Base64.getEncoder().encodeToString(image.getBytes()) : null;
-        List<CategoryDto> categories = new ArrayList<>();
 
         List<Comment> commentsRaw = product.getComments();
         List<CommentDto> comments = commentsRaw.stream()
                 .map(this::convertCommentToDto)
                 .collect(Collectors.toList());
 
+        List<CategoryDto> categories = new ArrayList<>();
         String[] categoryStrings = product.getCategory().split(",");
         String[] categoryOrders = product.getCategoryOrder().split("/");
 
@@ -72,12 +72,10 @@ public class ProductService {
                 orderInt[k] = Integer.parseInt(orderStrings[k]);
             }
 
-            // Получение порядков для каждой категории
             Integer order = categoryOrders.length > 0 && i < categoryOrders.length ? orderInt[0] : null;
             Integer subcategoryOrder = null;
             Integer subsubcategoryOrder = null;
 
-            // Если нужно добавить порядки подкатегорий
             if (categoryParts.length > 1) {
                 subcategoryOrder = (orderInt.length > 1 && i < orderInt.length) ? orderInt[1] : null;
             }
@@ -119,11 +117,6 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    public User getUserByPrincipal(Principal principal) {
-        if (principal == null) return new User();
-        return userRepository.findByEmail(principal.getName());
-    }
-
     private Image toImageEntity(MultipartFile file) throws IOException {
         Image image = new Image();
         image.setName(file.getName());
@@ -137,7 +130,6 @@ public class ProductService {
     public void deleteProduct(Long id) {
         basketRepository.deleteProductFromBasketProducts(id);
         productRepository.deleteById(id);
-
     }
 
 
@@ -162,7 +154,6 @@ public class ProductService {
         StringBuilder categoryOrderBuilder = new StringBuilder();
 
         for (CategoryDto categoryDto : newOrder) {
-            // Строим строку категории
             String category = categoryDto.getName();
             if (categoryDto.getSubcategory() != null) {
                 category += "/" + categoryDto.getSubcategory();
@@ -171,11 +162,11 @@ public class ProductService {
                 category += "/" + categoryDto.getSubsubcategory();
             }
             if (categoryBuilder.length() > 0) {
-                categoryBuilder.append(","); // Добавляем запятую для разделения категорий
+                categoryBuilder.append(",");
             }
             categoryBuilder.append(category);
 
-            // Строим строку порядка
+
             String order = categoryDto.getOrder().toString();
             if (categoryDto.getSubcategoryOrder() != null) {
                 order += "," + categoryDto.getSubcategoryOrder().toString();
@@ -184,18 +175,14 @@ public class ProductService {
                 order += "," + categoryDto.getSubsubcategoryOrder().toString();
             }
             if (categoryOrderBuilder.length() > 0) {
-                categoryOrderBuilder.append("/"); // Добавляем точку с запятой для разделения порядков
+                categoryOrderBuilder.append("/");
             }
             categoryOrderBuilder.append(order);
         }
 
-        // Устанавливаем строки в продукт
         product.setCategory(categoryBuilder.toString());
         product.setCategoryOrder(categoryOrderBuilder.toString());
 
-        // Сохраняем обновленный продукт
         productRepository.save(product);
     }
-
-
 }
