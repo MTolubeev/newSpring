@@ -47,6 +47,10 @@ const updateInCartStatus = async () => {
 const toggleCart = async () => {
   try {
     const token = localStorage.getItem("token");
+
+    if (!token || !user.value) {
+      return router.push("/signin");
+    }
     if (!inCart.value) {
       await cartStore.addToCart(props.productId, token);
       inCart.value = true;

@@ -6,7 +6,11 @@
       </div>
       <h3>{{ item.title }}</h3>
       <div class="info_card">
-        <span>
+        <span v-if="isAuthenticated">
+          Цена: <b>{{ item.discountPrice }} руб.</b>
+          <del style="margin-left: 10px">{{ item.price }} руб.</del>
+        </span>
+        <span v-else>
           Цена: <b>{{ item.price }} руб.</b>
         </span>
         <span>
@@ -44,8 +48,8 @@ import { NCard, NButton, NDialog } from "naive-ui";
 import CartButton from "./BasketButton.vue";
 import { useUserStore } from "@/store/userStore";
 import axios from "axios";
-const userStore = useUserStore();
 
+const userStore = useUserStore();
 const role = computed(() => userStore.role.value);
 const isAdmin = computed(() => role.value === "ROLE_ADMIN");
 
@@ -56,9 +60,17 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['delete']);
+const emit = defineEmits(["delete"]);
 const router = useRouter();
 const confirmDialogVisible = ref(false);
+const isAuthenticated = ref(false);
+
+const checkAuth = () => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    isAuthenticated.value = true;
+  }
+};
 
 const openConfirmDialog = (event) => {
   event.stopPropagation();
@@ -73,7 +85,7 @@ const deleteProduct = async () => {
   try {
     await axios.post(`http://localhost:8080/product/delete/${props.item.id}`);
     closeConfirmDialog();
-    emit('delete', props.item.id);
+    emit("delete", props.item.id);
   } catch (error) {
     console.error("Ошибка при удалении продукта", error);
     closeConfirmDialog();
@@ -84,8 +96,9 @@ const navigateToproduct = () => {
   router.push({ path: `/product-view/${props.item.id}` });
 };
 
-onMounted(async () => {
-  await userStore.fetchUser();
+onMounted(() => {
+  checkAuth();
+  userStore.fetchUser();
 });
 </script>
 

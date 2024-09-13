@@ -3,52 +3,38 @@
     <div class="cart">
       <h2>Каталог товаров</h2>
       <svg
-        @click="$emit('close-drawer')"
-        width="16"
-        height="14"
-        viewBox="0 0 16 14"
-        fill="#fff"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M1 7H14.7143"
-          stroke="#fff"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-        <path
-          d="M8.71436 1L14.7144 7L8.71436 13"
-          stroke="#fff"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
+        @click="$emit('close-drawer')" width="16" height="14" viewBox="0 0 16 14" fill="#fff" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1 7H14.7143" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8.71436 1L14.7144 7L8.71436 13" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
-
-    <n-button v-if="!editMode && isAdmin" type="primary" size="small" @click="enableEditMode">
+    <n-button
+      v-if="!editMode && isAdmin"
+      type="primary"
+      size="small"
+      @click="enableEditMode"
+    >
       Включить режим редактирования
     </n-button>
 
-
-    <Draggable 
-      v-model="categories" 
-      :group="{ name: 'categories' }" 
-      @end="onDragEnd" 
-      item-key="name" 
-      :disabled="!editMode" 
+    <Draggable
+      v-model="categories"
+      :group="{ name: 'categories' }"
+      @end="onDragEnd"
+      item-key="name"
+      :disabled="!editMode"
     >
       <template #item="{ element }">
         <li>
-          <router-link :to="{ name: 'Category', params: { categoryName: element.name } }">
+          <router-link
+            :to="{ name: 'Category', params: { categoryName: element.name } }">
             <strong>{{ element.name }}</strong>
           </router-link>
 
-          <Draggable 
-            v-model="element.subcategories" 
-            :group="{ name: 'subcategories' }" 
-            item-key="name" 
+          <Draggable
+            v-model="element.subcategories"
+            :group="{ name: 'subcategories' }"
+            item-key="name"
             :disabled="!editMode"
           >
             <template #item="{ element: subcategory }">
@@ -61,42 +47,45 @@
                         categoryName: element.name,
                         subcategoryName: subcategory.name,
                       },
-                    }"
-                  >
+                    }">
                     <strong>{{ subcategory.name }}</strong>
                   </router-link>
 
-                  <Draggable 
-                    v-model="subcategory.subsubcategories" 
-                    :group="{ name: 'subsubcategories' }" 
-                    item-key="name" 
+                  <Draggable
+                    v-model="subcategory.subsubcategories"
+                    :group="{ name: 'subsubcategories' }"
+                    item-key="name"
                     :disabled="!editMode"
                   >
                     <template #item="{ element: subsubcategory }">
                       <ul>
                         <li>
                           <router-link
-                            :to="{ name: 'Category',
+                            :to="{
+                              name: 'Category',
                               params: {
                                 categoryName: element.name,
                                 subcategoryName: subcategory.name,
                                 subsubcategoryName: subsubcategory.name,
                               },
-                            }"
-                          >
+                            }">
                             <strong>{{ subsubcategory.name }}</strong>
                           </router-link>
 
-                          <Draggable 
-                            v-model="subsubcategory.products" 
-                            :group="{ name: 'products' }" 
-                            item-key="id" 
+                          <Draggable
+                            v-model="subsubcategory.products"
+                            :group="{ name: 'products' }"
+                            item-key="id"
                             :disabled="!editMode"
                           >
                             <template #item="{ element: product }">
                               <ul>
                                 <li>
-                                  <router-link :to="{ name: 'ProductView', params: { productId: product.id } }">
+                                  <router-link
+                                    :to="{
+                                      name: 'ProductView',
+                                      params: { productId: product.id },
+                                    }">
                                     {{ product.title }}
                                   </router-link>
                                 </li>
@@ -108,16 +97,20 @@
                     </template>
                   </Draggable>
 
-                  <Draggable 
-                    v-model="subcategory.products" 
-                    :group="{ name: 'products' }" 
-                    item-key="id" 
+                  <Draggable
+                    v-model="subcategory.products"
+                    :group="{ name: 'products' }"
+                    item-key="id"
                     :disabled="!editMode"
                   >
                     <template #item="{ element: product }">
                       <ul>
                         <li>
-                          <router-link :to="{ name: 'ProductView', params: { productId: product.id } }">
+                          <router-link
+                            :to="{
+                              name: 'ProductView',
+                              params: { productId: product.id },
+                            }">
                             {{ product.title }}
                           </router-link>
                         </li>
@@ -129,16 +122,20 @@
             </template>
           </Draggable>
 
-          <Draggable 
-            v-model="element.productsWithoutSubcategory" 
-            :group="{ name: 'products' }" 
-            item-key="id" 
+          <Draggable
+            v-model="element.productsWithoutSubcategory"
+            :group="{ name: 'products' }"
+            item-key="id"
             :disabled="!editMode"
           >
             <template #item="{ element: product }">
               <ul>
                 <li>
-                  <router-link :to="{ name: 'ProductView', params: { productId: product.id } }">
+                  <router-link
+                    :to="{
+                      name: 'ProductView',
+                      params: { productId: product.id },
+                    }">
                     {{ product.title }}
                   </router-link>
                 </li>
@@ -148,24 +145,28 @@
         </li>
       </template>
     </Draggable>
-    <n-button v-if="editMode" type="warning" @click="saveOrder">Сохранить изменения</n-button>
+
+    <n-button v-if="editMode" type="warning" @click="saveOrder">
+      Сохранить изменения
+    </n-button>
   </div>
 </template>
 
 <script setup>
-import { defineProps, ref, onMounted, computed } from 'vue';
-import axios from 'axios';
+import { ref, computed, onMounted, defineProps } from "vue";
+import axios from "axios";
+import Draggable from "vuedraggable";
+import { NButton } from "naive-ui";
 import { useUserStore } from "@/store/userStore";
-import Draggable from 'vuedraggable'; 
-import { NButton } from 'naive-ui';
-import { useOrganizeProducts } from '@/composables/useOrganizeProducts';
+import { useOrganizeProducts } from "@/composables/useOrganizeProducts";
+
 const userStore = useUserStore();
 const categories = ref([]);
-const editMode = ref(false);  
+const editMode = ref(false);
 const { organizeProductsByCategories } = useOrganizeProducts();
 
 defineProps({
-  isVisible: Boolean
+  isVisible: Boolean,
 });
 
 const enableEditMode = () => {
@@ -174,122 +175,104 @@ const enableEditMode = () => {
 
 const fetchData = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/product/getAll');
+    const response = await axios.get("http://localhost:8080/product/getAll");
     const products = response.data;
-
     if (Array.isArray(products)) {
       categories.value = organizeProductsByCategories(products);
     } else {
-      console.error('Неправильный формат данных:', products);
+      console.error("Неправильный формат данных:", products);
     }
   } catch (error) {
-    console.error('Ошибка при получении данных:', error);
+    console.error("Ошибка при получении данных:", error);
   }
 };
 
-
 const collectChanges = () => {
-  let changes = [];
+  let changes = {};
 
-  const processCategory = (category) => {
-
-    for (const product of category.productsWithoutSubcategory) {
-      changes.push({
+  const processCategory = (category, categoryIndex) => {
+    category.productsWithoutSubcategory.forEach((product, productIndex) => {
+      if (!changes[product.id]) {
+        changes[product.id] = [];
+      }
+      changes[product.id].push({
         name: category.name,
         subcategory: null,
         subsubcategory: null,
-        order: category.order,
+        order: categoryIndex + 1,
         subcategoryOrder: null,
         subsubcategoryOrder: null,
-        productId: product.id
+        productOrder: productIndex + 1,
       });
-    }
+    });
 
-
-    for (const subcategory of category.subcategories) {
-      for (const product of subcategory.products) {
-        changes.push({
+    category.subcategories.forEach((subcategory, subcategoryIndex) => {
+      subcategory.products.forEach((product, productIndex) => {
+        if (!changes[product.id]) {
+          changes[product.id] = [];
+        }
+        changes[product.id].push({
           name: category.name,
           subcategory: subcategory.name,
           subsubcategory: null,
-          order: category.order,
-          subcategoryOrder: subcategory.order,
+          order: categoryIndex + 1,
+          subcategoryOrder: subcategoryIndex + 1,
           subsubcategoryOrder: null,
-          productId: product.id
+          productOrder: productIndex + 1,
         });
-      }
+      });
 
-
-      for (const subsubcategory of subcategory.subsubcategories) {
-        for (const product of subsubcategory.products) {
-          changes.push({
-            name: category.name,
-            subcategory: subcategory.name,
-            subsubcategory: subsubcategory.name,
-            order: category.order,
-            subcategoryOrder: subcategory.order,
-            subsubcategoryOrder: subsubcategory.order,
-            productId: product.id
+      subcategory.subsubcategories.forEach(
+        (subsubcategory, subsubcategoryIndex) => {
+          subsubcategory.products.forEach((product, productIndex) => {
+            if (!changes[product.id]) {
+              changes[product.id] = [];
+            }
+            changes[product.id].push({
+              name: category.name,
+              subcategory: subcategory.name,
+              subsubcategory: subsubcategory.name,
+              order: categoryIndex + 1,
+              subcategoryOrder: subcategoryIndex + 1,
+              subsubcategoryOrder: subsubcategoryIndex + 1,
+              productOrder: productIndex + 1,
+            });
           });
         }
-      }
-    }
+      );
+    });
   };
 
-  for (const category of categories.value) {
-    processCategory(category);
-  }
+  categories.value.forEach((category, index) => {
+    processCategory(category, index);
+  });
 
   return changes;
 };
 
-
 const saveOrder = async () => {
   try {
-
     const changes = collectChanges();
-
-    const productChanges = changes.reduce((acc, change) => {
-      if (!acc[change.productId]) {
-        acc[change.productId] = [];
-      }
-      acc[change.productId].push({
-        name: change.name,
-        subcategory: change.subcategory,
-        subsubcategory: change.subsubcategory,
-        order: change.order,
-        subcategoryOrder: change.subcategoryOrder,
-        subsubcategoryOrder: change.subsubcategoryOrder
-      });
-      return acc;
-    }, {});
-
-
-    console.log('Product Changes:', productChanges);
-
- 
-    const requests = Object.keys(productChanges).map(productId => {
-      return axios.put(`http://localhost:8082/products/${productId}/categories/reorder`,
-        productChanges[productId]
-      );
-    });
-
-  
+    const requests = Object.keys(changes).map((productId) =>
+      axios.put("http://localhost:8080/product/categories/reorder", {
+        [productId]: changes[productId],
+      })
+    );
     await Promise.all(requests);
-    console.log('Изменения успешно сохранены.');
+    console.log("Изменения успешно сохранены.");
   } catch (error) {
-    console.error('Ошибка при сохранении порядка:', error);
+    console.error("Ошибка при сохранении порядка:", error);
   }
 };
+
 const role = computed(() => userStore.role.value);
-const isAdmin = computed(() => role.value === 'ROLE_ADMIN')
+const isAdmin = computed(() => role.value === "ROLE_ADMIN");
 
 onMounted(() => {
   userStore.fetchUser();
   fetchData();
 });
 </script>
-
 <style scoped>
 .catalog {
   display: flex;
