@@ -100,7 +100,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void saveProduct(Product product, MultipartFile file1) throws IOException {
+    public void saveProduct(Product product, MultipartFile file1, String category, String categoryOrder) throws IOException {
         Image image1;
 
         if (file1.getSize() != 0 && file1.getSize() > 0) {
@@ -108,6 +108,8 @@ public class ProductService {
 
             product.addImageToProduct(image1);
         }
+        product.setCategory(category);
+        product.setCategoryOrder(categoryOrder);
 
         log.info("Saving new Product. Title: {}", product.getTitle());
         Product productFromDB = productRepository.save(product);
