@@ -331,10 +331,12 @@ li {
   margin-bottom: 0.5rem;
   padding: 0.5rem;
   border-radius: 4px;
+  list-style: none;
 }
 
 ul ul {
   padding-left: 1rem;
+  list-style: none;
 }
 
 .catalog:hover ul,
