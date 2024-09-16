@@ -149,6 +149,9 @@
     <n-button v-if="editMode" type="warning" @click="saveOrder">
       Сохранить изменения
     </n-button>
+    <n-button v-if="editMode" type="error" @click="cancelEditMode">
+      Отменить изменения
+    </n-button>
   </div>
 </template>
 
@@ -172,7 +175,9 @@ defineProps({
 const enableEditMode = () => {
   editMode.value = true;
 };
-
+const cancelEditMode = () => {
+  editMode.value = false;
+};
 const fetchData = async () => {
   try {
     const response = await axios.get("http://localhost:8080/product/getAll");
