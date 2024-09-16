@@ -259,7 +259,8 @@ const saveOrder = async () => {
       })
     );
     await Promise.all(requests);
-    console.log("Изменения успешно сохранены.");
+
+    editMode.value = false;
   } catch (error) {
     console.error("Ошибка при сохранении порядка:", error);
   }

@@ -163,7 +163,7 @@ const confirmDeleteComment = async () => {
 
     if (response.status === 200) {
       window.location.reload();
-      // Refresh the comments list or handle the state update
+
     } else {
       alert('Произошла ошибка при удалении комментария');
     }
