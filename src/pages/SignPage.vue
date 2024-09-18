@@ -9,42 +9,64 @@
       </router-link>
       <form @submit.prevent="login">
         <input type="email" v-model="loginEmail" placeholder="Email" required autocomplete="email" />
-        <input type="password" v-model="loginPassword" placeholder="Пароль" required  autocomplete="current-password" />
+        <input type="password" v-model="loginPassword" placeholder="Пароль" required autocomplete="current-password" />
         <div class="buttons">
           <button class="registr" type="submit">Войти</button>
         </div>
       </form>
     </div>
-    <p v-if="message">{{ message }}</p>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onBeforeMount } from 'vue';
+import { useRouter, useRoute } from 'vue-router'; 
 import { useUserStore } from '@/store/userStore';
+import { useNotificationService } from '@/composables/notificationUtils.js'; 
 import { NButton } from 'naive-ui';
 
+const router = useRouter(); 
+const route = useRoute(); 
 const userStore = useUserStore();
+const { showNotificationMessage } = useNotificationService(); 
 
 const loginEmail = ref('');
 const loginPassword = ref('');
-const message = ref('');
+let cameFromRegistration = ref(false);
 
 
+onBeforeMount(() => {
+  if (route?.redirectedFrom?.fullPath === '/registration' || route?.query?.from === 'registration') {
+    cameFromRegistration.value = true; 
+  }
+});
 
 const login = async () => {
   try {
     await userStore.login(loginEmail.value, loginPassword.value);
-    window.history.back();
+    showNotificationMessage('success', 'Успех', 'Вы успешно вошли в аккаунт'); 
+    
+  
+    if (cameFromRegistration.value) {
+      router.push('/'); 
+    } else {
+      window.history.back();
+    }
   } catch (error) {
-    message.value = error.message;
+    showNotificationMessage('error', 'Ошибка', 'Неправильный логин или пароль'); 
   }
 };
 
 const closeModal = () => {
-  window.history.back(); 
+  if (cameFromRegistration.value) {
+    router.push('/'); 
+    
+  } else {
+    window.history.back(); 
+  }
 };
 </script>
+
 
 <style scoped>
 .modal-overlay {
