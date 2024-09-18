@@ -7,6 +7,7 @@ import com.example.EShop.models.Product;
 import com.example.EShop.models.User;
 import com.example.EShop.repositories.BasketRepository;
 import com.example.EShop.repositories.ImageRepository;
+import com.example.EShop.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class BasketService {
 
     private final BasketRepository basketRepository;
     private final ImageRepository imageRepository;
+    private final ProductRepository productRepository;
 
     public List<ProductOrderDto> getUserProductDtos(User user) {
         Basket basket = basketRepository.findByUser(user);
@@ -102,6 +104,15 @@ public class BasketService {
         List<Product> productsInBasket = basket.getProducts();
 
         return productsInBasket.size();
+    }
+    public void cleanBasketAfterEmail(User user, Long id){
+        Basket basket = basketRepository.findByUser(user);
+        List<Product> products = basket.getProducts();
+        Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        while (products.contains(product)) {
+            products.remove(product);
+        }
+        basketRepository.save(basket);
     }
 
 }

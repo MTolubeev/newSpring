@@ -11,6 +11,7 @@ import com.example.EShop.models.User;
 import com.example.EShop.repositories.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,7 +42,7 @@ public class ProductService {
 
     public List<ProductDto> findAllProducts() {
 
-        return productRepository.findAll().stream()
+        return productRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
                 .map(this::convertProductToDto)
                 .collect(Collectors.toList());
     }

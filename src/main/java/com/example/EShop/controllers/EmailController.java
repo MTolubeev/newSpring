@@ -48,6 +48,10 @@ public class EmailController {
                 emailContent.toString()
         );
 
+        for (ProductOrderDto productOrder : usersProducts){
+            basketService.cleanBasketAfterEmail(user,productOrder.getId());
+        }
+
         return ResponseEntity.ok("Email sent successfully");
     }
 }

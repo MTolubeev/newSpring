@@ -74,7 +74,7 @@ public class ProductController {
     @PostMapping("/product/create")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createProduct(@RequestParam(value = "file1", required = false) MultipartFile file1,
-                                           @RequestBody Product product,
+                                           @ModelAttribute Product product,
                                            @RequestParam String category,
                                            @RequestParam String categoryOrder,
                                            @RequestHeader(value = "Authorization", required = false) String token) throws IOException {

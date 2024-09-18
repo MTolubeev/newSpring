@@ -68,9 +68,6 @@ public class CommentService {
         return commentRepository.findByProduct(product);
     }
 
-    public List<Comment> findByProductAndScore(Product product, int score) {
-        return commentRepository.findByProductAndScore(product, score);
-    }
 
     public List<Comment> findAll() {
         return commentRepository.findAll();
