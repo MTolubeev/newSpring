@@ -9,6 +9,7 @@ import com.example.EShop.utils.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +24,7 @@ public class EmailController {
     private final DefaultEmailService emailService;
     private final BasketService basketService;
 
-    @GetMapping("/email")
+    @PostMapping("/email")
     public ResponseEntity<String> sendEmail(@RequestHeader(value = "Authorization", required = false) String token) {
         User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
         List<ProductOrderDto> usersProducts = basketService.getUserProductDtos(user);
