@@ -13,7 +13,7 @@
       <div class="info__controll">
         <span>Всего товаров:{{ totalItems }}</span>
         <span>Общая сумма: {{ totalPrice }} ₽</span>
-        <n-button class="button" type="success">Оформить заказ</n-button>
+        <n-button class="button" type="success" @click="openShowConfrim">Оформить заказ</n-button>
       </div>
     </div>
   </div>
@@ -22,28 +22,45 @@
     <img src="@/assets/corob.svg" alt="Пустая корзина" />
     <p>Ввойдите или зарегестрируйтесь, чтобы вы смогли добалять товары в корзину</p>
   </div>
+  <div v-if="showConfrim" class="dialog-overlay">
+  <n-dialog 
+      class="confirm-dialog"
+      title="Подтверждение оформление заказа"
+      positive-text="Оформить"
+      negative-text="Отмена"
+      @positive-click="deleteProduct"
+      @negative-click="closeConfirmDialog"
+      :closable="false">
+      Вы хотите оформить заказ?
+  </n-dialog>
+</div>
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useCartStore } from '@/store/cartStore';
 import { useUserStore } from '@/store/userStore';
 import BasketItem from './BasketItem.vue';
-import { NButton } from 'naive-ui';
+import { NButton, NDialog } from 'naive-ui';
 
 const cartStore = useCartStore();
 const userStore = useUserStore();
 const user = computed(() => userStore.user.value);
 
+const showConfrim = ref(false);
+
+const openShowConfrim = () => {
+  showConfrim.value = true;
+}
+const closeConfirmDialog = () =>{
+  showConfrim.value = false;
+}
 const totalItems = computed(() => {
   return cartStore.cartItems.reduce((total, item) => total + item.count, 0);
 });
 
 const totalPrice = computed(() => {
-  return cartStore.cartItems.reduce(
-    (total, item) => total + item.price * item.count,
-    0
-  );
+  return cartStore.cartItems.reduce((total, item) => total + item.price * item.count, 0);
 });
 
 const updateCartItem = (updatedItem) => {
@@ -61,6 +78,9 @@ const updateCartItem = (updatedItem) => {
   }
 };
 
+const cartItems = computed(() => cartStore.cartItems);
+
+
 onMounted(async () => {
   try {
     await userStore.fetchUser();
@@ -74,8 +94,6 @@ onMounted(async () => {
     console.error("Failed to load user or cart:", err.message);
   }
 });
-
-const cartItems = computed(() => cartStore.cartItems);
 </script>
 
 <style scoped>
@@ -115,6 +133,27 @@ p {
 }
 h2 {
   text-align: center;
+}
+.modal-content {
+  text-align: center;
+}
+.modal-actions {
+  margin-top: 20px;
+}
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+}
+.confirm-dialog {
+  z-index: 100;
 }
 .n-card {
   width: 600px;

@@ -20,9 +20,7 @@
     </div>
     <div class="card__button">
       <CartButton :productId="item.id" :product="item" @click.stop />
-      <n-button v-if="isAdmin" @click.stop="openConfirmDialog"
-        >Удалить товар из общего списка</n-button
-      >
+      <n-button v-if="isAdmin" @click.stop="openConfirmDialog">Удалить товар из общего списка</n-button>
     </div>
   </n-card>
 
@@ -34,8 +32,7 @@
       negative-text="Отмена"
       @positive-click="deleteProduct"
       @negative-click="closeConfirmDialog"
-      :closable="false"
-    >
+      :closable="false">
       Вы уверены, что хотите удалить этот продукт?
     </n-dialog>
   </div>
