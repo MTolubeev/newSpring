@@ -1,13 +1,11 @@
 package com.example.EShop.services;
 
-import com.example.EShop.controllers.CommentController;
 import com.example.EShop.dtos.CategoryDto;
 import com.example.EShop.dtos.CommentDto;
 import com.example.EShop.dtos.ProductDto;
 import com.example.EShop.models.Comment;
 import com.example.EShop.models.Image;
 import com.example.EShop.models.Product;
-import com.example.EShop.models.User;
 import com.example.EShop.repositories.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,11 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +23,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
     private final BasketRepository basketRepository;
     private final ImageRepository imageRepository;
 
@@ -73,7 +66,7 @@ public class ProductService {
                 orderInt[k] = Integer.parseInt(orderStrings[k]);
             }
 
-            Integer order = categoryOrders.length > 0 && i < categoryOrders.length ? orderInt[0] : null;
+            Integer order =  orderInt[0];
             Integer subcategoryOrder = null;
             Integer subsubcategoryOrder = null;
 
@@ -100,18 +93,150 @@ public class ProductService {
         );
     }
 
-    @Transactional
-    public void saveProduct(Product product, MultipartFile file1, String category, String categoryOrder) throws IOException {
-        Image image1;
 
-        if (file1.getSize() != 0 && file1.getSize() > 0) {
-            image1 = toImageEntity(file1);
+    public void fillCategoryOrder(Product product) {
+        Map<String, Integer> categoryMap = getAllCategories(1);
+        Map<String, Integer> subcategoryMap = getAllCategories(2);
+        Map<String, Integer> subsubcategoryMap = getAllCategories(3);
 
-            product.addImageToProduct(image1);
+        // Получаем категорию продукта
+        String categoryString = product.getCategory();
+        String[] categoryParts = categoryString.split(",");
+
+        StringBuilder categoryOrderBuilder = new StringBuilder();
+
+        for (String categoryPart : categoryParts) {
+            // Разбиваем строку категории на части (категория, подкатегория, подподкатегория)
+            String[] parts = categoryPart.split("/");
+            Integer categoryOrder = null;
+            Integer subcategoryOrder = null;
+            Integer subsubcategoryOrder = null;
+
+            // Проверяем или добавляем порядковые номера для каждой категории
+            // Основная категория
+            if (parts.length > 0 && !parts[0].isEmpty()) {
+                categoryOrder = categoryMap.get(parts[0]);
+                if (categoryOrder == null) {
+                    // Назначаем новый порядковый номер
+                    categoryOrder = categoryMap.size() + 1;
+                    categoryMap.put(parts[0], categoryOrder);
+                }
+            }
+
+            // Подкатегория
+            if (parts.length > 1 && !parts[1].isEmpty()) {
+                subcategoryOrder = subcategoryMap.get(parts[1]);
+                if (subcategoryOrder == null) {
+                    // Назначаем новый порядковый номер
+                    subcategoryOrder = subcategoryMap.size() + 1;
+                    subcategoryMap.put(parts[1], subcategoryOrder);
+                }
+            }
+
+            // Подподкатегория
+            if (parts.length > 2 && !parts[2].isEmpty()) {
+                subsubcategoryOrder = subsubcategoryMap.get(parts[2]);
+                if (subsubcategoryOrder == null) {
+                    // Назначаем новый порядковый номер
+                    subsubcategoryOrder = subsubcategoryMap.size() + 1;
+                    subsubcategoryMap.put(parts[2], subsubcategoryOrder);
+                }
+            }
+
+            // Формируем строку порядков
+            if (categoryOrder != null) {
+                categoryOrderBuilder.append(categoryOrder);
+            }
+
+            if (subcategoryOrder != null) {
+                categoryOrderBuilder.append(",").append(subcategoryOrder);
+            }
+
+            if (subsubcategoryOrder != null) {
+                categoryOrderBuilder.append(",").append(subsubcategoryOrder);
+            }
+
+            categoryOrderBuilder.append("/");
         }
-        product.setCategory(category);
-        product.setCategoryOrder(categoryOrder);
 
+        // Удаляем последний символ "/"
+        if (categoryOrderBuilder.length() > 0) {
+            categoryOrderBuilder.setLength(categoryOrderBuilder.length() - 1);
+        }
+
+        // Устанавливаем новое значение categoryOrder для продукта
+        product.setCategoryOrder(categoryOrderBuilder.toString());
+    }
+
+
+    public Map<String, Integer> getAllCategories(Integer w) {
+        Map<String, Integer> categoryMap = new HashMap<>();
+        Map<String, Integer> subcategoryMap = new HashMap<>();
+        Map<String, Integer> subsubcategoryMap = new HashMap<>();
+
+        // Получаем все продукты из базы данных
+        List<Product> allProducts = productRepository.findAll();
+
+        // Проходим по каждому продукту
+        for (Product product : allProducts) {
+            // Разбиваем строку категорий по запятой, чтобы получить каждую категорию отдельно
+            String[] categoryStrings = product.getCategory().split(",");
+            // Разбиваем строку categoryOrder по "/"
+            String[] categoryOrders = product.getCategoryOrder().split("/");
+
+            // Проходим по каждой категории и её порядку
+            for (int i = 0; i < categoryStrings.length; i++) {
+                // Разбиваем строку категории по "/"
+                String[] categoryParts = categoryStrings[i].split("/");
+
+                // Разбиваем строку order по ","
+                String[] orderStrings = categoryOrders[i].split(",");
+                Integer[] orderInt = new Integer[orderStrings.length];
+
+                // Преобразуем строковые порядки в Integer
+                for (int k = 0; k < orderStrings.length; k++) {
+                    orderInt[k] = Integer.parseInt(orderStrings[k]);
+                }
+
+                // Обрабатываем первую категорию
+                if (categoryParts.length > 0 && !categoryParts[0].isEmpty()) {
+                    categoryMap.put(categoryParts[0], orderInt[0]);
+                }
+
+                // Обрабатываем подкатегорию
+                if (categoryParts.length > 1 && !categoryParts[1].isEmpty()) {
+                    subcategoryMap.put(categoryParts[1], orderInt[1]);
+
+                }
+
+                // Обрабатываем подподкатегорию
+                if (categoryParts.length > 2 && !categoryParts[2].isEmpty()) {
+                    subsubcategoryMap.put(categoryParts[2], orderInt[2]);
+
+                }
+
+            }
+        }
+        if (w == 1) return categoryMap;
+        if (w == 2) return subcategoryMap;
+        else return subsubcategoryMap;
+
+
+    }
+
+
+    @Transactional
+    public void saveProduct(Product product, String category)  {
+//        Image image1;
+//
+//        if (file1.getSize() != 0 && file1.getSize() > 0) {
+//            image1 = toImageEntity(file1);
+//
+//            product.addImageToProduct(image1);
+//        }
+        product.setCategory(category);
+
+        fillCategoryOrder(product);
         log.info("Saving new Product. Title: {}", product.getTitle());
         Product productFromDB = productRepository.save(product);
         if (!productFromDB.getImages().isEmpty()) {
@@ -171,10 +296,10 @@ public class ProductService {
 
             String order = categoryDto.getOrder().toString();
             if (categoryDto.getSubcategoryOrder() != null) {
-                order += "," + categoryDto.getSubcategoryOrder().toString();
+                order += "," + categoryDto.getSubcategoryOrder();
             }
             if (categoryDto.getSubsubcategoryOrder() != null) {
-                order += "," + categoryDto.getSubsubcategoryOrder().toString();
+                order += "," + categoryDto.getSubsubcategoryOrder();
             }
             if (categoryOrderBuilder.length() > 0) {
                 categoryOrderBuilder.append("/");
@@ -189,3 +314,4 @@ public class ProductService {
     }
 
 }
+

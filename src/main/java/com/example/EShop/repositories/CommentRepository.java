@@ -8,6 +8,5 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findByProduct(Product product);
-    List<Comment> findByProductAndScore(Product product, int score);
     List<Comment> findAll();
 }

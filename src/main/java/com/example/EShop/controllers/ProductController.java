@@ -11,6 +11,7 @@ import com.example.EShop.services.CommentService;
 import com.example.EShop.services.ProductService;
 import com.example.EShop.services.UserService;
 import com.example.EShop.utils.JwtTokenUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,7 @@ public class ProductController {
     private final CommentService commentService;
     private final UserRepository userRepository;
     private final JwtTokenUtils jwtTokenUtils;
+
 
     @GetMapping("/")
     public ResponseEntity<?> products(@RequestParam(name = "title", required = false) String title,
@@ -72,14 +74,20 @@ public class ProductController {
     }
 
     @PostMapping("/product/create")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> createProduct(@RequestParam(value = "file1", required = false) MultipartFile file1,
-                                           @ModelAttribute Product product,
-                                           @RequestParam String category,
-                                           @RequestParam String categoryOrder,
-                                           @RequestHeader(value = "Authorization", required = false) String token) throws IOException {
-        productService.saveProduct(product, file1, category, categoryOrder);
+    // @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> createProduct(
+            @ModelAttribute Product product,
+            @RequestParam String category,
+            @RequestHeader(value = "Authorization", required = false) String token) throws IOException {
+        productService.saveProduct(product, category);
         return ResponseEntity.status(HttpStatus.CREATED).body("Product created successfully");
+    }
+
+    @GetMapping("/product/getCat")
+    public ResponseEntity<Map<String, Integer>> hetCat(@RequestParam Integer w) {
+
+        return ResponseEntity.ok(productService.getAllCategories(w));
+
     }
 
     @PostMapping("/product/delete/{id}")
