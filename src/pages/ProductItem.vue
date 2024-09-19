@@ -41,6 +41,7 @@
           <p class="product-description">{{ product.description }}</p>
           <div class="card__pay">
           <span>Цена: <b>{{ product.price }} руб.</b></span>
+          <del style="margin-left: 10px">{{ product.discountPrice }} руб.</del>
           <span>Количество товаров осталось: <b>{{ product.count }}</b></span>
           <CartButton v-if="product" :productId="product.id" :product="product" />
           </div>

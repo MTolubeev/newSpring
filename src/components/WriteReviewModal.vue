@@ -86,7 +86,7 @@ const submitReview = async () => {
   try {
     const response = await axios.post('http://localhost:8080/comments/add', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+         'Content-Type': 'multipart/form-data',
         'Authorization': token,
       },
     });

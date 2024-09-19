@@ -5,15 +5,13 @@
       <h3
         v-if="comments.length > 3"
         class="open__comments"
-        @click="toggleComments"
-      >
+        @click="toggleComments">
         {{ showAll ? 'Скрыть отзывы' : 'Показать все отзывы' }}
       </h3>
       <n-button
         type="success"
         @click="handleWriteReview"
-        class="write-review-btn"
-      >
+        class="write-review-btn">
         Написать отзыв
       </n-button>
       <n-select
@@ -21,8 +19,7 @@
         :options="sortOptions"
         v-model:value="sortOrder"
         placeholder="Сортировать по"
-        style="width: 200px; margin-left: 20px;"
-      />
+        style="width: 200px; margin-left: 20px;"/>
     </div>
   </div>
 
@@ -40,8 +37,7 @@
               viewBox="0 0 24 24"
               :fill="star <= comment.score ? 'gold' : 'lightgray'"
               width="20"
-              height="20"
-            >
+              height="20">
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/>
             </svg>
           </div>
@@ -52,15 +48,13 @@
           src="@/assets/bin.webp"
           alt="admin badge" 
           class="admin-icon"
-          @click="openDeleteDialog(comment.id)"
-        />
+          @click="openDeleteDialog(comment.id)"/>
       </n-card>
     </div>
     <div v-else>
       <h3>Комментариев пока что нет</h3>
     </div>
   </div>
-
   <div v-if="confirmDialogVisible" class="modal-overlay">
     <div class="modal-content">
       <h3>Подтверждение удаления</h3>
@@ -74,13 +68,15 @@
 
   <WriteReviewModal v-model:show="showReviewModal" :productId="productId" />
 </template>
-
 <script setup>
 import { defineProps, ref, computed, onMounted } from 'vue';
 import { NCard, NButton, NSelect } from 'naive-ui';
 import WriteReviewModal from './WriteReviewModal.vue';
 import { useUserStore } from '@/store/userStore';
 import axios from 'axios';
+import { useNotificationService } from '@/composables/notificationUtils';
+const { showNotificationMessage } = useNotificationService();
+
 
 const userStore = useUserStore();
 const user = computed(() => userStore.user.value);
@@ -161,17 +157,19 @@ const confirmDeleteComment = async () => {
     });
 
     if (response.status === 200) {
-      window.location.reload();
-
+      localStorage.setItem('showDeleteSuccessNotification', 'true');
+      setTimeout(() => {
+        window.location.reload(); 
+      }, 1000); 
     } else {
-      alert('Произошла ошибка при удалении комментария');
+      showNotificationMessage('error', 'Ошибка', 'Произошла ошибка при удалении комментария.');
     }
   } catch (error) {
     if (error.response) {
       console.error('Ошибка ответа:', error.response);
-      alert(`Ошибка: ${error.response.data.message || error.response.data}`);
+      showNotificationMessage('error', 'Ошибка', `Ошибка: ${error.response.data.message || error.response.data}`);
     } else {
-      alert('Произошла ошибка при удалении комментария');
+      showNotificationMessage('error', 'Ошибка', 'Произошла ошибка при удалении комментария.');
     }
   } finally {
     closeConfirmDialog();
@@ -180,6 +178,12 @@ const confirmDeleteComment = async () => {
 
 onMounted(async () => {
   await userStore.fetchUser();
+  const notificationFlag = localStorage.getItem('showDeleteSuccessNotification');
+  console.log('Notification Flag:', notificationFlag);
+  if (notificationFlag === 'true') {
+    showNotificationMessage('success', 'Успешно!', 'Комментарий успешно удалён.');
+    localStorage.removeItem('showDeleteSuccessNotification');
+  }
 });
 </script>
 

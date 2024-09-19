@@ -4,9 +4,9 @@
       <button @click="closeModal" class="close-button">✖</button>
       <h2>Регистрация нового пользователя</h2>
       <p>Если аккаунт уже существует, то войдите</p>
-      <router-link to="/signin">
-        <n-button type="warning">Войти в аккаунт</n-button>
-      </router-link>
+      <router-link :to="{ path: '/signin', query: { from: 'registration' } }">
+  <n-button type="warning">Войти</n-button>
+</router-link>
       <form @submit.prevent="register">
         <input v-model="username" type="text" placeholder="Имя" required  />
         <input v-model="surname" type="text" placeholder="Фамилия" required />
@@ -25,7 +25,9 @@ import { ref } from 'vue';
 import api from '../services/api';
 import { NButton } from 'naive-ui';
 import router from '@/router';
+import { useNotificationService } from '@/composables/notificationUtils.js'; 
 
+const { showNotificationMessage } = useNotificationService(); 
 const username = ref('');
 const surname = ref('');
 const email = ref('');
@@ -33,7 +35,7 @@ const password = ref('');
 
 const register = async () => {
   try {
-    const response = await api.post('/user/registration', null, {
+   await api.post('/user/registration', null, {
       params: {
         username: username.value,
         surname: surname.value,
@@ -41,9 +43,9 @@ const register = async () => {
         password: password.value,
       },
     });
-    console.log('Пользователь зарегистрирован:', response.data);
+    showNotificationMessage('success', 'Успех', 'Вы успешно зарегестрировались. Перейдите на страницу входа'); 
   } catch (error) {
-   console.log(error)
+    showNotificationMessage('error', 'Ошибка', 'Регистрация не прошла'); 
   }
 };
 const closeModal = () => {
