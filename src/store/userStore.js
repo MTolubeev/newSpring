@@ -66,6 +66,7 @@ export const useUserStore = () => {
     localStorage.removeItem("token");
     user.value = null;
     role.value = null;
+
   };
 
   return { user, fetchUser, login, logout, role };

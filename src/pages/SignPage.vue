@@ -59,14 +59,14 @@ const login = async () => {
 
 const closeModal = () => {
   if (cameFromRegistration.value) {
-    router.push('/'); 
-    
+    // Перенаправление на главную страницу и перезагрузка страницы
+    router.push('/').then(() => window.location.reload());
   } else {
-    window.history.back(); 
+    // Вернуться на предыдущую страницу и перезагрузить
+    window.history.back();
   }
 };
 </script>
-
 
 <style scoped>
 .modal-overlay {

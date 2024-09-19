@@ -4,11 +4,11 @@
       <div class="profile">
         <img src="@/assets/Union.svg" alt="profile" />
         <router-link v-if="!user" to="/signin">
-          <n-button style="--n-border-hover: 1px solid #fff">Войти</n-button>
+          <n-button style="--n-border-hover: 1px solid #fff; --n-border-focus: 1px solid #f0f0f0;">Войти</n-button>
         </router-link>
         <div v-else>
           <span>{{ user.sub }}</span>
-          <n-button @click="logout" style="--n-border-hover: 1px solid #fff">
+          <n-button @click="logout" style="--n-border-hover: 1px solid #fff; --n-border-focus: 1px solid #f0f0f0;">
             Выйти
             </n-button>
         </div>
@@ -16,7 +16,7 @@
       <div class="cart">
         <img src="@/assets/cart.svg" alt="cart" />
         <router-link to="/cart">
-          <n-button style="--n-border-hover: 1px solid #fff">Корзина</n-button>
+          <n-button style="--n-border-hover: 1px solid #fff; --n-border-focus: 1px solid #f0f0f0;">Корзина</n-button>
         </router-link>
         <span>{{ cartItemCount }}</span>
       </div>

@@ -6,7 +6,7 @@
       <p>Если аккаунт уже существует, то войдите</p>
       <router-link :to="{ path: '/signin', query: { from: 'registration' } }">
   <n-button type="warning">Войти</n-button>
-</router-link>
+  </router-link>
       <form @submit.prevent="register">
         <input v-model="username" type="text" placeholder="Имя" required  />
         <input v-model="surname" type="text" placeholder="Фамилия" required />
