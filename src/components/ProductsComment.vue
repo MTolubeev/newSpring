@@ -61,7 +61,6 @@
     </div>
   </div>
 
-  <!-- Модальное окно для подтверждения удаления -->
   <div v-if="confirmDialogVisible" class="modal-overlay">
     <div class="modal-content">
       <h3>Подтверждение удаления</h3>
