@@ -83,12 +83,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Product created successfully");
     }
 
-    @GetMapping("/product/getCat")
-    public ResponseEntity<Map<String, Integer>> hetCat(@RequestParam Integer w) {
 
-        return ResponseEntity.ok(productService.getAllCategories(w));
-
-    }
 
     @PostMapping("/product/delete/{id}")
     @PreAuthorize("hasRole('ADMIN')")
