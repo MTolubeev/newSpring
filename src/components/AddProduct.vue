@@ -40,17 +40,15 @@
         </div>
 
         <div class="form-group">
-          <label>Категория товара:</label>
-          <input
-            type="text"
-            placeholder="Категория"
-            v-model="product.category"
-            required/>
+          <NSelect
+            v-model:value="selectedValue"
+            :options="options"
+            filterable
+            placeholder="Выберите или введите значение"/>
         </div>
-
         <div class="form-group">
           <label>Количество товаров:</label>
-          <input
+          <n-input
             type="number"
             placeholder="Количество"
             v-model="product.count"/>
@@ -64,9 +62,15 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from "vue";
-import axios from "axios";
+import { ref, defineEmits } from 'vue';
+import axios from 'axios';
+import { NSelect, NInput } from 'naive-ui';
 
+const selectedValue = ref('');
+const options = [
+  { label: 'Опция 1', value: 'option1' },
+  { label: 'Опция 2', value: 'option2' },
+];
 const emit = defineEmits(["close"]);
 
 const emitClose = () => {
@@ -100,13 +104,12 @@ async function uploadFile() {
     formData.append("count", product.value.count);
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/product/create",
-        formData,
+      const token = localStorage.getItem('token')
+      const response = await axios.post("http://localhost:8080/product/create", formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${getToken()}`,
+            Authorization: token,
           },
         }
       );
@@ -114,15 +117,11 @@ async function uploadFile() {
       message.value = "Ваш продукт создан! Обновите страницу";
     } catch (error) {
       console.error("Error uploading file:", error.response?.data || error);
-      message.value = "Неудалось создать продукт";
+      message.value = "Не удалось создать продукт";
     }
   } else {
     message.value = "Заполните все поля!";
   }
-}
-
-function getToken() {
-  return localStorage.getItem("authToken") || "";
 }
 </script>
 

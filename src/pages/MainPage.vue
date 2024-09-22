@@ -1,28 +1,36 @@
 <template>
-  <MyHeader @toggle-drawer="toggleDrawer" />
-  <MyDrawer :isVisible="isDrawerVisible" @close-drawer="closeDrawer" />
-  <n-button v-if="isAdmin" @click="openModal" class="button__add" type="warning">Добавить новый товар</n-button>
-  <AddProduct v-if="showModal" @close="closeModal" /> 
-    <MyCardList />
+  <n-spin content-style="--n-opacity-spinning:0; height: 100vh;" stroke="blue" :show="loading">
+    <MyHeader @toggle-drawer="toggleDrawer" />
+    <MyDrawer :isVisible="isDrawerVisible" @close-drawer="closeDrawer" />
+    <n-button v-if="isAdmin" @click="openModal" class="button__add" type="warning">Добавить новый товар</n-button>
+    <AddProduct v-if="showModal" @close="closeModal" />
+    
+    <MyCardList @products-loaded="onProductsLoaded" />
+
     <div class="all_comments">
       <h2>Отзывы наших пользователей</h2>
-    <n-card content-style="display:flex; justify-content:space-around;" v-for="comment in limitedComments" :key="comment.id">
-      <div>
-        <h3>{{ comment.username }}</h3>
-        <span>Оценка за товар: {{ comment.score }}</span>
-        <p>Отзыв: {{ comment.text }}</p></div>
+      <n-card
+        content-style="display:flex; justify-content:space-around;"
+        v-for="comment in limitedComments"
+        :key="comment.id">
         <div>
-        <router-link :to="{ name: 'ProductView', params: { productId: comment.productId } }" class="name_product">
-        {{ comment.productTitle }} 
-      </router-link>
+          <h3>{{ comment.username }}</h3>
+          <span>Оценка за товар: {{ comment.score }}</span>
+          <p>Отзыв: {{ comment.text }}</p>
+        </div>
+        <div>
+          <router-link :to="{ name: 'ProductView', params: { productId: comment.productId } }" class="name_product">
+            {{ comment.productTitle }}
+          </router-link>
+        </div>
+      </n-card>
     </div>
-    </n-card>
-  </div>
+  </n-spin>
 </template>
 
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { NButton, NCard } from 'naive-ui';
+import { NButton, NCard, NSpin } from 'naive-ui';
 import axios from 'axios';
 import MyHeader from "@/components/AppHeader.vue";
 import MyDrawer from "@/components/AppDrawer.vue";
@@ -34,8 +42,12 @@ import { useDrawer } from '@/composables/useHeader.js';
 const userStore = useUserStore();
 const { isDrawerVisible, toggleDrawer, closeDrawer } = useDrawer();
 
+const productsLoaded = ref(false);
+const commentsLoaded = ref(false);
 const showModal = ref(false);
 const comments = ref([]); 
+
+const loading = computed(() => !productsLoaded.value || !commentsLoaded.value);
 
 const openModal = () => {
   showModal.value = true;
@@ -46,24 +58,24 @@ const closeModal = () => {
   showModal.value = false;
   document.body.style.overflow = '';
 };
-
-
 const limitedComments = computed(() => {
-  return comments.value
-    .filter(comment => comment.score >= 4) 
-    .slice(0, 5); 
+  return comments.value.filter(comment => comment.score >= 4) .slice(0, 5); 
 });
-
-
 const getAllComments = async () => {
   try {
     const response = await axios.get(`http://localhost:8080/comments/getAllComments`);
     comments.value = response.data;
+    commentsLoaded.value = true;
   } catch (error) {
     console.log(error);
   }
 };
-
+const onProductsLoaded = () => {
+  productsLoaded.value = true; 
+  if (commentsLoaded.value) {
+    loading.value = false;
+  }
+};
 const role = computed(() => userStore.role.value);
 const isAdmin = computed(() => role.value === 'ROLE_ADMIN');
 
@@ -119,4 +131,5 @@ h2{
 .name_product:hover::after {
   width: 100%;
 }
+
 </style>

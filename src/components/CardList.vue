@@ -12,10 +12,11 @@
 
 <script setup>
 import MyCard from './CardItem.vue';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, defineEmits } from 'vue';
 import axios from 'axios';
 
 const items = ref([]);
+const emit = defineEmits(['products-loaded']);
 
 const fetchItems = async () => {
   try {
@@ -26,7 +27,8 @@ const fetchItems = async () => {
         ...product,
         imageUrl: `data:image/png;base64,${product.base64Image}`,
       };
-    });
+});
+    emit('products-loaded');
   } catch (err) {
     console.log(err);
   }

@@ -1,66 +1,67 @@
 <template>
-  <MyHeader @toggle-drawer="toggleDrawer" />
-  <MyDrawer :isVisible="isDrawerVisible" @close-drawer="closeDrawer" />
-  <div v-if="product">
-    <h2 class="breadcrumb">
-      <router-link
-          class="product__link"
-          :to="{ name: 'Category', params: { categoryName: productCategory } }">
-        {{ productCategory }}
-      </router-link>
-      /
-      <span v-if="productSubcategory !== 'None'">
+  <n-spin content-style="--n-opacity-spinning:0; height: 100vh;" stroke="blue" :show="loader">
+    <div v-if="product">
+    <MyHeader @toggle-drawer="toggleDrawer" />
+    <MyDrawer :isVisible="isDrawerVisible" @close-drawer="closeDrawer" />
+      <h2 class="breadcrumb">
         <router-link
             class="product__link"
-            :to="{ name: 'Category', params: { categoryName: productCategory, subcategoryName: productSubcategory } }">
-          {{ productSubcategory }}
+            :to="{ name: 'Category', params: { categoryName: productCategory } }">
+          {{ productCategory }}
         </router-link>
         /
-      </span>
-      <span v-if="productSubsubcategory !== 'None'">
-        <router-link
-            class="product__link"
-            :to="{ name: 'Category', params: { categoryName: productCategory, subcategoryName: productSubcategory, subsubcategoryName: productSubsubcategory } }">
-          {{ productSubsubcategory }}
-        </router-link>
-        /
-      </span>
-      {{ product.title }}
-    </h2>
-    <div class="card__item">
-      <n-card class="product-card" content-style="display: flex; flex-direction: row !important;">
-        <div class="img-wrapper">
-          <img
-              v-if="product.imageUrl"
-              :src="product.imageUrl"
-              alt="Product Image"
-              class="product-img"/>
-        </div>
-        <div class="card__info">
-          <h1 class="product-title">{{ product.title }}</h1>
-          <p class="product-description">{{ product.description }}</p>
-          <div class="card__pay">
-          <span>Цена: <b>{{ product.price }} руб.</b></span>
-          <del style="margin-left: 10px">{{ product.discountPrice }} руб.</del>
-          <span>Количество товаров осталось: <b>{{ product.count }}</b></span>
-          <CartButton v-if="product" :productId="product.id" :product="product" />
+        <span v-if="productSubcategory !== 'None'">
+          <router-link
+              class="product__link"
+              :to="{ name: 'Category', params: { categoryName: productCategory, subcategoryName: productSubcategory } }">
+            {{ productSubcategory }}
+          </router-link>
+          /
+        </span>
+        <span v-if="productSubsubcategory !== 'None'">
+          <router-link
+              class="product__link"
+              :to="{ name: 'Category', params: { categoryName: productCategory, subcategoryName: productSubcategory, subsubcategoryName: productSubsubcategory } }">
+            {{ productSubsubcategory }}
+          </router-link>
+          /
+        </span>
+        {{ product.title }}
+      </h2>
+      <div class="card__item">
+        <n-card class="product-card" content-style="display: flex; flex-direction: row !important;">
+          <div class="img-wrapper">
+            <img
+                v-if="product.imageUrl"
+                :src="product.imageUrl"
+                alt="Product Image"
+                class="product-img"/>
           </div>
-        </div>
-      </n-card>
-    </div>
-  <ProductsComment :comments="product.comments" :productId="product.id" />
+          <div class="card__info">
+            <h1 class="product-title">{{ product.title }}</h1>
+            <p class="product-description">{{ product.description }}</p>
+            <div class="card__pay">
+            <span v-if="isAuthenicated">Цена: <b>{{ product.price }} руб.</b>
+            <del style="margin-left: 10px">{{ product.discountPrice }} руб.</del>
+            </span>
+            <span v-else>Цена: {{ product.price }}</span>
+            <span>Количество товаров осталось: <b>{{ product.count }}</b></span>
+            <CartButton v-if="product" :productId="product.id" :product="product" />
+            </div>
+          </div>
+        </n-card>
+      </div>
+    <ProductsComment :comments="product.comments" :productId="product.id" />
+  </div>
 
-  </div>
-  <div v-else>
-    <p>Loading...</p>
-  </div>
+  </n-spin>
 </template>
 
 <script setup>
 import { ref, onMounted, computed, watch } from "vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
-import { NCard } from "naive-ui";
+import { NCard, NSpin } from "naive-ui";
 import MyHeader from "@/components/AppHeader.vue";
 import MyDrawer from "@/components/AppDrawer.vue";
 import { useDrawer } from '@/composables/useHeader.js';
@@ -71,12 +72,13 @@ import CartButton from "@/components/BasketButton.vue";
 const { isDrawerVisible, toggleDrawer, closeDrawer } = useDrawer();
 const route = useRoute();
 const product = ref(null);
+const loader = computed(() => !product.value);
+const isAuthenicated = ref(false);
 
 
 const fetchProduct = async (id) => {
   try {
     const response = await axios.get(`http://localhost:8080/product/getAll/${id}`);
-    console.log('Product data:', response.data);
     const productData = response.data;
 
     if (productData.base64Image) {
@@ -88,6 +90,13 @@ const fetchProduct = async (id) => {
     console.error("продукт не получили:", error);
   }
 };
+
+const checkAuth = () =>{
+  const token = localStorage.getItem("token");
+  if(token){
+    isAuthenicated.value = true;
+  }
+}
 
 watch(() => route.params.productId, (newId) => {
   if (newId) {
@@ -108,10 +117,10 @@ const productSubsubcategory = computed(() => {
 });
 
 onMounted(() => {
+  checkAuth();
   const productId = route.params.productId;
   fetchProduct(productId);
 });
-
 </script>
 
 <style scoped>
