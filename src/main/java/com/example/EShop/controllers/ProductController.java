@@ -74,15 +74,17 @@ public class ProductController {
     }
 
     @PostMapping("/product/create")
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createProduct(
+            @RequestParam MultipartFile file1,
             @ModelAttribute Product product,
             @RequestParam String category,
+            @RequestParam(required = false) String subCategory,
+            @RequestParam(required = false) String subSubCategory,
             @RequestHeader(value = "Authorization", required = false) String token) throws IOException {
-        productService.saveProduct(product, category);
+        productService.saveProduct(product, category, subCategory, subSubCategory, file1);
         return ResponseEntity.status(HttpStatus.CREATED).body("Product created successfully");
     }
-
 
 
     @PostMapping("/product/delete/{id}")

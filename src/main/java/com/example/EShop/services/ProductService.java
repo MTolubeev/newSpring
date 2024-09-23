@@ -193,15 +193,20 @@ public class ProductService {
 
 
     @Transactional
-    public void saveProduct(Product product, String category)  {
-//        Image image1;
-//
-//        if (file1.getSize() != 0 && file1.getSize() > 0) {
-//            image1 = toImageEntity(file1);
-//
-//            product.addImageToProduct(image1);
-//        }
-        product.setCategory(category);
+    public void saveProduct(Product product, String category, String subCategory, String subSubCategory, MultipartFile file1) throws IOException {
+        Image image1;
+
+        if (file1.getSize() != 0 && file1.getSize() > 0) {
+            image1 = toImageEntity(file1);
+
+            product.addImageToProduct(image1);
+        }
+        String cat = category;
+        if(!subCategory.isEmpty())
+            cat += "/" + subCategory;
+        product.setCategory(cat);
+        if(!subSubCategory.isEmpty())
+            cat += "/" + subSubCategory;
 
         generateCategoryOrderForProduct(product);
         log.info("Saving new Product. Title: {}", product.getTitle());
