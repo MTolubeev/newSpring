@@ -14,7 +14,8 @@
             type="text"
             v-model="product.title"
             placeholder="Название"
-            required/>
+            required
+          />
         </div>
 
         <div class="form-group">
@@ -23,7 +24,8 @@
             type="number"
             placeholder="Цена"
             v-model.number="product.price"
-            required/>
+            required
+          />
         </div>
 
         <div class="form-group">
@@ -31,7 +33,8 @@
           <input
             type="number"
             placeholder="Скидочная цена"
-            v-model="product.discountPrice"/>
+            v-model="product.discountPrice"
+          />
         </div>
 
         <div class="form-group">
@@ -40,20 +43,34 @@
         </div>
 
         <div class="form-group">
-          <NSelect
-            v-model:value="selectedValue"
-            :options="options"
-            filterable
-            placeholder="Выберите или введите значение"/>
+          <SelectCategory
+            :options="categoryOptions"
+            label="Категория"
+            @data-changed="(value) => handleDataChange('category')(value)"
+          />
+        </div>
+        <div class="form-group">
+          <SelectCategory
+            :options="subcategoryOptions"
+            label="Подкатегория"
+            @data-changed="(value) => handleDataChange('subcategory')(value)"
+          />
+        </div>
+        <div class="form-group">
+          <SelectCategory
+            :options="subsubcategoryOptions"
+            label="Подподкатегория"
+            @data-changed="(value) => handleDataChange('subsubcategory')(value)"
+          />
         </div>
         <div class="form-group">
           <label>Количество товаров:</label>
-          <n-input
+          <input
             type="number"
             placeholder="Количество"
-            v-model="product.count"/>
+            v-model="product.count"
+          />
         </div>
-
         <button class="create__product" type="submit">Создать товар</button>
       </form>
       <p v-if="message">{{ message }}</p>
@@ -62,19 +79,57 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from 'vue';
-import axios from 'axios';
-import { NSelect, NInput } from 'naive-ui';
+import { ref, defineEmits, onMounted } from "vue";
+import axios from "axios";
+import SelectCategory from "./SelectCategory.vue";
 
-const selectedValue = ref('');
-const options = [
-  { label: 'Опция 1', value: 'option1' },
-  { label: 'Опция 2', value: 'option2' },
-];
 const emit = defineEmits(["close"]);
 
 const emitClose = () => {
   emit("close");
+};
+
+const categoryOptions = ref([]);
+const subcategoryOptions = ref([]);
+const subsubcategoryOptions = ref([]);
+const selectedData = ref({
+  category: null,
+  subcategory: null,
+  subsubcategory: null,
+});
+
+const getUniqueValues = (items, key) => {
+  return Array.from(new Set(items.map((item) => item[key])))
+    .filter((value) => value !== null)
+    .map((value) => ({
+      label: value,
+      value: value,
+    }));
+};
+
+const fetchData = async () => {
+  try {
+    const response = await axios.get("http://localhost:8080/product/getAll");
+    const allCategories = response.data.flatMap(
+      (product) => product.categories
+    );
+    categoryOptions.value = getUniqueValues(allCategories, "name");
+    subcategoryOptions.value = getUniqueValues(
+      allCategories.filter((cat) => cat.subcategory !== null),
+      "subcategory"
+    );
+    subsubcategoryOptions.value = getUniqueValues(
+      allCategories.filter((cat) => cat.subsubcategory !== null),
+      "subsubcategory"
+    );
+  } catch (error) {
+    console.error("Ошибка при загрузке данных:", error);
+  }
+};
+
+const handleDataChange = (field) => (value) => {
+  selectedData.value[field] = value;
+  console.log(`Поле ${field} изменено на:`, value);
 };
 
 const file = ref(null);
@@ -93,19 +148,24 @@ function handleFileChange(event) {
 }
 
 async function uploadFile() {
+  console.log("Метод uploadFile вызван");
   if (file.value && product.value.title && product.value.price) {
+    console.log("Начало формирования FormData"); 
     const formData = new FormData();
     formData.append("file1", file.value);
     formData.append("title", product.value.title);
     formData.append("price", product.value.price);
     formData.append("discountPrice", product.value.discountPrice);
     formData.append("description", product.value.description);
-    formData.append("category", product.value.category);
+    formData.append("category", selectedData.value.category);
+    formData.append("subcategory", selectedData.value.subcategory || "");
+    formData.append("subsubcategory", selectedData.value.subsubcategory || "");
     formData.append("count", product.value.count);
-
     try {
-      const token = localStorage.getItem('token')
-      const response = await axios.post("http://localhost:8080/product/create", formData,
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        "http://localhost:8080/product/create",
+        formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -119,10 +179,11 @@ async function uploadFile() {
       console.error("Error uploading file:", error.response?.data || error);
       message.value = "Не удалось создать продукт";
     }
-  } else {
-    message.value = "Заполните все поля!";
   }
 }
+onMounted(() => {
+  fetchData();
+});
 </script>
 
 <style scoped>
@@ -131,6 +192,7 @@ async function uploadFile() {
   top: 0;
   left: 0;
   width: 100%;
+  overflow-y: auto;
   height: 100vh;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
@@ -167,7 +229,7 @@ textarea {
 }
 
 textarea {
-  height: 150px;
+  height: 50px;
   resize: vertical;
 }
 .close-button {

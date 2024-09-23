@@ -2,29 +2,32 @@
   <div v-if="isVisible" class="catalog">
     <div class="cart">
       <h2>Каталог товаров</h2>
-      <svg
-        @click="$emit('close-drawer')" width="16" height="14" viewBox="0 0 16 14" fill="#fff" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1 7H14.7143" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M8.71436 1L14.7144 7L8.71436 13" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg @click="$emit('close-drawer')" width="16" height="14" fill="#fff">
+        <path d="M1 7H14.7143" stroke="#fff" stroke-width="2" />
+        <path d="M8.71436 1L14.7144 7L8.71436 13" stroke="#fff" stroke-width="2"
+        />
       </svg>
     </div>
     <n-button
       v-if="!editMode && isAdmin"
       type="primary"
       size="small"
-      @click="enableEditMode">
+      @click="enableEditMode"
+    >
       Включить режим редактирования
     </n-button>
-<Draggable
+    <Draggable
       v-model="categories"
       :group="{ name: 'categories' }"
       @end="onDragEnd"
       item-key="name"
-      :disabled="!editMode">
+      :disabled="!editMode"
+    >
       <template #item="{ element }">
         <li>
           <router-link
-            :to="{ name: 'Category', params: { categoryName: element.name } }">
+            :to="{ name: 'Category', params: { categoryName: element.name } }"
+          >
             <strong>{{ element.name }}</strong>
           </router-link>
 
@@ -32,7 +35,8 @@
             v-model="element.subcategories"
             :group="{ name: 'subcategories' }"
             item-key="name"
-            :disabled="!editMode">
+            :disabled="!editMode"
+          >
             <template #item="{ element: subcategory }">
               <ul>
                 <li>
@@ -41,14 +45,18 @@
                       name: 'Category',
                       params: {
                         categoryName: element.name,
-                        subcategoryName: subcategory.name,},}">
+                        subcategoryName: subcategory.name,
+                      },
+                    }"
+                  >
                     <strong>{{ subcategory.name }}</strong>
                   </router-link>
                   <Draggable
                     v-model="subcategory.subsubcategories"
                     :group="{ name: 'subsubcategories' }"
                     item-key="name"
-                    :disabled="!editMode">
+                    :disabled="!editMode"
+                  >
                     <template #item="{ element: subsubcategory }">
                       <ul>
                         <li>
@@ -58,21 +66,27 @@
                               params: {
                                 categoryName: element.name,
                                 subcategoryName: subcategory.name,
-                                subsubcategoryName: subsubcategory.name,},}">
+                                subsubcategoryName: subsubcategory.name,
+                              },
+                            }"
+                          >
                             <strong>{{ subsubcategory.name }}</strong>
                           </router-link>
                           <Draggable
                             v-model="subsubcategory.products"
                             :group="{ name: 'products' }"
                             item-key="id"
-                            :disabled="!editMode">
+                            :disabled="!editMode"
+                          >
                             <template #item="{ element: product }">
                               <ul>
                                 <li>
                                   <router-link
                                     :to="{
                                       name: 'ProductView',
-                                      params: { productId: product.id },}">
+                                      params: { productId: product.id },
+                                    }"
+                                  >
                                     {{ product.title }}
                                   </router-link>
                                 </li>
@@ -88,14 +102,17 @@
                     v-model="subcategory.products"
                     :group="{ name: 'products' }"
                     item-key="id"
-                    :disabled="!editMode">
+                    :disabled="!editMode"
+                  >
                     <template #item="{ element: product }">
                       <ul>
                         <li>
                           <router-link
                             :to="{
                               name: 'ProductView',
-                              params: { productId: product.id },}">
+                              params: { productId: product.id },
+                            }"
+                          >
                             {{ product.title }}
                           </router-link>
                         </li>
@@ -111,14 +128,17 @@
             v-model="element.productsWithoutSubcategory"
             :group="{ name: 'products' }"
             item-key="id"
-            :disabled="!editMode">
+            :disabled="!editMode"
+          >
             <template #item="{ element: product }">
               <ul>
                 <li>
                   <router-link
                     :to="{
                       name: 'ProductView',
-                      params: { productId: product.id },}">
+                      params: { productId: product.id },
+                    }"
+                  >
                     {{ product.title }}
                   </router-link>
                 </li>
@@ -268,9 +288,9 @@ onMounted(() => {
   flex-direction: column;
   position: fixed;
   height: 100%;
-  width: 384px; 
+  width: 384px;
   background-color: #465a86;
-  padding: 28px 40px; 
+  padding: 28px 40px;
   top: 0;
   right: 0;
   z-index: 10;
@@ -296,7 +316,8 @@ svg {
   cursor: pointer;
 }
 
-ul, li {
+ul,
+li {
   list-style-type: none;
   padding: 0;
   margin: 0;
@@ -317,13 +338,12 @@ a:hover {
 }
 
 li {
-  margin-bottom: 8px; 
+  margin-bottom: 8px;
   padding: 8px;
   border-radius: 4px;
 }
 
 ul {
-  padding-left: 16px; 
+  padding-left: 16px;
 }
-
 </style>

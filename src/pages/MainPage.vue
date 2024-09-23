@@ -2,8 +2,7 @@
   <n-spin
     content-style="--n-opacity-spinning:0; height: 100vh;"
     stroke="blue"
-    :show="loading"
-  >
+    :show="loading">
     <MyHeader @toggle-drawer="toggleDrawer" />
     <MyDrawer :isVisible="isDrawerVisible" @close-drawer="closeDrawer" />
     <n-button
@@ -11,8 +10,7 @@
       @click="openModal"
       class="button__add"
       type="warning"
-      >Добавить новый товар</n-button
-    >
+      >Добавить новый товар</n-button>
     <AddProduct v-if="showModal" @close="closeModal" />
 
     <MyCardList @products-loaded="onProductsLoaded" />
@@ -22,8 +20,7 @@
       <n-card
         content-style="display:flex; justify-content:space-around;"
         v-for="comment in limitedComments"
-        :key="comment.id"
-      >
+        :key="comment.id">
         <div>
           <h3>{{ comment.username }}</h3>
           <span>Оценка за товар: {{ comment.score }}</span>
@@ -33,10 +30,8 @@
           <router-link
             :to="{
               name: 'ProductView',
-              params: { productId: comment.productId },
-            }"
-            class="name_product"
-          >
+              params: { productId: comment.productId },}"
+            class="name_product">
             {{ comment.productTitle }}
           </router-link>
         </div>
