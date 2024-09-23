@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 public class CategoryDto {
-    private String name;
-    private String subcategory;
-    private String subsubcategory;
-    private Integer order;
-    private Integer subcategoryOrder;
-    private Integer subsubcategoryOrder;
+    private String name = null;
+    private String subcategory = null;
+    private String subsubcategory = null;
+    private Integer order = null;
+    private Integer subcategoryOrder = null;
+    private Integer subsubcategoryOrder = null;
 }

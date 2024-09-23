@@ -23,6 +23,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.io.IOException;
@@ -69,7 +70,7 @@ public class CommentController {
             CommentImage commentImage = new CommentImage();
             commentImage.setImageUrl(imageUrl);
             commentImage.setComment(comment);
-            comment.getImages().add(commentImage);
+            comment.getImages().add(commentImage);// 73 row
         }
 
         Comment savedComment = commentRepository.save(comment);
@@ -78,22 +79,24 @@ public class CommentController {
 
 
 
-    public String saveImage(MultipartFile image) throws IOException {
+    private String saveImage(MultipartFile image) throws IOException {
+        // Путь к директории для сохранения изображений
+        String directory = "images/";
 
-        String fileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
-        String uploadDir = "/resources/templates/static/images";
-
-        // Создаем директорию, если её нет
-        File directory = new File(uploadDir);
-        if (!directory.exists()) {
-            directory.mkdirs();
+        // Проверка существования директории, создание, если не существует
+        Path imageDirectory = Paths.get(directory);
+        if (!Files.exists(imageDirectory)) {
+            Files.createDirectories(imageDirectory);  // Создаем директорию, если ее нет
         }
 
+        // Генерация уникального имени файла
+        String fileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
+        Path imagePath = imageDirectory.resolve(fileName);
 
-        Path filePath = Paths.get(uploadDir, fileName);
-        Files.write(filePath, image.getBytes());
+        // Копируем файл в директорию
+        Files.copy(image.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
 
-        // Возвращаем путь для записи в БД
+        // Возвращаем путь к файлу, который может быть использован для загрузки изображения
         return "/images/" + fileName;
     }
 
@@ -103,7 +106,7 @@ public class CommentController {
 
 
 
-    @GetMapping("/product/{productId}")
+        @GetMapping("/product/{productId}")
     public ResponseEntity<List<Comment>> getComments(@PathVariable Long productId) {
         Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
         return ResponseEntity.ok(commentService.findByProduct(product));

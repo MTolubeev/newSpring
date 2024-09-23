@@ -76,7 +76,7 @@ public class ProductController {
     @PostMapping("/product/create")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createProduct(
-            @RequestParam MultipartFile file1,
+            @RequestParam(required = false) MultipartFile file1,
             @ModelAttribute Product product,
             @RequestParam String category,
             @RequestParam(required = false) String subCategory,
