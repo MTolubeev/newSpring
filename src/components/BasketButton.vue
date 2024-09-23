@@ -1,5 +1,5 @@
 <template>
-  <n-button :style="buttonStyle" @click="toggleCart">
+  <n-button style="--n-border-hover: 1px solid #3B5998;" :style="buttonStyle" @click="toggleCart">
     {{ buttonText }}
   </n-button>
 </template>
