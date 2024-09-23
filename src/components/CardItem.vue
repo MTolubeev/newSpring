@@ -20,7 +20,9 @@
     </div>
     <div class="card__button">
       <CartButton :productId="item.id" :product="item" @click.stop />
-      <n-button v-if="isAdmin" @click.stop="openConfirmDialog">Удалить товар из общего списка</n-button>
+      <n-button style="--n-border-hover: 1px solid #3B5998; --n-text-color-hover:#3B5998;"  v-if="isAdmin" @click.stop="openConfirmDialog">
+        Удалить товар из списка
+      </n-button>
     </div>
   </n-card>
 
@@ -94,8 +96,8 @@ const navigateToproduct = () => {
 };
 
 onMounted(() => {
-  checkAuth();
   userStore.fetchUser();
+  checkAuth();
 });
 </script>
 

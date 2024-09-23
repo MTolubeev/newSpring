@@ -28,10 +28,12 @@
   </template>
   
   <script setup>
-import { ref, defineProps, defineEmits, watch } from 'vue';
+import { ref, defineProps, defineEmits, watch, onMounted } from 'vue';
 import axios from 'axios';
 import { NModal } from 'naive-ui';
+import {  useNotificationService } from '@/composables/notificationUtils.js'; 
 
+const { showNotificationMessage } = useNotificationService();
 const props = defineProps({
   modelValue: Boolean,
   productId: {
@@ -62,39 +64,48 @@ const handleClose = () => {
 
 const submitReview = async () => {
   if (!reviewText.value || rating.value === 0) {
-    alert('Пожалуйста, заполните все поля.');
+    showNotificationMessage('error', 'Ошибка', 'Заполните все поля!');
     return;
   }
 
   const formData = new FormData();
-  formData.append('productId', props.productId); 
+  formData.append('productId', props.productId);
   formData.append('text', reviewText.value);
   formData.append('score', rating.value.toString());
   if (image.value) {
     formData.append('image', image.value);
   }
-  
-  console.log("Submitting review with data:", {
-    productId: props.productId,
-    text: reviewText.value,
-    score: rating.value,
-    image: image.value,
-  }); 
 
   const token = localStorage.getItem('token'); 
 
   try {
     const response = await axios.post('http://localhost:8080/comments/add', formData, {
       headers: {
-         'Content-Type': 'multipart/form-data',
+        'Content-Type': 'multipart/form-data',
         'Authorization': token,
       },
     });
-    console.log('Комментарий успешно отправлен:', response.data);
+
+    if (response.status === 200) {
+      localStorage.setItem('showReviewSuccessNotification', 'true');
+      setTimeout(() => {
+        window.location.reload(); // Перезагрузка страницы через 1 секунду
+      }, 1000);
+    }
   } catch (error) {
     console.error('Ошибка при отправке комментария:', error.response ? error.response.data : error.message);
+    showNotificationMessage('error', 'Ошибка', 'Произошла ошибка при отправке комментария.');
   }
 };
+
+onMounted(() => {
+  const notificationFlag = localStorage.getItem('showReviewSuccessNotification');
+  
+  if (notificationFlag === 'true') {
+    showNotificationMessage('success', 'Успешно!', 'Ваш отзыв был успешно отправлен.');
+    localStorage.removeItem('showReviewSuccessNotification');
+  }
+});
 
 watch(() => props.modelValue, (newVal) => {
   visible.value = newVal;

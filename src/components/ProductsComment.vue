@@ -74,7 +74,7 @@ import { NCard, NButton, NSelect } from 'naive-ui';
 import WriteReviewModal from './WriteReviewModal.vue';
 import { useUserStore } from '@/store/userStore';
 import axios from 'axios';
-import { useNotificationService } from '@/composables/notificationUtils';
+import  { useNotificationService }  from '@/composables/notificationUtils';
 const { showNotificationMessage } = useNotificationService();
 
 
@@ -126,8 +126,8 @@ const sortedComments = computed(() => {
 const handleWriteReview = () => {
   if (user.value) {
     showReviewModal.value = true;
-  } else {
-    alert('Вы не авторизованы. Пожалуйста, войдите, чтобы оставить отзыв.');
+  }else{
+    showNotificationMessage('error', 'Ошибка добавления комментария', 'Авторизуйтесь для создания комменария');
   }
 };
 
@@ -158,15 +158,12 @@ const confirmDeleteComment = async () => {
 
     if (response.status === 200) {
       localStorage.setItem('showDeleteSuccessNotification', 'true');
-      setTimeout(() => {
-        window.location.reload(); 
-      }, 1000); 
+      window.location.reload(); 
     } else {
       showNotificationMessage('error', 'Ошибка', 'Произошла ошибка при удалении комментария.');
     }
   } catch (error) {
     if (error.response) {
-      console.error('Ошибка ответа:', error.response);
       showNotificationMessage('error', 'Ошибка', `Ошибка: ${error.response.data.message || error.response.data}`);
     } else {
       showNotificationMessage('error', 'Ошибка', 'Произошла ошибка при удалении комментария.');
@@ -176,12 +173,11 @@ const confirmDeleteComment = async () => {
   }
 };
 
-onMounted(async () => {
+onMounted(async() => {
   await userStore.fetchUser();
   const notificationFlag = localStorage.getItem('showDeleteSuccessNotification');
-  console.log('Notification Flag:', notificationFlag);
   if (notificationFlag === 'true') {
-    showNotificationMessage('success', 'Успешно!', 'Комментарий успешно удалён.');
+    showNotificationMessage('success', 'Комментарий успешно удалён.');
     localStorage.removeItem('showDeleteSuccessNotification');
   }
 });

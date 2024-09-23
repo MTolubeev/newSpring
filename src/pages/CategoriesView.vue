@@ -1,37 +1,39 @@
 <template>
-  <MyHeader @toggle-drawer="toggleDrawer" />
-  <MyDrawer :isVisible="isDrawerVisible" @close-drawer="closeDrawer" />
-  <div class="paths">
-    <h1>
-      <router-link
+  <n-spin content-style="--n-opacity-spinning:0; height: 100vh;" stroke="blue" :show="isLoading">
+    <MyHeader @toggle-drawer="toggleDrawer" />
+    <MyDrawer :isVisible="isDrawerVisible" @close-drawer="closeDrawer" />
+    <div class="paths">
+      <h1>
+        <router-link
           class="path__link"
           :to="{ name: 'Category', params: { categoryName: categoryName } }">
-        {{ categoryName }}
-      </router-link>
-      /
-      <router-link
+          {{ categoryName }}
+        </router-link>
+        /
+        <router-link
           v-if="subcategoryName"
           class="path__link"
           :to="{ name: 'Category', params: { categoryName: categoryName, subcategoryName: subcategoryName } }">
-        {{ subcategoryName }}
-      </router-link>
-      <span v-if="subsubcategoryName">
-        /
-        <router-link
+          {{ subcategoryName }}
+        </router-link>
+        <span v-if="subsubcategoryName">
+          /
+          <router-link
             class="path__link"
             :to="{ name: 'Category', params: { categoryName: categoryName, subcategoryName: subcategoryName, subsubcategoryName: subsubcategoryName } }">
-          {{ subsubcategoryName }}
-        </router-link>
-      </span>
-    </h1>
-  </div>
-  <div class="cards">
-    <MyCard
+            {{ subsubcategoryName }}
+          </router-link>
+        </span>
+      </h1>
+    </div>
+    <div class="cards">
+      <MyCard
         v-for="product in filteredProducts"
         :key="product.id"
         :item="product"
-    ></MyCard>
-  </div>
+      ></MyCard>
+    </div>
+  </n-spin>
 </template>
 
 <script setup>
@@ -43,10 +45,12 @@ import MyCard from "@/components/CardItem.vue";
 import { useDrawer } from "@/composables/useHeader.js";
 import MyHeader from "@/components/AppHeader.vue";
 import MyDrawer from "@/components/AppDrawer.vue";
+import { NSpin } from 'naive-ui'; // Импортируйте n-spin
 
 const { isDrawerVisible, toggleDrawer, closeDrawer } = useDrawer();
 const route = useRoute();
 const categories = ref([]);
+const isLoading = ref(true); // Переменная для управления загрузкой
 const categoryName = ref(route.params.categoryName);
 const subcategoryName = ref(route.params.subcategoryName || "");
 const subsubcategoryName = ref(route.params.subsubcategoryName || "");
@@ -54,9 +58,8 @@ const { organizeProductsByCategories } = useOrganizeProducts();
 
 const filteredProducts = computed(() => {
   const category = categories.value.find(cat => cat.name === categoryName.value);
-
   if (!category) return [];
-
+  
   if (!subcategoryName.value) {
     return [
       ...category.productsWithoutSubcategory,
@@ -68,7 +71,6 @@ const filteredProducts = computed(() => {
   }
 
   const subcategory = category.subcategories.find(sub => sub.name === subcategoryName.value);
-
   if (!subcategory) return [];
   if (!subsubcategoryName.value) {
     return [
@@ -82,6 +84,7 @@ const filteredProducts = computed(() => {
 });
 
 const fetchData = async () => {
+  isLoading.value = true; 
   try {
     const response = await axios.get("http://localhost:8080/product/getAll");
     const products = response.data;
@@ -96,6 +99,8 @@ const fetchData = async () => {
     }
   } catch (error) {
     console.error("Ошибка при получении данных:", error);
+  } finally {
+    isLoading.value = false; 
   }
 };
 
@@ -115,6 +120,7 @@ onMounted(() => {
   fetchData();
 });
 </script>
+
 
 <style scoped>
 .paths {
