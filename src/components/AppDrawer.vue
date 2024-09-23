@@ -4,157 +4,31 @@
       <h2>Каталог товаров</h2>
       <svg @click="$emit('close-drawer')" width="16" height="14" fill="#fff">
         <path d="M1 7H14.7143" stroke="#fff" stroke-width="2" />
-        <path d="M8.71436 1L14.7144 7L8.71436 13" stroke="#fff" stroke-width="2"
+        <path
+          d="M8.71436 1L14.7144 7L8.71436 13"
+          stroke="#fff"
+          stroke-width="2"
         />
       </svg>
     </div>
-    <n-button
-      v-if="!editMode && isAdmin"
-      type="primary"
-      size="small"
-      @click="enableEditMode"
-    >
+
+    <n-button v-if="!editMode && isAdmin" @click="enableEditMode">
       Включить режим редактирования
     </n-button>
+
     <Draggable
       v-model="categories"
       :group="{ name: 'categories' }"
       @end="onDragEnd"
       item-key="name"
-      :disabled="!editMode"
-    >
+      :disabled="!editMode">
       <template #item="{ element }">
-        <li>
-          <router-link
-            :to="{ name: 'Category', params: { categoryName: element.name } }"
-          >
-            <strong>{{ element.name }}</strong>
-          </router-link>
-
-          <Draggable
-            v-model="element.subcategories"
-            :group="{ name: 'subcategories' }"
-            item-key="name"
-            :disabled="!editMode"
-          >
-            <template #item="{ element: subcategory }">
-              <ul>
-                <li>
-                  <router-link
-                    :to="{
-                      name: 'Category',
-                      params: {
-                        categoryName: element.name,
-                        subcategoryName: subcategory.name,
-                      },
-                    }"
-                  >
-                    <strong>{{ subcategory.name }}</strong>
-                  </router-link>
-                  <Draggable
-                    v-model="subcategory.subsubcategories"
-                    :group="{ name: 'subsubcategories' }"
-                    item-key="name"
-                    :disabled="!editMode"
-                  >
-                    <template #item="{ element: subsubcategory }">
-                      <ul>
-                        <li>
-                          <router-link
-                            :to="{
-                              name: 'Category',
-                              params: {
-                                categoryName: element.name,
-                                subcategoryName: subcategory.name,
-                                subsubcategoryName: subsubcategory.name,
-                              },
-                            }"
-                          >
-                            <strong>{{ subsubcategory.name }}</strong>
-                          </router-link>
-                          <Draggable
-                            v-model="subsubcategory.products"
-                            :group="{ name: 'products' }"
-                            item-key="id"
-                            :disabled="!editMode"
-                          >
-                            <template #item="{ element: product }">
-                              <ul>
-                                <li>
-                                  <router-link
-                                    :to="{
-                                      name: 'ProductView',
-                                      params: { productId: product.id },
-                                    }"
-                                  >
-                                    {{ product.title }}
-                                  </router-link>
-                                </li>
-                              </ul>
-                            </template>
-                          </Draggable>
-                        </li>
-                      </ul>
-                    </template>
-                  </Draggable>
-
-                  <Draggable
-                    v-model="subcategory.products"
-                    :group="{ name: 'products' }"
-                    item-key="id"
-                    :disabled="!editMode"
-                  >
-                    <template #item="{ element: product }">
-                      <ul>
-                        <li>
-                          <router-link
-                            :to="{
-                              name: 'ProductView',
-                              params: { productId: product.id },
-                            }"
-                          >
-                            {{ product.title }}
-                          </router-link>
-                        </li>
-                      </ul>
-                    </template>
-                  </Draggable>
-                </li>
-              </ul>
-            </template>
-          </Draggable>
-
-          <Draggable
-            v-model="element.productsWithoutSubcategory"
-            :group="{ name: 'products' }"
-            item-key="id"
-            :disabled="!editMode"
-          >
-            <template #item="{ element: product }">
-              <ul>
-                <li>
-                  <router-link
-                    :to="{
-                      name: 'ProductView',
-                      params: { productId: product.id },
-                    }"
-                  >
-                    {{ product.title }}
-                  </router-link>
-                </li>
-              </ul>
-            </template>
-          </Draggable>
-        </li>
+        <CategoryItem :category="element" :editMode="editMode" />
       </template>
     </Draggable>
 
-    <n-button v-if="editMode" type="warning" @click="saveOrder">
-      Сохранить изменения
-    </n-button>
-    <n-button v-if="editMode" type="error" @click="cancelEditMode">
-      Отменить изменения
-    </n-button>
+    <button v-if="editMode" @click="saveOrder">Сохранить изменения</button>
+    <button v-if="editMode" @click="cancelEditMode">Отменить изменения</button>
   </div>
 </template>
 
@@ -165,6 +39,7 @@ import Draggable from "vuedraggable";
 import { NButton } from "naive-ui";
 import { useUserStore } from "@/store/userStore";
 import { useOrganizeProducts } from "@/composables/useOrganizeProducts";
+import CategoryItem from "./CategoryItem.vue";
 
 const userStore = useUserStore();
 const categories = ref([]);
@@ -282,6 +157,7 @@ onMounted(() => {
   fetchData();
 });
 </script>
+
 <style scoped>
 .catalog {
   display: flex;
@@ -318,31 +194,18 @@ svg {
 
 ul,
 li {
-  list-style-type: none;
   padding: 0;
   margin: 0;
   list-style: none;
 }
-
-a {
-  text-decoration: none;
-  color: black;
-  display: block;
-}
-
 a:focus {
   outline: none;
 }
-a:hover {
-  color: #2fd40e;
-}
-
 li {
   margin-bottom: 8px;
   padding: 8px;
   border-radius: 4px;
 }
-
 ul {
   padding-left: 16px;
 }
