@@ -59,10 +59,8 @@ const login = async () => {
 
 const closeModal = () => {
   if (cameFromRegistration.value) {
-    // Перенаправление на главную страницу и перезагрузка страницы
     router.push('/').then(() => window.location.reload());
   } else {
-    // Вернуться на предыдущую страницу и перезагрузить
     window.history.back();
   }
 };
