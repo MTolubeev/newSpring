@@ -8,8 +8,20 @@
         <n-button type="warning">Создать аккаунт</n-button>
       </router-link>
       <form @submit.prevent="login">
-        <input type="email" v-model="loginEmail" placeholder="Email" required autocomplete="email" />
-        <input type="password" v-model="loginPassword" placeholder="Пароль" required autocomplete="current-password" />
+        <input
+          type="email"
+          v-model="loginEmail"
+          placeholder="Email"
+          required
+          autocomplete="email"
+        />
+        <input
+          type="password"
+          v-model="loginPassword"
+          placeholder="Пароль"
+          required
+          autocomplete="current-password"
+        />
         <div class="buttons">
           <button class="registr" type="submit">Войти</button>
         </div>
@@ -19,52 +31,47 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount } from 'vue';
-import { useRouter, useRoute } from 'vue-router'; 
-import { useUserStore } from '@/store/userStore';
-import { useNotificationService } from '@/composables/notificationUtils.js'; 
-import { NButton } from 'naive-ui';
+import { ref, onBeforeMount } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useUserStore } from "@/store/userStore";
+import { useNotificationService } from "@/composables/notificationUtils.js";
+import { NButton } from "naive-ui";
 
-const router = useRouter(); 
-const route = useRoute(); 
+const router = useRouter();
+const route = useRoute();
 const userStore = useUserStore();
-const { showNotificationMessage } = useNotificationService(); 
+const { showNotificationMessage } = useNotificationService();
 
-const loginEmail = ref('');
-const loginPassword = ref('');
+const loginEmail = ref("");
+const loginPassword = ref("");
 let cameFromRegistration = ref(false);
 
-
 onBeforeMount(() => {
-  if (route?.redirectedFrom?.fullPath === '/registration' || route?.query?.from === 'registration') {
-    cameFromRegistration.value = true; 
+  if (
+    route?.redirectedFrom?.fullPath === "/registration" ||
+    route?.query?.from === "registration"
+  ) {
+    cameFromRegistration.value = true;
   }
 });
-
 const login = async () => {
   try {
     await userStore.login(loginEmail.value, loginPassword.value);
-    showNotificationMessage('success', 'Успех', 'Вы успешно вошли в аккаунт'); 
-    
-  
+    showNotificationMessage("success", "Успех", "Вы успешно вошли в аккаунт");
+
     if (cameFromRegistration.value) {
-      router.push('/'); 
+      router.push("/"); 
     } else {
-      window.history.back();
+      window.history.back(); 
     }
   } catch (error) {
-    showNotificationMessage('error', 'Ошибка', 'Неправильный логин или пароль'); 
+    showNotificationMessage("error", "Ошибка", "Неправильный логин или пароль");
   }
 };
 
 const closeModal = () => {
-  if (cameFromRegistration.value) {
-    // Перенаправление на главную страницу и перезагрузка страницы
-    router.push('/').then(() => window.location.reload());
-  } else {
-    // Вернуться на предыдущую страницу и перезагрузить
-    window.history.back();
-  }
+
+  router.push("/").then(() => window.location.reload());
 };
 </script>
 
@@ -95,7 +102,7 @@ const closeModal = () => {
 .modal-content h2 {
   margin-top: 0;
 }
-form{
+form {
   display: flex;
   flex-direction: column;
   gap: 10px;
