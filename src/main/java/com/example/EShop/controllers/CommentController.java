@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.io.IOException;
@@ -44,13 +45,7 @@ public class CommentController {
 
     @PostMapping("/add")
     @PreAuthorize("isAuthenticated()")
-//    public ResponseEntity<Comment> addComment(@RequestParam("productId") Long productId,
-//                                              @RequestParam("text") String text,
-//                                              @RequestParam("score") int score,
-//                                              @RequestParam("image") MultipartFile image,
-//                                              @RequestHeader("Authorization") String token) throws IOException {
-//        return commentService.addComment(productId, text, score, image, token);
-//    }
+
     public ResponseEntity<Comment> addComment(@RequestParam("productId") Long productId,
                                               @RequestParam("text") String text,
                                               @RequestParam("score") int score,
@@ -65,19 +60,22 @@ public class CommentController {
         comment.setText(text);
         comment.setScore(score);
 
+        // Проверяем и инициализируем список изображений, если это нужно
+        if (comment.getImages() == null) {
+            comment.setImages(new ArrayList<>());  // Инициализация списка изображений
+        }
+
         if (image != null && !image.isEmpty()) {
             String imageUrl = saveImage(image);
             CommentImage commentImage = new CommentImage();
             commentImage.setImageUrl(imageUrl);
             commentImage.setComment(comment);
-            comment.getImages().add(commentImage);// 73 row
+            comment.getImages().add(commentImage); // Здесь уже ошибки не будет
         }
 
         Comment savedComment = commentRepository.save(comment);
         return ResponseEntity.ok(savedComment);
     }
-
-
 
     private String saveImage(MultipartFile image) throws IOException {
         // Путь к директории для сохранения изображений
@@ -99,12 +97,6 @@ public class CommentController {
         // Возвращаем путь к файлу, который может быть использован для загрузки изображения
         return "/images/" + fileName;
     }
-
-
-
-
-
-
 
         @GetMapping("/product/{productId}")
     public ResponseEntity<List<Comment>> getComments(@PathVariable Long productId) {
