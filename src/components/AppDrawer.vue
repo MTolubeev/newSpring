@@ -4,42 +4,35 @@
       <h2>Каталог товаров</h2>
       <svg @click="$emit('close-drawer')" width="16" height="14" fill="#fff">
         <path d="M1 7H14.7143" stroke="#fff" stroke-width="2" />
-        <path
-          d="M8.71436 1L14.7144 7L8.71436 13"
-          stroke="#fff"
-          stroke-width="2"
-        />
+        <path d="M8.71436 1L14.7144 7L8.71436 13" stroke="#fff" stroke-width="2" />
       </svg>
     </div>
-
-    <n-button v-if="!editMode && isAdmin" @click="enableEditMode">
+    <n-button v-if="!editMode && isAdmin" type="primary" size="small" @click="enableEditMode">
       Включить режим редактирования
     </n-button>
 
-    <Draggable
-      v-model="categories"
-      :group="{ name: 'categories' }"
-      @end="onDragEnd"
-      item-key="name"
-      :disabled="!editMode">
-      <template #item="{ element }">
-        <CategoryItem :category="element" :editMode="editMode" />
-      </template>
-    </Draggable>
+    <DraggableCatalog
+      :categories="categories"
+      :editMode="editMode"
+      @drag-end="onDragEnd"
+    />
 
-    <button v-if="editMode" @click="saveOrder">Сохранить изменения</button>
-    <button v-if="editMode" @click="cancelEditMode">Отменить изменения</button>
+    <n-button v-if="editMode" type="warning" @click="saveOrder">
+      Сохранить изменения
+    </n-button>
+    <n-button v-if="editMode" type="error" @click="cancelEditMode">
+      Отменить изменения
+    </n-button>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, defineProps } from "vue";
 import axios from "axios";
-import Draggable from "vuedraggable";
+import DraggableCatalog from './DraggableCatalog.vue';
 import { NButton } from "naive-ui";
 import { useUserStore } from "@/store/userStore";
 import { useOrganizeProducts } from "@/composables/useOrganizeProducts";
-import CategoryItem from "./CategoryItem.vue";
 
 const userStore = useUserStore();
 const categories = ref([]);
@@ -53,9 +46,11 @@ defineProps({
 const enableEditMode = () => {
   editMode.value = true;
 };
+
 const cancelEditMode = () => {
   editMode.value = false;
 };
+
 const fetchData = async () => {
   try {
     const response = await axios.get("http://localhost:8080/product/getAll");
@@ -70,68 +65,49 @@ const fetchData = async () => {
   }
 };
 
+const onDragEnd = (newCategories) => {
+  categories.value = newCategories;
+};
+
 const collectChanges = () => {
   let changes = {};
 
-  const processCategory = (category, categoryIndex) => {
+  const processProduct = (product, category, subcategory = null, subsubcategory = null, categoryIndex, subcategoryIndex = null, subsubcategoryIndex = null, productIndex) => {
+    if (!changes[product.id]) {
+      changes[product.id] = [];
+    }
+    changes[product.id].push({
+      name: category.name,
+      subcategory: subcategory ? subcategory.name : null,
+      subsubcategory: subsubcategory ? subsubcategory.name : null,
+      order: categoryIndex + 1,
+      subcategoryOrder: subcategoryIndex !== null ? subcategoryIndex + 1 : null,
+      subsubcategoryOrder: subsubcategoryIndex !== null ? subsubcategoryIndex + 1 : null,
+      productOrder: productIndex + 1,
+    });
+  };
+
+  categories.value.forEach((category, categoryIndex) => {
     category.productsWithoutSubcategory.forEach((product, productIndex) => {
-      if (!changes[product.id]) {
-        changes[product.id] = [];
-      }
-      changes[product.id].push({
-        name: category.name,
-        subcategory: null,
-        subsubcategory: null,
-        order: categoryIndex + 1,
-        subcategoryOrder: null,
-        subsubcategoryOrder: null,
-        productOrder: productIndex + 1,
-      });
+      processProduct(product, category, null, null, categoryIndex, null, null, productIndex);
     });
 
     category.subcategories.forEach((subcategory, subcategoryIndex) => {
       subcategory.products.forEach((product, productIndex) => {
-        if (!changes[product.id]) {
-          changes[product.id] = [];
-        }
-        changes[product.id].push({
-          name: category.name,
-          subcategory: subcategory.name,
-          subsubcategory: null,
-          order: categoryIndex + 1,
-          subcategoryOrder: subcategoryIndex + 1,
-          subsubcategoryOrder: null,
-          productOrder: productIndex + 1,
-        });
+        processProduct(product, category, subcategory, null, categoryIndex, subcategoryIndex, null, productIndex);
       });
 
-      subcategory.subsubcategories.forEach(
-        (subsubcategory, subsubcategoryIndex) => {
-          subsubcategory.products.forEach((product, productIndex) => {
-            if (!changes[product.id]) {
-              changes[product.id] = [];
-            }
-            changes[product.id].push({
-              name: category.name,
-              subcategory: subcategory.name,
-              subsubcategory: subsubcategory.name,
-              order: categoryIndex + 1,
-              subcategoryOrder: subcategoryIndex + 1,
-              subsubcategoryOrder: subsubcategoryIndex + 1,
-              productOrder: productIndex + 1,
-            });
-          });
-        }
-      );
+      subcategory.subsubcategories.forEach((subsubcategory, subsubcategoryIndex) => {
+        subsubcategory.products.forEach((product, productIndex) => {
+          processProduct(product, category, subcategory, subsubcategory, categoryIndex, subcategoryIndex, subsubcategoryIndex, productIndex);
+        });
+      });
     });
-  };
-
-  categories.value.forEach((category, index) => {
-    processCategory(category, index);
   });
 
   return changes;
 };
+
 
 const saveOrder = async () => {
   try {
@@ -157,7 +133,6 @@ onMounted(() => {
   fetchData();
 });
 </script>
-
 <style scoped>
 .catalog {
   display: flex;
@@ -190,23 +165,5 @@ span {
 
 svg {
   cursor: pointer;
-}
-
-ul,
-li {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-a:focus {
-  outline: none;
-}
-li {
-  margin-bottom: 8px;
-  padding: 8px;
-  border-radius: 4px;
-}
-ul {
-  padding-left: 16px;
 }
 </style>
