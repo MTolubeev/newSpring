@@ -13,10 +13,11 @@ import java.util.List;
 public class CommentDto {
     private Long id;
     private String text;
-    private List<CommentImage> images;
     private int score;
     private Long userId;
     private String username;
     private Long productId;
     private String productTitle;
+    private List<CommentImage> images;
+    private String image;
 }

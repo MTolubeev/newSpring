@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.io.IOException;
@@ -60,9 +61,9 @@ public class CommentController {
         comment.setText(text);
         comment.setScore(score);
 
-        // Проверяем и инициализируем список изображений, если это нужно
+
         if (comment.getImages() == null) {
-            comment.setImages(new ArrayList<>());  // Инициализация списка изображений
+            comment.setImages(new ArrayList<>());
         }
 
         if (image != null && !image.isEmpty()) {
@@ -70,7 +71,8 @@ public class CommentController {
             CommentImage commentImage = new CommentImage();
             commentImage.setImageUrl(imageUrl);
             commentImage.setComment(comment);
-            comment.getImages().add(commentImage); // Здесь уже ошибки не будет
+            commentImage.setBytes(image.getBytes());
+            comment.getImages().add(commentImage);
         }
 
         Comment savedComment = commentRepository.save(comment);
@@ -172,6 +174,11 @@ public class CommentController {
 
     private CommentDto convertToDto(Comment comment) {
         CommentDto dto = new CommentDto();
+        if(comment.getImages().size() != 0) {
+            CommentImage commentImage = comment.getImages().get(0);
+            String image = Base64.getEncoder().encodeToString(commentImage.getBytes());
+            dto.setImage(image);
+        }
         dto.setId(comment.getId());
         dto.setText(comment.getText());
         dto.setImages(comment.getImages());
@@ -180,6 +187,7 @@ public class CommentController {
         dto.setUsername(comment.getUser().getUsername());
         dto.setProductId(comment.getProduct().getId());
         dto.setProductTitle(comment.getProduct().getTitle());
+
         return dto;
     }
 }

@@ -35,29 +35,6 @@ public class CommentService {
     private final JwtTokenUtils jwtTokenUtils;
     private final ProductRepository productRepository;
 
-    public ResponseEntity<Comment> addComment(Long productId, String text, int score, MultipartFile image, String token) throws IOException {
-        User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
-        Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
-
-        Comment comment = new Comment();
-        comment.setUser(user);
-        comment.setProduct(product);
-        comment.setText(text);
-        comment.setScore(score);
-
-        if (image != null && !image.isEmpty()) {
-            // Save the image and set the URL
-            String imageUrl = saveImage(image);
-            CommentImage commentImage = new CommentImage();
-            commentImage.setImageUrl(imageUrl);
-            commentImage.setComment(comment);
-            comment.getImages().add(commentImage);
-
-        }
-
-        Comment savedComment = save(comment);
-        return ResponseEntity.ok(savedComment);
-    }
 
 
     public Comment save(Comment comment) {
@@ -68,7 +45,6 @@ public class CommentService {
         return commentRepository.findByProduct(product);
     }
 
-
     public List<Comment> findAll() {
         return commentRepository.findAll();
     }
@@ -76,10 +52,12 @@ public class CommentService {
     public void delete(Comment comment) {
         commentRepository.delete(comment);
     }
+
     public void deleteImage(Comment comment) {
             comment.setImages(null);
             commentRepository.save(comment);
     }
+
     public String saveImage(MultipartFile image) throws IOException {
         String filename = UUID.randomUUID().toString() + "-" + image.getOriginalFilename();
         Path imagePath = Paths.get("images", filename);

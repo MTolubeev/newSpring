@@ -189,9 +189,6 @@ public class ProductService {
         product.setCategoryOrder(categoryOrderBuilder.toString());
     }
 
-
-
-
     @Transactional
     public void saveProduct(Product product, String category, String subCategory, String subSubCategory, MultipartFile file1) throws IOException {
         Image image1;
@@ -231,7 +228,6 @@ public class ProductService {
         basketRepository.deleteProductFromBasketProducts(id);
         productRepository.deleteById(id);
     }
-
 
     private CommentDto convertCommentToDto(Comment comment) {
         CommentDto dto = new CommentDto();

@@ -22,5 +22,7 @@ public class CommentImage {
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
+    @Column(name = "bytes", columnDefinition = "bytea")
+    private byte[] bytes;
 
 }
