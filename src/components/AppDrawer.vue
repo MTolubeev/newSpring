@@ -2,132 +2,20 @@
   <div v-if="isVisible" class="catalog">
     <div class="cart">
       <h2>Каталог товаров</h2>
-      <svg
-        @click="$emit('close-drawer')" width="16" height="14" viewBox="0 0 16 14" fill="#fff" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1 7H14.7143" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M8.71436 1L14.7144 7L8.71436 13" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg @click="$emit('close-drawer')" width="16" height="14" fill="#fff">
+        <path d="M1 7H14.7143" stroke="#fff" stroke-width="2" />
+        <path d="M8.71436 1L14.7144 7L8.71436 13" stroke="#fff" stroke-width="2" />
       </svg>
     </div>
-    <n-button
-      v-if="!editMode && isAdmin"
-      type="primary"
-      size="small"
-      @click="enableEditMode">
+    <n-button v-if="!editMode && isAdmin" type="primary" size="small" @click="enableEditMode">
       Включить режим редактирования
     </n-button>
-<Draggable
-      v-model="categories"
-      :group="{ name: 'categories' }"
-      @end="onDragEnd"
-      item-key="name"
-      :disabled="!editMode">
-      <template #item="{ element }">
-        <li>
-          <router-link
-            :to="{ name: 'Category', params: { categoryName: element.name } }">
-            <strong>{{ element.name }}</strong>
-          </router-link>
 
-          <Draggable
-            v-model="element.subcategories"
-            :group="{ name: 'subcategories' }"
-            item-key="name"
-            :disabled="!editMode">
-            <template #item="{ element: subcategory }">
-              <ul>
-                <li>
-                  <router-link
-                    :to="{
-                      name: 'Category',
-                      params: {
-                        categoryName: element.name,
-                        subcategoryName: subcategory.name,},}">
-                    <strong>{{ subcategory.name }}</strong>
-                  </router-link>
-                  <Draggable
-                    v-model="subcategory.subsubcategories"
-                    :group="{ name: 'subsubcategories' }"
-                    item-key="name"
-                    :disabled="!editMode">
-                    <template #item="{ element: subsubcategory }">
-                      <ul>
-                        <li>
-                          <router-link
-                            :to="{
-                              name: 'Category',
-                              params: {
-                                categoryName: element.name,
-                                subcategoryName: subcategory.name,
-                                subsubcategoryName: subsubcategory.name,},}">
-                            <strong>{{ subsubcategory.name }}</strong>
-                          </router-link>
-                          <Draggable
-                            v-model="subsubcategory.products"
-                            :group="{ name: 'products' }"
-                            item-key="id"
-                            :disabled="!editMode">
-                            <template #item="{ element: product }">
-                              <ul>
-                                <li>
-                                  <router-link
-                                    :to="{
-                                      name: 'ProductView',
-                                      params: { productId: product.id },}">
-                                    {{ product.title }}
-                                  </router-link>
-                                </li>
-                              </ul>
-                            </template>
-                          </Draggable>
-                        </li>
-                      </ul>
-                    </template>
-                  </Draggable>
-
-                  <Draggable
-                    v-model="subcategory.products"
-                    :group="{ name: 'products' }"
-                    item-key="id"
-                    :disabled="!editMode">
-                    <template #item="{ element: product }">
-                      <ul>
-                        <li>
-                          <router-link
-                            :to="{
-                              name: 'ProductView',
-                              params: { productId: product.id },}">
-                            {{ product.title }}
-                          </router-link>
-                        </li>
-                      </ul>
-                    </template>
-                  </Draggable>
-                </li>
-              </ul>
-            </template>
-          </Draggable>
-
-          <Draggable
-            v-model="element.productsWithoutSubcategory"
-            :group="{ name: 'products' }"
-            item-key="id"
-            :disabled="!editMode">
-            <template #item="{ element: product }">
-              <ul>
-                <li>
-                  <router-link
-                    :to="{
-                      name: 'ProductView',
-                      params: { productId: product.id },}">
-                    {{ product.title }}
-                  </router-link>
-                </li>
-              </ul>
-            </template>
-          </Draggable>
-        </li>
-      </template>
-    </Draggable>
+    <DraggableCatalog
+      :categories="categories"
+      :editMode="editMode"
+      @drag-end="onDragEnd"
+    />
 
     <n-button v-if="editMode" type="warning" @click="saveOrder">
       Сохранить изменения
@@ -141,7 +29,7 @@
 <script setup>
 import { ref, computed, onMounted, defineProps } from "vue";
 import axios from "axios";
-import Draggable from "vuedraggable";
+import DraggableCatalog from './DraggableCatalog.vue';
 import { NButton } from "naive-ui";
 import { useUserStore } from "@/store/userStore";
 import { useOrganizeProducts } from "@/composables/useOrganizeProducts";
@@ -158,9 +46,11 @@ defineProps({
 const enableEditMode = () => {
   editMode.value = true;
 };
+
 const cancelEditMode = () => {
   editMode.value = false;
 };
+
 const fetchData = async () => {
   try {
     const response = await axios.get("http://localhost:8080/product/getAll");
@@ -175,69 +65,48 @@ const fetchData = async () => {
   }
 };
 
+const onDragEnd = (newCategories) => {
+  categories.value = newCategories;
+};
+
 const collectChanges = () => {
   let changes = {};
 
-  const processCategory = (category, categoryIndex) => {
+  const processProduct = (product, category, subcategory = null, subsubcategory = null, categoryIndex, subcategoryIndex = null, subsubcategoryIndex = null, productIndex) => {
+    if (!changes[product.id]) {
+      changes[product.id] = [];
+    }
+    changes[product.id].push({
+      name: category.name,
+      subcategory: subcategory ? subcategory.name : null,
+      subsubcategory: subsubcategory ? subsubcategory.name : null,
+      order: categoryIndex + 1,
+      subcategoryOrder: subcategoryIndex !== null ? subcategoryIndex + 1 : null,
+      subsubcategoryOrder: subsubcategoryIndex !== null ? subsubcategoryIndex + 1 : null,
+      productOrder: productIndex + 1,
+    });
+  };
+
+  categories.value.forEach((category, categoryIndex) => {
     category.productsWithoutSubcategory.forEach((product, productIndex) => {
-      if (!changes[product.id]) {
-        changes[product.id] = [];
-      }
-      changes[product.id].push({
-        name: category.name,
-        subcategory: null,
-        subsubcategory: null,
-        order: categoryIndex + 1,
-        subcategoryOrder: null,
-        subsubcategoryOrder: null,
-        productOrder: productIndex + 1,
-      });
+      processProduct(product, category, null, null, categoryIndex, null, null, productIndex);
     });
 
     category.subcategories.forEach((subcategory, subcategoryIndex) => {
       subcategory.products.forEach((product, productIndex) => {
-        if (!changes[product.id]) {
-          changes[product.id] = [];
-        }
-        changes[product.id].push({
-          name: category.name,
-          subcategory: subcategory.name,
-          subsubcategory: null,
-          order: categoryIndex + 1,
-          subcategoryOrder: subcategoryIndex + 1,
-          subsubcategoryOrder: null,
-          productOrder: productIndex + 1,
-        });
+        processProduct(product, category, subcategory, null, categoryIndex, subcategoryIndex, null, productIndex);
       });
 
-      subcategory.subsubcategories.forEach(
-        (subsubcategory, subsubcategoryIndex) => {
-          subsubcategory.products.forEach((product, productIndex) => {
-            if (!changes[product.id]) {
-              changes[product.id] = [];
-            }
-            changes[product.id].push({
-              name: category.name,
-              subcategory: subcategory.name,
-              subsubcategory: subsubcategory.name,
-              order: categoryIndex + 1,
-              subcategoryOrder: subcategoryIndex + 1,
-              subsubcategoryOrder: subsubcategoryIndex + 1,
-              productOrder: productIndex + 1,
-            });
-          });
-        }
-      );
+      subcategory.subsubcategories.forEach((subsubcategory, subsubcategoryIndex) => {
+        subsubcategory.products.forEach((product, productIndex) => {
+          processProduct(product, category, subcategory, subsubcategory, categoryIndex, subcategoryIndex, subsubcategoryIndex, productIndex);
+        });
+      });
     });
-  };
-
-  categories.value.forEach((category, index) => {
-    processCategory(category, index);
   });
 
   return changes;
 };
-
 const saveOrder = async () => {
   try {
     const changes = collectChanges();
@@ -268,9 +137,9 @@ onMounted(() => {
   flex-direction: column;
   position: fixed;
   height: 100%;
-  width: 384px; 
+  width: 384px;
   background-color: #465a86;
-  padding: 28px 40px; 
+  padding: 28px 40px;
   top: 0;
   right: 0;
   z-index: 10;
@@ -295,35 +164,4 @@ span {
 svg {
   cursor: pointer;
 }
-
-ul, li {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-
-a {
-  text-decoration: none;
-  color: black;
-  display: block;
-}
-
-a:focus {
-  outline: none;
-}
-a:hover {
-  color: #2fd40e;
-}
-
-li {
-  margin-bottom: 8px; 
-  padding: 8px;
-  border-radius: 4px;
-}
-
-ul {
-  padding-left: 16px; 
-}
-
 </style>

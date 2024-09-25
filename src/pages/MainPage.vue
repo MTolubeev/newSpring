@@ -1,10 +1,18 @@
 <template>
-  <n-spin content-style="--n-opacity-spinning:0; height: 100vh;" stroke="blue" :show="loading">
+  <n-spin
+    content-style="--n-opacity-spinning:0; height: 100vh;"
+    stroke="blue"
+    :show="loading">
     <MyHeader @toggle-drawer="toggleDrawer" />
     <MyDrawer :isVisible="isDrawerVisible" @close-drawer="closeDrawer" />
-    <n-button v-if="isAdmin" @click="openModal" class="button__add" type="warning">Добавить новый товар</n-button>
+    <n-button
+      v-if="isAdmin"
+      @click="openModal"
+      class="button__add"
+      type="warning"
+      >Добавить новый товар</n-button>
     <AddProduct v-if="showModal" @close="closeModal" />
-    
+
     <MyCardList @products-loaded="onProductsLoaded" />
 
     <div class="all_comments">
@@ -19,7 +27,11 @@
           <p>Отзыв: {{ comment.text }}</p>
         </div>
         <div>
-          <router-link :to="{ name: 'ProductView', params: { productId: comment.productId } }" class="name_product">
+          <router-link
+            :to="{
+              name: 'ProductView',
+              params: { productId: comment.productId },}"
+            class="name_product">
             {{ comment.productTitle }}
           </router-link>
         </div>
@@ -29,15 +41,15 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
-import { NButton, NCard, NSpin } from 'naive-ui';
-import axios from 'axios';
+import { computed, onMounted, ref } from "vue";
+import { NButton, NCard, NSpin } from "naive-ui";
+import axios from "axios";
 import MyHeader from "@/components/AppHeader.vue";
 import MyDrawer from "@/components/AppDrawer.vue";
-import AddProduct from '@/components/AddProduct.vue';
-import MyCardList from '@/components/CardList.vue';
+import AddProduct from "@/components/AddProduct.vue";
+import MyCardList from "@/components/CardList.vue";
 import { useUserStore } from "@/store/userStore";
-import { useDrawer } from '@/composables/useHeader.js';
+import { useDrawer } from "@/composables/useHeader.js";
 
 const userStore = useUserStore();
 const { isDrawerVisible, toggleDrawer, closeDrawer } = useDrawer();
@@ -45,25 +57,27 @@ const { isDrawerVisible, toggleDrawer, closeDrawer } = useDrawer();
 const productsLoaded = ref(false);
 const commentsLoaded = ref(false);
 const showModal = ref(false);
-const comments = ref([]); 
+const comments = ref([]);
 
 const loading = computed(() => !productsLoaded.value || !commentsLoaded.value);
 
 const openModal = () => {
   showModal.value = true;
-  document.body.style.overflow = 'hidden';
+  document.body.style.overflow = "hidden";
 };
 
 const closeModal = () => {
   showModal.value = false;
-  document.body.style.overflow = '';
+  document.body.style.overflow = "";
 };
 const limitedComments = computed(() => {
-  return comments.value.filter(comment => comment.score >= 4) .slice(0, 5); 
+  return comments.value.filter((comment) => comment.score >= 4).slice(0, 5);
 });
 const getAllComments = async () => {
   try {
-    const response = await axios.get(`http://localhost:8080/comments/getAllComments`);
+    const response = await axios.get(
+      `http://localhost:8080/comments/getAllComments`
+    );
     comments.value = response.data;
     commentsLoaded.value = true;
   } catch (error) {
@@ -71,13 +85,13 @@ const getAllComments = async () => {
   }
 };
 const onProductsLoaded = () => {
-  productsLoaded.value = true; 
+  productsLoaded.value = true;
   if (commentsLoaded.value) {
     loading.value = false;
   }
 };
 const role = computed(() => userStore.role.value);
-const isAdmin = computed(() => role.value === 'ROLE_ADMIN');
+const isAdmin = computed(() => role.value === "ROLE_ADMIN");
 
 onMounted(async () => {
   await userStore.fetchUser();
@@ -86,12 +100,12 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.button__add{
+.button__add {
   position: relative;
   left: 10%;
   top: 60px;
 }
-.all_comments{
+.all_comments {
   margin-top: 20px;
   display: flex;
   justify-content: center;
@@ -101,12 +115,12 @@ onMounted(async () => {
   padding: 20px;
   background-color: #465a86;
 }
-.n-card{
+.n-card {
   width: 700px;
   display: flex;
   flex-direction: column;
 }
-h2{
+h2 {
   color: #fff;
 }
 .name_product {
@@ -118,7 +132,7 @@ h2{
 }
 
 .name_product::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   bottom: -2px;
@@ -131,5 +145,4 @@ h2{
 .name_product:hover::after {
   width: 100%;
 }
-
 </style>
