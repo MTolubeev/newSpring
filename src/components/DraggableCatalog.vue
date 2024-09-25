@@ -6,10 +6,16 @@
     item-key="name"
     :disabled="!editMode">
     <template #item="{ element }">
-      <li>
-        <router-link :to="{ name: 'Category', params: { categoryName: element.name } }">
-          <strong>{{ element.name }}</strong>
-        </router-link>
+      <li class="category-item">
+        <div class="category-content">
+          <router-link :to="{ name: 'Category', params: { categoryName: element.name } }" class="category-link">
+            <strong>{{ element.name }}</strong>
+          </router-link>
+         
+          <span v-if="editMode" class="edit-icon" @click="handleEditCategory(element)">
+            <img src="@/assets/pencil.svg" alt="pencil">
+          </span>
+        </div>
 
         <Draggable
           v-model="element.subcategories"
@@ -18,11 +24,15 @@
           :disabled="!editMode">
           <template #item="{ element: subcategory }">
             <ul>
-              <li>
+              <li class="category-item">
+                <div class="category-content">
                 <router-link :to="{ name: 'Category', params: { categoryName: element.name, subcategoryName: subcategory.name } }">
                   <strong>{{ subcategory.name }}</strong>
                 </router-link>
-
+                <span v-if="editMode" class="edit-icon" @click="handleEditCategory(element)">
+                  <img src="@/assets/pencil.svg" alt="pencil">
+                </span>
+              </div>
                 <Draggable
                   v-model="subcategory.subsubcategories"
                   :group="{ name: 'subsubcategories' }"
@@ -30,15 +40,21 @@
                   :disabled="!editMode">
                   <template #item="{ element: subsubcategory }">
                     <ul>
-                      <li>
+                      <li class="category-item">
+                        <div class="category-content">
                         <router-link :to="{ name: 'Category', params: { categoryName: element.name, subcategoryName: subcategory.name, subsubcategoryName: subsubcategory.name } }">
                           <strong>{{ subsubcategory.name }}</strong>
                         </router-link>
 
+                        <span v-if="editMode" class="edit-icon" @click="handleEditCategory(element)">
+                          <img src="@/assets/pencil.svg" alt="pencil">
+                        </span>
+                      </div>
                         <Draggable
                           v-model="subsubcategory.products"
                           :group="{ name: 'products' }"
                           item-key="id"
+                          :move="checkSameList"
                           :disabled="!editMode">
                           <template #item="{ element: product }">
                             <ul>
@@ -59,6 +75,7 @@
                   v-model="subcategory.products"
                   :group="{ name: 'products' }"
                   item-key="id"
+                  :move="checkSameList" 
                   :disabled="!editMode">
                   <template #item="{ element: product }">
                     <ul>
@@ -79,6 +96,7 @@
           v-model="element.productsWithoutSubcategory"
           :group="{ name: 'products' }"
           item-key="id"
+          :move="checkSameList" 
           :disabled="!editMode">
           <template #item="{ element: product }">
             <ul>
@@ -94,6 +112,7 @@
     </template>
   </Draggable>
 </template>
+
 
 <script setup>
 import { defineProps, defineEmits, ref, watch } from 'vue';
@@ -115,6 +134,10 @@ watch(() => props.categories, (newCategories) => {
 const handleDragEnd = () => {
   emit('drag-end', internalCategories.value);
 };
+
+const checkSameList = (evt) => {
+  return evt.from === evt.to;
+};
 </script>
 
 <style scoped>
@@ -134,6 +157,31 @@ li {
 
 ul {
   padding-left: 16px;
+}
+
+.category-item {
+  position: relative;
+}
+
+.category-content {
+  display: flex;
+  align-items: center;
+}
+
+.edit-icon {
+  display: none; 
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.category-content:hover .edit-icon {
+  display: inline-block; 
+}
+
+.edit-icon img {
+  width: 16px; 
+  height: 16px;
+  stroke: #ccc; 
 }
 
 a {

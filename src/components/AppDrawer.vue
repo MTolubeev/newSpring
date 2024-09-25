@@ -107,8 +107,6 @@ const collectChanges = () => {
 
   return changes;
 };
-
-
 const saveOrder = async () => {
   try {
     const changes = collectChanges();
