@@ -62,11 +62,11 @@ public class CommentController {
         comment.setScore(score);
 
 
-        if (comment.getImages() == null) {
+        if (image.isEmpty()) {
             comment.setImages(new ArrayList<>());
         }
 
-        if (image != null && !image.isEmpty()) {
+        else {
             String imageUrl = saveImage(image);
             CommentImage commentImage = new CommentImage();
             commentImage.setImageUrl(imageUrl);

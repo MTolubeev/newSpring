@@ -4,6 +4,7 @@ import com.example.EShop.dtos.CategoryDto;
 import com.example.EShop.dtos.CommentDto;
 import com.example.EShop.dtos.ProductDto;
 import com.example.EShop.models.Comment;
+import com.example.EShop.models.CommentImage;
 import com.example.EShop.models.Image;
 import com.example.EShop.models.Product;
 import com.example.EShop.repositories.*;
@@ -199,10 +200,10 @@ public class ProductService {
             product.addImageToProduct(image1);
         }
         String cat = category;
-        if(!subCategory.isEmpty())
+        if(!Objects.equals(subCategory, ""))
             cat += "/" + subCategory;
         product.setCategory(cat);
-        if(!subSubCategory.isEmpty())
+        if(!Objects.equals(subSubCategory, ""))
             cat += "/" + subSubCategory;
 
         generateCategoryOrderForProduct(product);
@@ -231,6 +232,11 @@ public class ProductService {
 
     private CommentDto convertCommentToDto(Comment comment) {
         CommentDto dto = new CommentDto();
+        if(comment.getImages().size() != 0) {
+            CommentImage commentImage = comment.getImages().get(0);
+            String image = Base64.getEncoder().encodeToString(commentImage.getBytes());
+            dto.setImage(image);
+        }
         dto.setId(comment.getId());
         dto.setText(comment.getText());
         dto.setImages(comment.getImages());
@@ -239,6 +245,7 @@ public class ProductService {
         dto.setUsername(comment.getUser().getUsername());
         dto.setProductId(comment.getProduct().getId());
         dto.setProductTitle(comment.getProduct().getTitle());
+
         return dto;
     }
 
