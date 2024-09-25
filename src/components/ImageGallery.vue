@@ -80,6 +80,7 @@
   .gallery-content {
     text-align: center;
     display: flex;
+    width: 400px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -101,21 +102,20 @@
     font-size: 36px;
   }
   
-  .prev-button {
+.prev-button {
     left: 20px;
-  }
+}
   
-  .next-button {
+.next-button {
     right: 20px;
-  }
+}
   
-  .close-button {
+.close-button {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 7px;
+    left: 270%;
     background: transparent;
-    border: none;
     font-size: 36px;
-  }
+}
   </style>
   
