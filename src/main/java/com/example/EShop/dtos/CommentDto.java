@@ -19,5 +19,5 @@ public class CommentDto {
     private Long productId;
     private String productTitle;
     private List<CommentImage> images;
-    private String image;
+  //  private String image;
 }

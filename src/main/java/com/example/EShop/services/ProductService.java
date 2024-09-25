@@ -232,11 +232,11 @@ public class ProductService {
 
     private CommentDto convertCommentToDto(Comment comment) {
         CommentDto dto = new CommentDto();
-        if(comment.getImages().size() != 0) {
-            CommentImage commentImage = comment.getImages().get(0);
-            String image = Base64.getEncoder().encodeToString(commentImage.getBytes());
-            dto.setImage(image);
-        }
+//        if(comment.getImages().size() != 0) {
+//            CommentImage commentImage = comment.getImages().get(0);
+//            String image = Base64.getEncoder().encodeToString(commentImage.getBytes());
+//            dto.setImage(image);
+//        }
         dto.setId(comment.getId());
         dto.setText(comment.getText());
         dto.setImages(comment.getImages());
