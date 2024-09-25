@@ -44,8 +44,15 @@
         </div>
         <div>{{ comment.text }}</div>
         <div class="comment-images" v-if="comment.images.length > 0">
-          <img v-for="image in comment.images" :src="convertBase64(image.bytes)" :key="image.id" class="comment-image" alt="comment image" />
+          <img 
+            v-for="image in comment.images" 
+            :src="convertBase64(image.bytes)" 
+            :key="image.id" 
+            class="comment-image" 
+            alt="comment image" 
+            @click="openImageGallery(comment.images)" />
         </div>
+        <ImageGallery :images="currentImages" :show="showImageGallery" @close="closeImageGallery" />
         <img 
           v-if="isAdmin || isOwner(comment)" 
           src="@/assets/bin.webp"
@@ -58,6 +65,8 @@
       <h3>Комментариев пока что нет</h3>
     </div>
   </div>
+  
+
   <div v-if="confirmDialogVisible" class="modal-overlay">
     <div class="modal-content">
       <h3>Подтверждение удаления</h3>
@@ -71,15 +80,17 @@
 
   <WriteReviewModal v-model:show="showReviewModal" :productId="productId" />
 </template>
+
 <script setup>
 import { defineProps, ref, computed, onMounted } from 'vue';
 import { NCard, NButton, NSelect } from 'naive-ui';
 import WriteReviewModal from './WriteReviewModal.vue';
 import { useUserStore } from '@/store/userStore';
 import axios from 'axios';
-import  { useNotificationService }  from '@/composables/notificationUtils';
-const { showNotificationMessage } = useNotificationService();
+import ImageGallery from './ImageGallery.vue';
+import { useNotificationService } from '@/composables/notificationUtils';
 
+const { showNotificationMessage } = useNotificationService();
 
 const userStore = useUserStore();
 const user = computed(() => userStore.user.value);
@@ -104,6 +115,8 @@ const showReviewModal = ref(false);
 const confirmDialogVisible = ref(false);
 const commentIdToDelete = ref(null);
 const sortOrder = ref('desc');
+const currentImages = ref([]); // Для хранения текущих изображений для галереи
+const showImageGallery = ref(false); // Для управления показом галереи
 
 const sortOptions = [
   { label: 'От высоких к низким', value: 'desc' },
@@ -113,9 +126,15 @@ const sortOptions = [
 const toggleComments = () => {
   showAll.value = !showAll.value;
 };
-const convertBase64 = (base64String) => {
-  return `data:image/jpeg;base64,${base64String}`;
+const closeImageGallery = () => {
+  showImageGallery.value = false;
+  currentImages.value = []; 
 };
+
+const convertBase64 = (base64String) => {
+  return base64String ? `data:image/jpeg;base64,${base64String}` : '';
+};
+
 const isOwner = (comment) => {
   return user.value && user.value.id === comment.userId;
 };
@@ -131,8 +150,8 @@ const sortedComments = computed(() => {
 const handleWriteReview = () => {
   if (user.value) {
     showReviewModal.value = true;
-  }else{
-    showNotificationMessage('error', 'Ошибка добавления комментария', 'Авторизуйтесь для создания комменария');
+  } else {
+    showNotificationMessage('error', 'Ошибка добавления комментария', 'Авторизуйтесь для создания комментария');
   }
 };
 
@@ -178,7 +197,14 @@ const confirmDeleteComment = async () => {
   }
 };
 
-onMounted(async() => {
+const openImageGallery = (images) => {
+  console.log('Opening gallery with images:', images); 
+  currentImages.value = images.map(image => convertBase64(image.bytes)); 
+  showImageGallery.value = true; // Показываем галерею
+};
+
+
+onMounted(async () => {
   await userStore.fetchUser();
   const notificationFlag = localStorage.getItem('showDeleteSuccessNotification');
   if (notificationFlag === 'true') {
@@ -187,6 +213,7 @@ onMounted(async() => {
   }
 });
 </script>
+
 
 <style scoped>
 .comments__wrapper {
@@ -262,5 +289,11 @@ h2, h3 {
   display: flex;
   justify-content: center;
   gap: 15px;
+}
+
+.comment-image {
+  width: 19px; /* Установка ширины изображения */
+  height: auto; /* Автоматическая высота для сохранения пропорций */
+  cursor: pointer; /* Указатель при наведении для интерактивности */
 }
 </style>
