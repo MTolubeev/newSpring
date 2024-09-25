@@ -225,6 +225,7 @@ public class ProductService {
         return image;
     }
 
+
     public void deleteProduct(Long id) {
         basketRepository.deleteProductFromBasketProducts(id);
         productRepository.deleteById(id);

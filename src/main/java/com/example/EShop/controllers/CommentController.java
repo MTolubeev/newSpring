@@ -50,7 +50,7 @@ public class CommentController {
     public ResponseEntity<Comment> addComment(@RequestParam("productId") Long productId,
                                               @RequestParam("text") String text,
                                               @RequestParam("score") int score,
-                                              @RequestParam(value = ("image"), required = false) MultipartFile image,
+                                              @RequestParam(value = ("image"), required = false) List<MultipartFile> image,
                                               @RequestHeader("Authorization") String token) throws IOException {
         User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
         Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
@@ -61,18 +61,17 @@ public class CommentController {
         comment.setText(text);
         comment.setScore(score);
 
-
-        if (image.isEmpty()) {
+        if (image == null) {
             comment.setImages(new ArrayList<>());
-        }
-
-        else {
-            String imageUrl = saveImage(image);
-            CommentImage commentImage = new CommentImage();
-            commentImage.setImageUrl(imageUrl);
-            commentImage.setComment(comment);
-            commentImage.setBytes(image.getBytes());
-            comment.getImages().add(commentImage);
+        } else {
+            for (int i = 0; i < image.size(); i++) {
+                String imageUrl = saveImage(image.get(i));
+                CommentImage commentImage = new CommentImage();
+                commentImage.setImageUrl(imageUrl);
+                commentImage.setComment(comment);
+                commentImage.setBytes(image.get(i).getBytes());
+                comment.getImages().add(commentImage);
+            }
         }
 
         Comment savedComment = commentRepository.save(comment);
@@ -100,7 +99,7 @@ public class CommentController {
         return "/images/" + fileName;
     }
 
-        @GetMapping("/product/{productId}")
+    @GetMapping("/product/{productId}")
     public ResponseEntity<List<Comment>> getComments(@PathVariable Long productId) {
         Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
         return ResponseEntity.ok(commentService.findByProduct(product));
