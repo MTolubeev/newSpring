@@ -43,6 +43,9 @@
           </div>
         </div>
         <div>{{ comment.text }}</div>
+        <div class="comment-images" v-if="comment.images.length > 0">
+          <img v-for="image in comment.images" :src="convertBase64(image.bytes)" :key="image.id" class="comment-image" alt="comment image" />
+        </div>
         <img 
           v-if="isAdmin || isOwner(comment)" 
           src="@/assets/bin.webp"
@@ -110,7 +113,9 @@ const sortOptions = [
 const toggleComments = () => {
   showAll.value = !showAll.value;
 };
-
+const convertBase64 = (base64String) => {
+  return `data:image/jpeg;base64,${base64String}`;
+};
 const isOwner = (comment) => {
   return user.value && user.value.id === comment.userId;
 };

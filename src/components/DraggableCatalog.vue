@@ -8,12 +8,26 @@
     <template #item="{ element }">
       <li class="category-item">
         <div class="category-content">
-          <router-link :to="{ name: 'Category', params: { categoryName: element.name } }" class="category-link">
-            <strong>{{ element.name }}</strong>
-          </router-link>
-         
-          <span v-if="editMode" class="edit-icon" @click="handleEditCategory(element)">
-            <img src="@/assets/pencil.svg" alt="pencil">
+          <template v-if="editMode && editingItem === element">
+            <n-input
+              v-model:value="editedName"
+              @blur="saveEdit(element)"
+              @keyup.enter="saveEdit(element)"/>
+            <n-button size="small" round type="success" @click="saveEdit(element)" class="action-button">
+              ✔️
+            </n-button>
+            <n-button size="small" round type="error" @click="cancelEdit" class="action-button">
+              ✖️
+            </n-button>
+          </template>
+          <template v-else>
+            <router-link :to="{ name: 'Category', params: { categoryName: element.name } }" class="category-link">
+              <strong>{{ element.name }}</strong>
+            </router-link>
+          </template>
+
+          <span v-if="editMode && editingItem !== element" class="edit-icon" @click="startEditing(element)">
+            <img src="@/assets/pencil.svg" alt="pencil" />
           </span>
         </div>
 
@@ -26,13 +40,31 @@
             <ul>
               <li class="category-item">
                 <div class="category-content">
-                <router-link :to="{ name: 'Category', params: { categoryName: element.name, subcategoryName: subcategory.name } }">
-                  <strong>{{ subcategory.name }}</strong>
-                </router-link>
-                <span v-if="editMode" class="edit-icon" @click="handleEditCategory(element)">
-                  <img src="@/assets/pencil.svg" alt="pencil">
-                </span>
-              </div>
+                  <template v-if="editMode && editingItem === subcategory">
+                    <n-input
+                      v-model:value="editedName"
+                      @blur="saveEdit(subcategory)"
+                      @keyup.enter="saveEdit(subcategory)"/>
+
+                    <n-button size="small" round type="success" @click="saveEdit(subcategory)" class="action-button">
+                      <n-icon size="14">со</n-icon>
+                    </n-button>
+                    <n-button size="small" round type="error" @click="cancelEdit" class="action-button">
+                      <n-icon size="14">за</n-icon>
+                    </n-button>
+                  </template>
+                  <template v-else>
+                    <router-link :to="{ name: 'Category', params: { categoryName: element.name, subcategoryName: subcategory.name } }">
+                      <strong>{{ subcategory.name }}</strong>
+                    </router-link>
+                  </template>
+
+                  <span v-if="editMode && editingItem !== subcategory" class="edit-icon" @click="startEditing(subcategory)">
+                    <img src="@/assets/pencil.svg" alt="pencil" />
+                  </span>
+                </div>
+
+
                 <Draggable
                   v-model="subcategory.subsubcategories"
                   :group="{ name: 'subsubcategories' }"
@@ -42,14 +74,28 @@
                     <ul>
                       <li class="category-item">
                         <div class="category-content">
-                        <router-link :to="{ name: 'Category', params: { categoryName: element.name, subcategoryName: subcategory.name, subsubcategoryName: subsubcategory.name } }">
-                          <strong>{{ subsubcategory.name }}</strong>
-                        </router-link>
+                          <template v-if="editMode && editingItem === subsubcategory">
+                            <n-input
+                              v-model:value="editedName"
+                              @blur="saveEdit(subsubcategory)"
+                              @keyup.enter="saveEdit(subsubcategory)"/>
+                            <n-button size="small" round type="success" @click="saveEdit(subsubcategory)" class="action-button">
+                              <n-icon size="14">со</n-icon>
+                            </n-button>
+                            <n-button size="small" round type="error" @click="cancelEdit" class="action-button">
+                              <n-icon size="14">зак</n-icon>
+                            </n-button>
+                          </template>
+                          <template v-else>
+                            <router-link :to="{ name: 'Category', params: { categoryName: element.name, subcategoryName: subcategory.name, subsubcategoryName: subsubcategory.name } }">
+                              <strong>{{ subsubcategory.name }}</strong>
+                            </router-link>
+                          </template>
 
-                        <span v-if="editMode" class="edit-icon" @click="handleEditCategory(element)">
-                          <img src="@/assets/pencil.svg" alt="pencil">
-                        </span>
-                      </div>
+                          <span v-if="editMode && editingItem !== subsubcategory" class="edit-icon" @click="startEditing(subsubcategory)">
+                            <img src="@/assets/pencil.svg" alt="pencil" />
+                          </span>
+                        </div>
                         <Draggable
                           v-model="subsubcategory.products"
                           :group="{ name: 'products' }"
@@ -71,11 +117,12 @@
                   </template>
                 </Draggable>
 
+
                 <Draggable
                   v-model="subcategory.products"
                   :group="{ name: 'products' }"
                   item-key="id"
-                  :move="checkSameList" 
+                  :move="checkSameList"
                   :disabled="!editMode">
                   <template #item="{ element: product }">
                     <ul>
@@ -92,11 +139,12 @@
           </template>
         </Draggable>
 
+        <!-- Products without subcategory -->
         <Draggable
           v-model="element.productsWithoutSubcategory"
           :group="{ name: 'products' }"
           item-key="id"
-          :move="checkSameList" 
+          :move="checkSameList"
           :disabled="!editMode">
           <template #item="{ element: product }">
             <ul>
@@ -113,10 +161,10 @@
   </Draggable>
 </template>
 
-
 <script setup>
 import { defineProps, defineEmits, ref, watch } from 'vue';
 import Draggable from 'vuedraggable';
+import { NInput, NButton, NIcon } from 'naive-ui';
 
 const emit = defineEmits(['drag-end']);
 
@@ -126,14 +174,42 @@ const props = defineProps({
 });
 
 const internalCategories = ref([...props.categories]);
+const editingItem = ref(null);
+const editedName = ref('');
+const originalName = ref('');
+
 
 watch(() => props.categories, (newCategories) => {
   internalCategories.value = [...newCategories];
 });
 
+
+const startEditing = (item) => {
+  editingItem.value = item;
+  editedName.value = item.name;
+  originalName.value = item.name;
+};
+
+// Сохранение изменений
+const saveEdit = (item) => {
+  if (editedName.value.trim()) {
+    item.name = editedName.value;
+    emit('drag-end', internalCategories.value);
+  }
+  editingItem.value = null;
+};
+
+
+const cancelEdit = () => {
+  editingItem.value.name = originalName.value; 
+  editingItem.value = null;
+};
+
+
 const handleDragEnd = () => {
   emit('drag-end', internalCategories.value);
 };
+
 
 const checkSameList = (evt) => {
   return evt.from === evt.to;
@@ -169,24 +245,29 @@ ul {
 }
 
 .edit-icon {
-  display: none; 
+  display: none;
   cursor: pointer;
   margin-left: 8px;
 }
 
 .category-content:hover .edit-icon {
-  display: inline-block; 
+  display: inline-block;
 }
 
 .edit-icon img {
-  width: 16px; 
+  width: 16px;
   height: 16px;
-  stroke: #ccc; 
+  stroke: #ccc;
+}
+
+/* Стили для кнопок действий */
+.action-button {
+  margin-left: 4px;
+  padding: 0;
 }
 
 a {
   text-decoration: none;
   color: white;
 }
-
 </style>
