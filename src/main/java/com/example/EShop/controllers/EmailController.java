@@ -43,6 +43,8 @@ public class EmailController {
         emailContent.append("\nИтоговая стоимость: ").append(totalPrice).append(" руб.");
 
         String address = user.getEmail();
+      //  String address = "lector1774@gmail.com";
+
         emailService.sendSimpleEmail(
                 address,
                 "Ваш заказ на E-shop",

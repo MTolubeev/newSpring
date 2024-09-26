@@ -47,11 +47,12 @@ public class CommentController {
     @PostMapping("/add")
     @PreAuthorize("isAuthenticated()")
 
-    public ResponseEntity<Comment> addComment(@RequestParam("productId") Long productId,
-                                              @RequestParam("text") String text,
-                                              @RequestParam("score") int score,
-                                              @RequestParam(value = ("image"), required = false) List<MultipartFile> image,
-                                              @RequestHeader("Authorization") String token) throws IOException {
+    public ResponseEntity<Comment>addComment(@RequestParam("productId") Long productId,
+               @RequestParam("text") String text,
+               @RequestParam("score") int score,
+               @RequestParam(value = "images", required = false) MultipartFile[] images,
+               @RequestHeader("Authorization") String token) throws IOException {
+
         User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
         Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
 
@@ -61,16 +62,21 @@ public class CommentController {
         comment.setText(text);
         comment.setScore(score);
 
-        if (image == null) {
+        if (comment.getImages() == null) {
             comment.setImages(new ArrayList<>());
-        } else {
-            for (int i = 0; i < image.size(); i++) {
-                String imageUrl = saveImage(image.get(i));
-                CommentImage commentImage = new CommentImage();
-                commentImage.setImageUrl(imageUrl);
-                commentImage.setComment(comment);
-                commentImage.setBytes(image.get(i).getBytes());
-                comment.getImages().add(commentImage);
+        }
+
+        // Обработка массива изображений
+        if (images != null && images.length > 0) {
+            for (MultipartFile image : images) {
+                if (!image.isEmpty()) {
+                    String imageUrl = saveImage(image);
+                    CommentImage commentImage = new CommentImage();
+                    commentImage.setImageUrl(imageUrl);
+                    commentImage.setComment(comment);
+                    commentImage.setBytes(image.getBytes());
+                    comment.getImages().add(commentImage);
+                }
             }
         }
 
@@ -79,23 +85,18 @@ public class CommentController {
     }
 
     private String saveImage(MultipartFile image) throws IOException {
-        // Путь к директории для сохранения изображений
         String directory = "images/";
-
-        // Проверка существования директории, создание, если не существует
         Path imageDirectory = Paths.get(directory);
+
         if (!Files.exists(imageDirectory)) {
-            Files.createDirectories(imageDirectory);  // Создаем директорию, если ее нет
+            Files.createDirectories(imageDirectory); // Создаем директорию, если ее нет
         }
 
-        // Генерация уникального имени файла
         String fileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
         Path imagePath = imageDirectory.resolve(fileName);
 
-        // Копируем файл в директорию
         Files.copy(image.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
 
-        // Возвращаем путь к файлу, который может быть использован для загрузки изображения
         return "/images/" + fileName;
     }
 
@@ -157,9 +158,12 @@ public class CommentController {
     @GetMapping("/getAllComments")
     public ResponseEntity<List<CommentDto>> getAllComments() {
         List<Comment> comments = commentRepository.findAll();
+
+        // Конвертация комментариев в DTO
         List<CommentDto> commentDtos = comments.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
+
         return ResponseEntity.ok(commentDtos);
     }
 
@@ -173,19 +177,20 @@ public class CommentController {
 
     private CommentDto convertToDto(Comment comment) {
         CommentDto dto = new CommentDto();
-//        if(comment.getImages().size() != 0) {
-//            CommentImage commentImage = comment.getImages().get(0);
-//            String image = Base64.getEncoder().encodeToString(commentImage.getBytes());
-//            dto.setImage(image);
-//        }
         dto.setId(comment.getId());
         dto.setText(comment.getText());
-        dto.setImages(comment.getImages());
         dto.setScore(comment.getScore());
         dto.setUserId(comment.getUser().getId());
         dto.setUsername(comment.getUser().getUsername());
         dto.setProductId(comment.getProduct().getId());
         dto.setProductTitle(comment.getProduct().getTitle());
+
+        // Если изображения не инициализированы, возвращаем пустой список
+        if (comment.getImages() == null) {
+            dto.setImages(new ArrayList<>());
+        } else {
+            dto.setImages(comment.getImages());
+        }
 
         return dto;
     }
