@@ -11,12 +11,13 @@
 </template>
 
 <script setup>
-import MyCard from './CardItem.vue';
 import { ref, onMounted, defineEmits } from 'vue';
 import axios from 'axios';
+import MyCard from './CardItem.vue';
+
+const emit = defineEmits(['products-loaded']);
 
 const items = ref([]);
-const emit = defineEmits(['products-loaded']);
 
 const fetchItems = async () => {
   try {
@@ -36,6 +37,7 @@ const fetchItems = async () => {
 const handleDelete = (itemId) => {
   items.value = items.value.filter((item) => item.id !== itemId);
 };
+
 onMounted(fetchItems);
 </script>
 

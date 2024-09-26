@@ -16,20 +16,19 @@
     <span class="item__price"><strong>{{ item.price }} руб.</strong></span>
     <n-button type="error" @click="removeItem">Удалить</n-button>
   </n-card>
-
-
-  
 </template>
 
 <script setup>
 import { defineProps, ref, defineEmits, watch, computed, onMounted } from "vue";
 import { useCartStore } from "@/store/cartStore";
 import { useUserStore } from "@/store/userStore";
+import { NCard, NButton } from "naive-ui";
+
 const cartStore = useCartStore();
 const userStore = useUserStore();
 const token = localStorage.getItem("token");
+
 const user = computed(() => userStore.user.value);
-import { NCard, NButton } from "naive-ui";
 
 const props = defineProps({
   item: {
@@ -72,6 +71,7 @@ watch(
   },
   { immediate: true }
 );
+
 onMounted(async () => {
   if (!user.value) {
     await userStore.fetchUser();

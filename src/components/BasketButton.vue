@@ -15,7 +15,6 @@ const router = useRouter();
 const cartStore = useCartStore();
 const userStore = useUserStore();
 const inCart = ref(false);
-const user = computed(() => userStore.user.value);
 
 const props = defineProps({
   productId: {
@@ -27,6 +26,17 @@ const props = defineProps({
     required: true,
   },
 });
+
+const user = computed(() => userStore.user.value);
+
+const buttonText = computed(() =>
+  inCart.value ? "Перейти в корзину" : "Добавить в корзину"
+);
+
+const buttonStyle = computed(() => ({
+  backgroundColor: inCart.value ? "#f0f0f0" : "#3B5998",
+  color: inCart.value ? "#000" : "#fff",
+}));
 
 const updateInCartStatus = async () => {
   try {
@@ -62,15 +72,6 @@ const toggleCart = async () => {
     console.log(error);
   }
 };
-
-const buttonText = computed(() =>
-  inCart.value ? "Перейти в корзину" : "Добавить в корзину"
-);
-
-const buttonStyle = computed(() => ({
-  backgroundColor: inCart.value ? "#f0f0f0" : "#3B5998",
-  color: inCart.value ? "#000" : "#fff",
-}));
 
 onMounted(async () => {
   await updateInCartStatus();

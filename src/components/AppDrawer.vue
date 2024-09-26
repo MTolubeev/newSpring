@@ -7,7 +7,11 @@
         <path d="M8.71436 1L14.7144 7L8.71436 13" stroke="#fff" stroke-width="2" />
       </svg>
     </div>
-    <n-button v-if="!editMode && isAdmin" type="primary" size="small" @click="enableEditMode">
+    <n-button 
+    v-if="!editMode && isAdmin" 
+    type="primary" 
+    size="small" 
+    @click="enableEditMode">
       Включить режим редактирования
     </n-button>
 
@@ -17,10 +21,16 @@
       @drag-end="onDragEnd"
     />
 
-    <n-button v-if="editMode" type="warning" @click="saveOrder">
+    <n-button 
+    v-if="editMode" 
+    type="warning" 
+    @click="saveOrder">
       Сохранить изменения
     </n-button>
-    <n-button v-if="editMode" type="error" @click="cancelEditMode">
+    <n-button 
+    v-if="editMode" 
+    type="error" 
+    @click="cancelEditMode">
       Отменить изменения
     </n-button>
   </div>
@@ -34,14 +44,17 @@ import { NButton } from "naive-ui";
 import { useUserStore } from "@/store/userStore";
 import { useOrganizeProducts } from "@/composables/useOrganizeProducts";
 
+defineProps({
+  isVisible: Boolean,
+});
+
 const userStore = useUserStore();
 const categories = ref([]);
 const editMode = ref(false);
 const { organizeProductsByCategories } = useOrganizeProducts();
 
-defineProps({
-  isVisible: Boolean,
-});
+const role = computed(() => userStore.role.value);
+const isAdmin = computed(() => role.value === "ROLE_ADMIN");
 
 const enableEditMode = () => {
   editMode.value = true;
@@ -123,14 +136,12 @@ const saveOrder = async () => {
   }
 };
 
-const role = computed(() => userStore.role.value);
-const isAdmin = computed(() => role.value === "ROLE_ADMIN");
-
 onMounted(() => {
   userStore.fetchUser();
   fetchData();
 });
 </script>
+
 <style scoped>
 .catalog {
   display: flex;

@@ -44,13 +44,9 @@
 import { ref, defineProps, defineEmits, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { NCard, NButton, NDialog } from "naive-ui";
-import CartButton from "./BasketButton.vue";
 import { useUserStore } from "@/store/userStore";
+import CartButton from "./BasketButton.vue";
 import axios from "axios";
-
-const userStore = useUserStore();
-const role = computed(() => userStore.role.value);
-const isAdmin = computed(() => role.value === "ROLE_ADMIN");
 
 const props = defineProps({
   item: {
@@ -60,9 +56,14 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["delete"]);
+
+const userStore = useUserStore();
 const router = useRouter();
 const confirmDialogVisible = ref(false);
 const isAuthenticated = ref(false);
+
+const role = computed(() => userStore.role.value);
+const isAdmin = computed(() => role.value === "ROLE_ADMIN");
 
 const checkAuth = () => {
   const token = localStorage.getItem("token");

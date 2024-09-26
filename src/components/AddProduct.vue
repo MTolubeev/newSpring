@@ -87,10 +87,16 @@ import SelectCategory from "./SelectCategory.vue";
 
 const emit = defineEmits(["close"]);
 
-const emitClose = () => {
-  emit("close");
-};
-
+const message = ref("");
+const file = ref(null);
+const product = ref({
+  title: "",
+  price: "",
+  discountPrice: "",
+  description: "",
+  category: "",
+  count: "",
+});
 const categoryOptions = ref([]);
 const subcategoryOptions = ref([]);
 const subsubcategoryOptions = ref([]);
@@ -99,6 +105,10 @@ const selectedData = ref({
   subcategory: null,
   subsubcategory: null,
 });
+
+const emitClose = () => {
+  emit("close");
+};
 
 const getUniqueValues = (items, key) => {
   return Array.from(new Set(items.map((item) => item[key])))
@@ -123,25 +133,13 @@ const fetchData = async () => {
 
 const handleDataChange = (field) => (value) => {
   selectedData.value[field] = value;
-  console.log(`Поле ${field} изменено на:`, value);
 };
 
-const file = ref(null);
-const product = ref({
-  title: "",
-  price: "",
-  discountPrice: "",
-  description: "",
-  category: "",
-  count: "",
-});
-const message = ref("");
-
-function handleFileChange(event) {
+const handleFileChange = (event) => {
   file.value = event.target.files[0];
 }
 
-async function uploadFile() {
+const uploadFile =  async() => {
   if (file.value && product.value.title && product.value.price) {
     const formData = new FormData();
     formData.append("file1", file.value);
@@ -173,6 +171,7 @@ async function uploadFile() {
     }
   }
 }
+
 onMounted(() => {
   fetchData();
 });
