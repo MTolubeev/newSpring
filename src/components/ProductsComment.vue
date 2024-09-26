@@ -44,13 +44,25 @@
         </div>
         <div>{{ comment.text }}</div>
         <div class="comment-images" v-if="comment.images.length > 0">
-          <img 
-            v-for="image in comment.images" 
-            :src="convertBase64(image.bytes)" 
-            :key="image.id" 
-            class="comment-image" 
-            alt="comment image" 
-            @click="openImageGallery(comment.images)" />
+          <div class="images-container">
+            <div class="images-wrapper">
+              <img 
+                v-for="image in comment.images.slice(0, 3)" 
+                :src="convertBase64(image.bytes)" 
+                :key="image.id" 
+                class="comment-image" 
+                alt="изображение комментария" 
+                @click="openImageGallery(comment.images)" />
+            </div>
+            <n-button 
+              quaternary circle
+              v-if="comment.images.length > 3" 
+              @click="openImageGallery(comment.images)" 
+              size="large"
+              class="gallery-button">
+              +
+            </n-button>
+          </div>
         </div>
         <ImageGallery :images="currentImages" :show="showImageGallery" @close="closeImageGallery" />
         <img 
@@ -65,7 +77,6 @@
       <h3>Комментариев пока что нет</h3>
     </div>
   </div>
-  
 
   <div v-if="confirmDialogVisible" class="modal-overlay">
     <div class="modal-content">
@@ -115,8 +126,8 @@ const showReviewModal = ref(false);
 const confirmDialogVisible = ref(false);
 const commentIdToDelete = ref(null);
 const sortOrder = ref('desc');
-const currentImages = ref([]); // Для хранения текущих изображений для галереи
-const showImageGallery = ref(false); // Для управления показом галереи
+const currentImages = ref([]); 
+const showImageGallery = ref(false); 
 
 const sortOptions = [
   { label: 'От высоких к низким', value: 'desc' },
@@ -200,7 +211,7 @@ const confirmDeleteComment = async () => {
 const openImageGallery = (images) => {
   console.log('Opening gallery with images:', images); 
   currentImages.value = images.map(image => convertBase64(image.bytes)); 
-  showImageGallery.value = true; // Показываем галерею
+  showImageGallery.value = true; 
 };
 
 
@@ -273,7 +284,6 @@ h2, h3 {
   justify-content: center;
   z-index: 1000;
 }
-
 .modal-content {
   background-color: white;
   padding: 20px;
@@ -292,8 +302,21 @@ h2, h3 {
 }
 
 .comment-image {
-  width: 19px; /* Установка ширины изображения */
-  height: auto; /* Автоматическая высота для сохранения пропорций */
-  cursor: pointer; /* Указатель при наведении для интерактивности */
+  width: 60px;
+  height: 60px;
+  object-fit: contain; 
+  border-radius: 10px; 
+  cursor: pointer; 
+}
+.images-container {
+  display: flex;
+  align-items: center; 
+  gap: 10px; 
+}
+
+.images-wrapper {
+  display: flex;
+  gap: 10px; 
+  flex-wrap: wrap;
 }
 </style>

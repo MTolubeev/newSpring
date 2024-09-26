@@ -1,37 +1,55 @@
 <template>
-    <n-modal v-model:show="visible" title="Написать отзыв" @close="handleClose" content-style="padding:20px">
-      <div class="review-form">
-        <label for="reviewText">Ваш отзыв:</label>
-        <textarea id="reviewText" v-model="reviewText" rows="4"></textarea>
-  
-        <label>Оценка:</label>
-        <div class="stars">
-          <svg
-            v-for="star in maxStars"
-            :key="star"
-            @click="setRating(star)"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            :fill="star <= rating ? 'gold' : 'lightgray'"
-            width="30"
-            height="30">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          </svg>
-        </div>
-  
-        <label for="uploadImage">Добавить изображение:</label>
-        <input type="file" id="uploadImage" @change="handleImageUpload" accept="image/*">
-  
-        <button @click="submitReview" class="submit-btn">Отправить отзыв</button>
+  <n-modal v-model:show="visible" title="Написать отзыв" @close="handleClose" content-style="padding:20px; width:600px;">
+    <div class="review-form">
+      <label for="reviewText">Ваш отзыв:</label>
+      <n-input
+      v-model:value="reviewText"
+      type="textarea"
+      placeholder="Введите ваш отзыв"
+      rows="4"/>
+
+      <label>Оценка:</label>
+      <div class="stars">
+        <svg
+          v-for="star in maxStars"
+          :key="star"
+          @click="setRating(star)"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          :fill="star <= rating ? 'gold' : 'lightgray'"
+          width="30"
+          height="30">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
       </div>
-    </n-modal>
-  </template>
-  
-  <script setup>
+
+      <label>Добавить изображения:</label>
+      <n-upload 
+        :multiple="true" 
+        :before-upload="beforeUpload"
+        @change="handleChange">
+        <n-button>Выберите файлы</n-button>
+      </n-upload>
+
+      <div v-if="images.length">
+        <h3>Загруженные изображения:</h3>
+        <div class="images-wrapper">
+          <div v-for="(img, index) in images" :key="index" class="image-item">
+            <img :src="img.url" :alt="'Image ' + (index + 1)" />
+          </div>
+        </div>
+      </div>
+
+      <button @click="submitReview" class="submit-btn">Отправить отзыв</button>
+    </div>
+  </n-modal>
+</template>
+
+<script setup>
 import { ref, defineProps, defineEmits, watch, onMounted } from 'vue';
 import axios from 'axios';
-import { NModal } from 'naive-ui';
-import {  useNotificationService } from '@/composables/notificationUtils.js'; 
+import { NModal, NUpload, NButton, NInput } from 'naive-ui';
+import { useNotificationService } from '@/composables/notificationUtils.js'; 
 
 const { showNotificationMessage } = useNotificationService();
 const props = defineProps({
@@ -41,21 +59,35 @@ const props = defineProps({
     required: true
   }
 });
-
 const emits = defineEmits(['update:modelValue']);
 
 const visible = ref(props.modelValue);
 const reviewText = ref('');
 const rating = ref(0);
 const maxStars = 5;
-const image = ref(null);
 
 const setRating = (star) => {
   rating.value = star;
 };
 
-const handleImageUpload = (event) => {
-  image.value = event.target.files[0];
+const files = ref([]);
+
+const images = ref([]);
+
+const beforeUpload = () => {
+  return true;
+};
+
+const handleChange = (event) => {
+  images.value = event.fileList.map(file => {
+    const fileObject = file.file;
+    return {
+      uid: file.uid,
+      name: file.name,
+      url: URL.createObjectURL(fileObject)
+    };
+  });
+  files.value = event.fileList.map(file => file.file);
 };
 
 const handleClose = () => {
@@ -72,11 +104,12 @@ const submitReview = async () => {
   formData.append('productId', props.productId);
   formData.append('text', reviewText.value);
   formData.append('score', rating.value.toString());
-  if (image.value) {
-    formData.append('image', image.value);
-  }
 
-  const token = localStorage.getItem('token'); 
+  files.value.forEach((file) => {
+    formData.append('images', file); 
+  });
+
+  const token = localStorage.getItem('token');
 
   try {
     const response = await axios.post('http://localhost:8080/comments/add', formData, {
@@ -89,7 +122,7 @@ const submitReview = async () => {
     if (response.status === 200) {
       localStorage.setItem('showReviewSuccessNotification', 'true');
       setTimeout(() => {
-        window.location.reload(); // Перезагрузка страницы через 1 секунду
+        window.location.reload();
       }, 1000);
     }
   } catch (error) {
@@ -112,37 +145,66 @@ watch(() => props.modelValue, (newVal) => {
 });
 </script>
 
-  <style scoped>
-  .n-modal  {
+<style scoped>
+.n-modal  {
   padding: 20px;
   box-sizing: border-box; 
+  width: 600px; 
 }
-  .n-modal{
-    background-color: #fff;
-  }
-  .review-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .stars {
-    display: flex;
-    gap: 5px;
-    cursor: pointer;
-  }
-  
-  .submit-btn {
-    padding: 8px 16px;
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .submit-btn:hover {
-    background-color: #218838;
-  }
-  </style>
-  
+.n-modal {
+  background-color: #fff;
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stars {
+  display: flex;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.images-wrapper {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 10px;
+  max-width: 100%; 
+  padding: 10px 0;
+}
+
+::v-deep .n-upload-file-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap; 
+  gap: 10px;
+}
+
+::v-deep .n-upload-file {
+  max-width: 120px; 
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis; 
+}
+.image-item img {
+  max-width: 100px;
+  max-height: 100px;
+  margin: 5px;
+}
+
+.submit-btn {
+  padding: 8px 16px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  background-color: #218838;
+}
+</style>

@@ -5,7 +5,9 @@
       <form @submit.prevent="uploadFile">
         <div class="form-group">
           <label>Изображение к товару:</label>
-          <input type="file" @change="handleFileChange" />
+          <input 
+          type="file" 
+          @change="handleFileChange" />
         </div>
 
         <div class="form-group">
@@ -110,18 +112,10 @@ const getUniqueValues = (items, key) => {
 const fetchData = async () => {
   try {
     const response = await axios.get("http://localhost:8080/product/getAll");
-    const allCategories = response.data.flatMap(
-      (product) => product.categories
-    );
+    const allCategories = response.data.flatMap((product) => product.categories);
     categoryOptions.value = getUniqueValues(allCategories, "name");
-    subcategoryOptions.value = getUniqueValues(
-      allCategories.filter((cat) => cat.subcategory !== null),
-      "subcategory"
-    );
-    subsubcategoryOptions.value = getUniqueValues(
-      allCategories.filter((cat) => cat.subsubcategory !== null),
-      "subsubcategory"
-    );
+    subcategoryOptions.value = getUniqueValues(allCategories.filter((cat) => cat.subcategory !== null),"subcategory");
+    subsubcategoryOptions.value = getUniqueValues(allCategories.filter((cat) => cat.subsubcategory !== null),"subsubcategory");
   } catch (error) {
     console.error("Ошибка при загрузке данных:", error);
   }
@@ -148,9 +142,7 @@ function handleFileChange(event) {
 }
 
 async function uploadFile() {
-  console.log("Метод uploadFile вызван");
   if (file.value && product.value.title && product.value.price) {
-    console.log("Начало формирования FormData"); 
     const formData = new FormData();
     formData.append("file1", file.value);
     formData.append("title", product.value.title);
@@ -161,19 +153,19 @@ async function uploadFile() {
     formData.append("subcategory", selectedData.value.subcategory || "");
     formData.append("subsubcategory", selectedData.value.subsubcategory || "");
     formData.append("count", product.value.count);
+
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post(
-        "http://localhost:8080/product/create",
-        formData,
+       await axios.post("http://localhost:8080/product/create",formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: token,
           },
-        }
-      );
-      console.log(response.data);
+        });
       message.value = "Ваш продукт создан! Обновите страницу";
     } catch (error) {
       console.error("Error uploading file:", error.response?.data || error);

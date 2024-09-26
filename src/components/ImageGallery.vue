@@ -5,7 +5,7 @@
         @click="prevImage" 
         :disabled="currentIndex === 0"
         style="color: white;">
-        ←
+        &#9664;
       </n-button>
       
       <div class="gallery-content">
@@ -24,7 +24,7 @@
         @click="nextImage" 
         :disabled="currentIndex >= images.length - 1"
         style="color: white;">
-        →
+        &#9654;
       </n-button>
     </div>
   </template>
@@ -111,11 +111,11 @@
 }
   
 .close-button {
-    position: absolute;
-    top: 7px;
-    left: 270%;
+    position: fixed;
+    top: 10px;
+    right: 10px;
     background: transparent;
     font-size: 36px;
 }
-  </style>
+</style>
   
