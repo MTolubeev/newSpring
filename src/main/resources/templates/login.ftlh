@@ -18,3 +18,4 @@
 <a href="/registration">Зарегистрироваться</a>
 </body>
 </html>
+JCZZK-YSBFE-7EK5R-GWT5D-QFVU6
