@@ -59,7 +59,6 @@ const logout = () => {
   userStore.logout();
   router.push("/signin");
 };
-
 watch(
   () => cartStore.cartItems,
   (newItems) => {

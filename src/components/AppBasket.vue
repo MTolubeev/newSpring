@@ -62,14 +62,13 @@ import { NButton, NDialog, NSpin } from 'naive-ui';
 const cartStore = useCartStore();
 const userStore = useUserStore();
 
-const cartItems = computed(() => cartStore.cartItems);
-const totalItems = computed(() => cartStore.cartItems.reduce((total, item) => total + item.count, 0));
-const totalPrice = computed(() => cartStore.cartItems.reduce((total, item) => total + item.price * item.count, 0));
-
 const showConfirmation = ref(false);
 const showOrderConfirmed = ref(false);
 const isLoading = ref(false); 
 
+const cartItems = computed(() => cartStore.cartItems);
+const totalItems = computed(() => cartStore.cartItems.reduce((total, item) => total + item.count, 0));
+const totalPrice = computed(() => cartStore.cartItems.reduce((total, item) => total + item.price * item.count, 0));
 const user = computed(() => userStore.user.value);
 
 const updateCartItem = (updatedItem) => {

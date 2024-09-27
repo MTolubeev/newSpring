@@ -5,7 +5,9 @@
       <form @submit.prevent="uploadFile">
         <div class="form-group">
           <label>Изображение к товару:</label>
-          <input type="file" @change="handleFileChange" />
+          <input 
+          type="file" 
+          @change="handleFileChange" />
         </div>
 
         <div class="form-group">
@@ -85,10 +87,16 @@ import SelectCategory from "./SelectCategory.vue";
 
 const emit = defineEmits(["close"]);
 
-const emitClose = () => {
-  emit("close");
-};
-
+const message = ref("");
+const file = ref(null);
+const product = ref({
+  title: "",
+  price: "",
+  discountPrice: "",
+  description: "",
+  category: "",
+  count: "",
+});
 const categoryOptions = ref([]);
 const subcategoryOptions = ref([]);
 const subsubcategoryOptions = ref([]);
@@ -97,6 +105,10 @@ const selectedData = ref({
   subcategory: null,
   subsubcategory: null,
 });
+
+const emitClose = () => {
+  emit("close");
+};
 
 const getUniqueValues = (items, key) => {
   return Array.from(new Set(items.map((item) => item[key])))
@@ -110,18 +122,10 @@ const getUniqueValues = (items, key) => {
 const fetchData = async () => {
   try {
     const response = await axios.get("http://localhost:8080/product/getAll");
-    const allCategories = response.data.flatMap(
-      (product) => product.categories
-    );
+    const allCategories = response.data.flatMap((product) => product.categories);
     categoryOptions.value = getUniqueValues(allCategories, "name");
-    subcategoryOptions.value = getUniqueValues(
-      allCategories.filter((cat) => cat.subcategory !== null),
-      "subcategory"
-    );
-    subsubcategoryOptions.value = getUniqueValues(
-      allCategories.filter((cat) => cat.subsubcategory !== null),
-      "subsubcategory"
-    );
+    subcategoryOptions.value = getUniqueValues(allCategories.filter((cat) => cat.subcategory !== null),"subcategory");
+    subsubcategoryOptions.value = getUniqueValues(allCategories.filter((cat) => cat.subsubcategory !== null),"subsubcategory");
   } catch (error) {
     console.error("Ошибка при загрузке данных:", error);
   }
@@ -129,28 +133,14 @@ const fetchData = async () => {
 
 const handleDataChange = (field) => (value) => {
   selectedData.value[field] = value;
-  console.log(`Поле ${field} изменено на:`, value);
 };
 
-const file = ref(null);
-const product = ref({
-  title: "",
-  price: "",
-  discountPrice: "",
-  description: "",
-  category: "",
-  count: "",
-});
-const message = ref("");
-
-function handleFileChange(event) {
+const handleFileChange = (event) => {
   file.value = event.target.files[0];
 }
 
-async function uploadFile() {
-  console.log("Метод uploadFile вызван");
+const uploadFile =  async() => {
   if (file.value && product.value.title && product.value.price) {
-    console.log("Начало формирования FormData"); 
     const formData = new FormData();
     formData.append("file1", file.value);
     formData.append("title", product.value.title);
@@ -161,19 +151,19 @@ async function uploadFile() {
     formData.append("subcategory", selectedData.value.subcategory || "");
     formData.append("subsubcategory", selectedData.value.subsubcategory || "");
     formData.append("count", product.value.count);
+
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post(
-        "http://localhost:8080/product/create",
-        formData,
+       await axios.post("http://localhost:8080/product/create",formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: token,
           },
-        }
-      );
-      console.log(response.data);
+        });
       message.value = "Ваш продукт создан! Обновите страницу";
     } catch (error) {
       console.error("Error uploading file:", error.response?.data || error);
@@ -181,6 +171,7 @@ async function uploadFile() {
     }
   }
 }
+
 onMounted(() => {
   fetchData();
 });

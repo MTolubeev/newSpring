@@ -139,7 +139,6 @@
           </template>
         </Draggable>
 
-        <!-- Products without subcategory -->
         <Draggable
           v-model="element.productsWithoutSubcategory"
           :group="{ name: 'products' }"
@@ -166,23 +165,17 @@ import { defineProps, defineEmits, ref, watch } from 'vue';
 import Draggable from 'vuedraggable';
 import { NInput, NButton, NIcon } from 'naive-ui';
 
-const emit = defineEmits(['drag-end']);
-
 const props = defineProps({
   categories: Array,
   editMode: Boolean
 });
 
+const emit = defineEmits(['drag-end']);
+
 const internalCategories = ref([...props.categories]);
 const editingItem = ref(null);
 const editedName = ref('');
 const originalName = ref('');
-
-
-watch(() => props.categories, (newCategories) => {
-  internalCategories.value = [...newCategories];
-});
-
 
 const startEditing = (item) => {
   editingItem.value = item;
@@ -190,7 +183,6 @@ const startEditing = (item) => {
   originalName.value = item.name;
 };
 
-// Сохранение изменений
 const saveEdit = (item) => {
   if (editedName.value.trim()) {
     item.name = editedName.value;
@@ -199,21 +191,22 @@ const saveEdit = (item) => {
   editingItem.value = null;
 };
 
-
 const cancelEdit = () => {
   editingItem.value.name = originalName.value; 
   editingItem.value = null;
 };
 
-
 const handleDragEnd = () => {
   emit('drag-end', internalCategories.value);
 };
 
-
 const checkSameList = (evt) => {
   return evt.from === evt.to;
 };
+
+watch(() => props.categories, (newCategories) => {
+  internalCategories.value = [...newCategories];
+});
 </script>
 
 <style scoped>
