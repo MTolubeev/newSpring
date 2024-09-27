@@ -53,9 +53,17 @@ public class CommentService {
         commentRepository.delete(comment);
     }
 
-    public void deleteImage(Comment comment) {
-            comment.setImages(null);
+    public void deleteImage(Comment comment, Long id) {
+
+        List<CommentImage> images = comment.getImages();
+
+        if (images != null && !images.isEmpty()) {
+            images.removeIf(image -> image.getId().equals(id));
+            comment.setImages(images);
             commentRepository.save(comment);
+        } else {
+            throw new RuntimeException("У комментария нет изображений для удаления.");
+        }
     }
 
     public String saveImage(MultipartFile image) throws IOException {

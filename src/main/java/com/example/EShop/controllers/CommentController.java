@@ -62,7 +62,7 @@ public class CommentController {
         comment.setText(text);
         comment.setScore(score);
 
-        if (comment.getImages() == null) {
+        if (comment.getImages().isEmpty()) {
             comment.setImages(new ArrayList<>());
         }
 
@@ -133,27 +133,16 @@ public class CommentController {
     @DeleteMapping("/deleteImage/{commentId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteCommentImage(@PathVariable Long commentId,
+                                                   @RequestParam Long commentImageId,
                                                    @RequestHeader(value = "Authorization") String token) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
-        commentService.deleteImage(comment);
+        commentService.deleteImage(comment, commentImageId);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/usersComment/deleteImage/{commentId}")
-    public ResponseEntity<?> deleteCommentImageByUser(@PathVariable Long commentId,
-                                                      @RequestHeader(value = "Authorization") String token) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
-        User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
-        if (comment.getUser().getId() == user.getId()) {
-            commentService.deleteImage(comment);
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("That's not your comment.");
-        }
-    }
+
 
     @GetMapping("/getAllComments")
     public ResponseEntity<List<CommentDto>> getAllComments() {
