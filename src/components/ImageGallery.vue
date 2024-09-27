@@ -111,11 +111,11 @@
 }
   
 .close-button {
-    position: absolute;
-    top: 7px;
-    left: 270%;
+    position: fixed;
+    top: 20px;
+    right: 20px;
     background: transparent;
     font-size: 36px;
-}
+  }
   </style>
   

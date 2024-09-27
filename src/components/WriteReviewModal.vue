@@ -1,37 +1,37 @@
 <template>
-    <n-modal v-model:show="visible" title="Написать отзыв" @close="handleClose" content-style="padding:20px">
-      <div class="review-form">
-        <label for="reviewText">Ваш отзыв:</label>
-        <textarea id="reviewText" v-model="reviewText" rows="4"></textarea>
-  
-        <label>Оценка:</label>
-        <div class="stars">
-          <svg
-            v-for="star in maxStars"
-            :key="star"
-            @click="setRating(star)"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            :fill="star <= rating ? 'gold' : 'lightgray'"
-            width="30"
-            height="30">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          </svg>
-        </div>
-  
-        <label for="uploadImage">Добавить изображение:</label>
-        <input type="file" id="uploadImage" @change="handleImageUpload" accept="image/*">
-  
-        <button @click="submitReview" class="submit-btn">Отправить отзыв</button>
+  <n-modal v-model:show="visible" title="Написать отзыв" @close="handleClose" content-style="padding:20px">
+    <div class="review-form">
+      <label for="reviewText">Ваш отзыв:</label>
+      <textarea id="reviewText" v-model="reviewText" rows="4"></textarea>
+
+      <label>Оценка:</label>
+      <div class="stars">
+        <svg
+          v-for="star in maxStars"
+          :key="star"
+          @click="setRating(star)"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          :fill="star <= rating ? 'gold' : 'lightgray'"
+          width="30"
+          height="30">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
       </div>
-    </n-modal>
-  </template>
-  
-  <script setup>
+
+      <label for="uploadImage">Добавить изображение:</label>
+      <input type="file" id="uploadImage" @change="handleImageUpload" accept="image/*">
+
+      <button @click="submitReview" class="submit-btn">Отправить отзыв</button>
+    </div>
+  </n-modal>
+</template>
+
+<script setup>
 import { ref, defineProps, defineEmits, watch, onMounted } from 'vue';
 import axios from 'axios';
 import { NModal } from 'naive-ui';
-import {  useNotificationService } from '@/composables/notificationUtils.js'; 
+import { useNotificationService } from '@/composables/notificationUtils.js';
 
 const { showNotificationMessage } = useNotificationService();
 const props = defineProps({
@@ -48,14 +48,15 @@ const visible = ref(props.modelValue);
 const reviewText = ref('');
 const rating = ref(0);
 const maxStars = 5;
-const image = ref(null);
+const images = ref([]); // Изменяем на массив
 
 const setRating = (star) => {
   rating.value = star;
 };
 
 const handleImageUpload = (event) => {
-  image.value = event.target.files[0];
+  // Загружаем файлы в массив
+  images.value = Array.from(event.target.files);
 };
 
 const handleClose = () => {
@@ -72,11 +73,12 @@ const submitReview = async () => {
   formData.append('productId', props.productId);
   formData.append('text', reviewText.value);
   formData.append('score', rating.value.toString());
-  if (image.value) {
-    formData.append('image', image.value);
-  }
+  
+  images.value.forEach((image) => {
+    formData.append('image', image); // Изменяем на 'image', как требуется
+  });
 
-  const token = localStorage.getItem('token'); 
+  const token = localStorage.getItem('token');
 
   try {
     const response = await axios.post('http://localhost:8080/comments/add', formData, {
@@ -88,9 +90,9 @@ const submitReview = async () => {
 
     if (response.status === 200) {
       localStorage.setItem('showReviewSuccessNotification', 'true');
-      setTimeout(() => {
-        window.location.reload(); // Перезагрузка страницы через 1 секунду
-      }, 1000);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
     }
   } catch (error) {
     console.error('Ошибка при отправке комментария:', error.response ? error.response.data : error.message);
@@ -100,7 +102,7 @@ const submitReview = async () => {
 
 onMounted(() => {
   const notificationFlag = localStorage.getItem('showReviewSuccessNotification');
-  
+
   if (notificationFlag === 'true') {
     showNotificationMessage('success', 'Успешно!', 'Ваш отзыв был успешно отправлен.');
     localStorage.removeItem('showReviewSuccessNotification');
@@ -112,37 +114,33 @@ watch(() => props.modelValue, (newVal) => {
 });
 </script>
 
-  <style scoped>
-  .n-modal  {
+<style scoped>
+.n-modal  {
   padding: 20px;
   box-sizing: border-box; 
 }
-  .n-modal{
-    background-color: #fff;
-  }
-  .review-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .stars {
-    display: flex;
-    gap: 5px;
-    cursor: pointer;
-  }
-  
-  .submit-btn {
-    padding: 8px 16px;
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .submit-btn:hover {
-    background-color: #218838;
-  }
-  </style>
-  
+.n-modal {
+  background-color: #fff;
+}
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.stars {
+  display: flex;
+  gap: 5px;
+  cursor: pointer;
+}
+.submit-btn {
+  padding: 8px 16px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.submit-btn:hover {
+  background-color: #218838;
+}
+</style>

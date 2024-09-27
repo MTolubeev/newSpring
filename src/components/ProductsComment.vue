@@ -66,7 +66,6 @@
     </div>
   </div>
   
-
   <div v-if="confirmDialogVisible" class="modal-overlay">
     <div class="modal-content">
       <h3>Подтверждение удаления</h3>
@@ -115,8 +114,8 @@ const showReviewModal = ref(false);
 const confirmDialogVisible = ref(false);
 const commentIdToDelete = ref(null);
 const sortOrder = ref('desc');
-const currentImages = ref([]); // Для хранения текущих изображений для галереи
-const showImageGallery = ref(false); // Для управления показом галереи
+const currentImages = ref([]); 
+const showImageGallery = ref(false); 
 
 const sortOptions = [
   { label: 'От высоких к низким', value: 'desc' },
@@ -200,7 +199,7 @@ const confirmDeleteComment = async () => {
 const openImageGallery = (images) => {
   console.log('Opening gallery with images:', images); 
   currentImages.value = images.map(image => convertBase64(image.bytes)); 
-  showImageGallery.value = true; // Показываем галерею
+  showImageGallery.value = true; 
 };
 
 
@@ -292,8 +291,8 @@ h2, h3 {
 }
 
 .comment-image {
-  width: 19px; /* Установка ширины изображения */
-  height: auto; /* Автоматическая высота для сохранения пропорций */
-  cursor: pointer; /* Указатель при наведении для интерактивности */
+  width: 40px; 
+  height: auto; 
+  cursor: pointer;
 }
 </style>
