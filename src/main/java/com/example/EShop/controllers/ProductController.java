@@ -79,10 +79,10 @@ public class ProductController {
             @RequestParam(required = false) MultipartFile file1,
             @ModelAttribute Product product,
             @RequestParam String category,
-            @RequestParam(required = false) String subCategory,
-            @RequestParam(required = false) String subSubCategory,
+            @RequestParam(required = false) String subcategory,
+            @RequestParam(required = false) String subsubcategory,
             @RequestHeader(value = "Authorization", required = false) String token) throws IOException {
-        productService.saveProduct(product, category, subCategory, subSubCategory, file1);
+        productService.saveProduct(product, category, subcategory, subsubcategory, file1);
         return ResponseEntity.status(HttpStatus.CREATED).body("Product created successfully");
     }
 

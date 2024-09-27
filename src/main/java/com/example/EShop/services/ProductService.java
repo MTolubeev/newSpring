@@ -200,10 +200,10 @@ public class ProductService {
             product.addImageToProduct(image1);
         }
         String cat = category;
-        if(!Objects.equals(subCategory, ""))
+        if(subCategory != null)
             cat += "/" + subCategory;
         product.setCategory(cat);
-        if(!Objects.equals(subSubCategory, ""))
+        if(subSubCategory != null)
             cat += "/" + subSubCategory;
 
         generateCategoryOrderForProduct(product);
