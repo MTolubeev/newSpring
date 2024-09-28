@@ -64,7 +64,12 @@
             </n-button>
           </div>
         </div>
-        <ImageGallery :images="currentImages" :show="showImageGallery" @close="closeImageGallery" />
+        <ImageGallery 
+        :images="currentImages" 
+        :show="showImageGallery" 
+        @close="closeImageGallery"
+        @delete-image="(imageId) => handleDeleteImage(comment.id, imageId)" />
+
         <img 
           v-if="isAdmin || isOwner(comment)" 
           src="@/assets/bin.webp"
@@ -207,13 +212,44 @@ const confirmDeleteComment = async () => {
     closeConfirmDialog();
   }
 };
+const handleDeleteImage = async (commentId, imageId) => {
+  try {
+    const token = localStorage.getItem('token');
+    console.log('Отправка запроса на удаление изображения:', {
+      commentId,
+      imageId,
+      headers: {
+        Authorization: token,
+      },
+    });
 
-const openImageGallery = (images) => {
-  console.log('Opening gallery with images:', images); 
-  currentImages.value = images.map(image => convertBase64(image.bytes)); 
+    const response = await axios.delete(`http://localhost:8080/comments/deleteImage/${commentId}`, {
+      headers: {
+        Authorization: token,
+      },
+      params: {
+        commentImageId: imageId,
+      },
+    });
+
+    if (response.status === 200) {
+      showNotificationMessage('success', 'Изображение успешно удалено.');
+      // window.location.reload();
+    } else {
+      showNotificationMessage('error', 'Ошибка при удалении изображения.');
+    }
+  } catch (error) {
+    console.error(error);
+    showNotificationMessage('error', 'Произошла ошибка при удалении изображения.');
+  }
+}
+const openImageGallery = (images) => { 
+  currentImages.value = images.map(image => ({
+    base64: convertBase64(image.bytes),
+    ...image
+  }));
   showImageGallery.value = true; 
 };
-
 
 onMounted(async () => {
   await userStore.fetchUser();

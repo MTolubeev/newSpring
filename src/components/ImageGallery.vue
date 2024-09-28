@@ -10,12 +10,19 @@
     
     <div class="gallery-content">
       <img :src="currentImage" alt="gallery image" class="gallery-image" v-if="currentImage" />
-      
+
       <n-button 
         class="close-button" 
-        @click="$emit('close')" 
+        @click="emitClose" 
         style="color: white; font-size: 24px;">
         ×
+      </n-button>
+
+      <n-button 
+        class="delete-button" 
+        @click="deleteImage"
+        style="color: white; font-size: 24px;">
+        🗑
       </n-button>
     </div>
 
@@ -30,7 +37,7 @@
 </template>
 
 <script setup>
-import { computed, ref, defineProps } from 'vue';
+import { computed, ref, defineProps, defineEmits } from 'vue';
 import { NButton } from 'naive-ui';
 
 const props = defineProps({
@@ -44,11 +51,24 @@ const props = defineProps({
   }
 });
 
+const emit = defineEmits(['close', 'delete-image']);
+
 const currentIndex = ref(0);
 
 const currentImage = computed(() => {
-  return props.images[currentIndex.value] ? props.images[currentIndex.value] : null; 
+  return props.images[currentIndex.value] ? props.images[currentIndex.value].base64 : null;
 });
+
+const deleteImage = () => {
+  if (currentImage.value) {
+    const imageId = props.images[currentIndex.value].id;
+    emit('delete-image', imageId);
+  }
+};
+
+const emitClose = () => {
+  emit('close');
+};
 
 const nextImage = () => {
   if (currentIndex.value < props.images.length - 1) {
@@ -110,11 +130,18 @@ const prevImage = () => {
   right: 20px;
 }
 
-.close-button {
+.close-button, .delete-button {
   position: fixed;
   top: 10px;
-  right: 10px;
   background: transparent;
   font-size: 36px;
+}
+
+.close-button {
+  right: 80px;
+}
+
+.delete-button {
+  right: 10px;
 }
 </style>
