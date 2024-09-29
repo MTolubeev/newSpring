@@ -52,7 +52,7 @@
                 :key="image.id" 
                 class="comment-image" 
                 alt="изображение комментария" 
-                @click="openImageGallery(comment.images)" />
+                @click="openImageGallery(comment.images, comment.id)" />
             </div>
             <n-button 
               quaternary circle
@@ -67,8 +67,10 @@
         <ImageGallery 
         :images="currentImages" 
         :show="showImageGallery" 
+        :commentId = "currentImageGalleryId"
         @close="closeImageGallery"
-        @delete-image="(imageId) => handleDeleteImage(comment.id, imageId)" />
+        @delete-image="handleDeleteImage"
+        />
 
         <img 
           v-if="isAdmin || isOwner(comment)" 
@@ -133,6 +135,7 @@ const commentIdToDelete = ref(null);
 const sortOrder = ref('desc');
 const currentImages = ref([]); 
 const showImageGallery = ref(false); 
+const currentImageGalleryId = ref(null);
 
 const sortOptions = [
   { label: 'От высоких к низким', value: 'desc' },
@@ -180,6 +183,14 @@ const closeConfirmDialog = () => {
   confirmDialogVisible.value = false;
   commentIdToDelete.value = null;
 };
+const openImageGallery = (images, commentId) => { 
+  currentImages.value = images.map(image => ({
+    base64: convertBase64(image.bytes),
+    ...image
+  }));
+  currentImageGalleryId.value = commentId;
+  showImageGallery.value = true; 
+};
 
 const confirmDeleteComment = async () => {
   if (!commentIdToDelete.value) return;
@@ -212,16 +223,9 @@ const confirmDeleteComment = async () => {
     closeConfirmDialog();
   }
 };
-const handleDeleteImage = async (commentId, imageId) => {
+const handleDeleteImage = async ( {commentId, imageId} ) => {
   try {
     const token = localStorage.getItem('token');
-    console.log('Отправка запроса на удаление изображения:', {
-      commentId,
-      imageId,
-      headers: {
-        Authorization: token,
-      },
-    });
 
     const response = await axios.delete(`http://localhost:8080/comments/deleteImage/${commentId}`, {
       headers: {
@@ -233,30 +237,30 @@ const handleDeleteImage = async (commentId, imageId) => {
     });
 
     if (response.status === 200) {
-      showNotificationMessage('success', 'Изображение успешно удалено.');
-      // window.location.reload();
+      localStorage.setItem("showDeleteImageSuccessNotification", "true"); 
+      window.location.reload(); 
     } else {
-      showNotificationMessage('error', 'Ошибка при удалении изображения.');
+      showNotificationMessage("error", "Ошибка при удалении изображения.");
     }
   } catch (error) {
     console.error(error);
-    showNotificationMessage('error', 'Произошла ошибка при удалении изображения.');
+    showNotificationMessage("error","Произошла ошибка при удалении изображения."
+    );
   }
 }
-const openImageGallery = (images) => { 
-  currentImages.value = images.map(image => ({
-    base64: convertBase64(image.bytes),
-    ...image
-  }));
-  showImageGallery.value = true; 
-};
 
 onMounted(async () => {
   await userStore.fetchUser();
-  const notificationFlag = localStorage.getItem('showDeleteSuccessNotification');
-  if (notificationFlag === 'true') {
-    showNotificationMessage('success', 'Комментарий успешно удалён.');
-    localStorage.removeItem('showDeleteSuccessNotification');
+  const deleteCommentNotification = localStorage.getItem("showDeleteSuccessNotification");
+  if (deleteCommentNotification === "true") {
+    showNotificationMessage("success", "Комментарий успешно удалён.");
+    localStorage.removeItem("showDeleteSuccessNotification");
+  }
+
+  const deleteImageNotification = localStorage.getItem("showDeleteImageSuccessNotification");
+  if (deleteImageNotification === "true") {
+    showNotificationMessage("success", "Изображение успешно удалено.");
+    localStorage.removeItem("showDeleteImageSuccessNotification");
   }
 });
 </script>

@@ -48,6 +48,10 @@ const props = defineProps({
   show: {
     type: Boolean,
     required: true
+  },
+  commentId:{
+    type: Number,
+    required: true
   }
 });
 
@@ -62,7 +66,7 @@ const currentImage = computed(() => {
 const deleteImage = () => {
   if (currentImage.value) {
     const imageId = props.images[currentIndex.value].id;
-    emit('delete-image', imageId);
+    emit('delete-image', { imageId, commentId: props.commentId });
   }
 };
 
