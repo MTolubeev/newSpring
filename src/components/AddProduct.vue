@@ -16,8 +16,7 @@
             type="text"
             v-model:value="product.title"
             placeholder="Название"
-            required
-          />
+            required/>
         </div>
 
         <div class="form-group">
@@ -26,8 +25,7 @@
             type="number"
             placeholder="Цена"
             v-model:value="product.price"
-            required
-          />
+            required/>
         </div>
 
         <div class="form-group">
@@ -35,13 +33,15 @@
           <n-input
             type="number"
             placeholder="Скидочная цена"
-            v-model:value="product.discountPrice"
-          />
+            v-model:value="product.discountPrice"/>
         </div>
 
         <div class="form-group">
           <label>Описание товара:</label>
-          <n-input type="textarea" v-model:value="product.description" required />
+          <n-input 
+          type="textarea" 
+          v-model:value="product.description" 
+          required />
         </div>
 
         <div class="form-group">
@@ -54,14 +54,14 @@
         <div class="form-group">
           <SelectCategory
             :options="subcategoryOptions"
-            label="Подкатегория"
+            label="Подкатегория (Необязательно)"
             @data-changed="(value) => handleDataChange('subcategory')(value)"
           />
         </div>
         <div class="form-group">
           <SelectCategory
             :options="subsubcategoryOptions"
-            label="Подподкатегория"
+            label="Подподкатегория (Необязательно)"
             @data-changed="(value) => handleDataChange('subsubcategory')(value)"
           />
         </div>
@@ -75,7 +75,6 @@
         </div>
         <button class="create__product" type="submit">Создать товар</button>
       </form>
-      <!-- <p v-if="message">{{ message }}</p> -->
     </div>
   </div>
 </template>
@@ -164,7 +163,6 @@ const uploadFile =  async() => {
         });
         console.log(response);
         if(response.status === 201){
-          localStorage.setItem("showNitificationCreateProduct", "true");
           window.location.reload();
         } else{
           showNotificationMessage('error', 'Товар не удалось создать');
@@ -176,14 +174,8 @@ const uploadFile =  async() => {
 }
 
 onMounted(() => {
-  const deleteProduct = localStorage.getItem("showNitificationCreateProduct");
-  if(deleteProduct === "true"){
-    showNotificationMessage('success', 'Продукт успешно создан');
-    localStorage.removeItem("showNitificationCreateProduct")
-  }
-});
-
-fetchData();
+  fetchData();
+})
 </script>
 
 <style scoped>

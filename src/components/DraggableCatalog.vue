@@ -47,10 +47,10 @@
                       @keyup.enter="saveEdit(subcategory)"/>
 
                     <n-button size="small" round type="success" @click="saveEdit(subcategory)" class="action-button">
-                      <n-icon size="14">со</n-icon>
+                      ✔️
                     </n-button>
                     <n-button size="small" round type="error" @click="cancelEdit" class="action-button">
-                      <n-icon size="14">за</n-icon>
+                      ✖️
                     </n-button>
                   </template>
                   <template v-else>
@@ -63,8 +63,6 @@
                     <img src="@/assets/pencil.svg" alt="pencil" />
                   </span>
                 </div>
-
-
                 <Draggable
                   v-model="subcategory.subsubcategories"
                   :group="{ name: 'subsubcategories' }"
@@ -80,10 +78,10 @@
                               @blur="saveEdit(subsubcategory)"
                               @keyup.enter="saveEdit(subsubcategory)"/>
                             <n-button size="small" round type="success" @click="saveEdit(subsubcategory)" class="action-button">
-                              <n-icon size="14">со</n-icon>
+                              ✔️
                             </n-button>
                             <n-button size="small" round type="error" @click="cancelEdit" class="action-button">
-                              <n-icon size="14">зак</n-icon>
+                              ✖️
                             </n-button>
                           </template>
                           <template v-else>
@@ -163,7 +161,7 @@
 <script setup>
 import { defineProps, defineEmits, ref, watch } from 'vue';
 import Draggable from 'vuedraggable';
-import { NInput, NButton, NIcon } from 'naive-ui';
+import { NInput, NButton } from 'naive-ui';
 
 const props = defineProps({
   categories: Array,

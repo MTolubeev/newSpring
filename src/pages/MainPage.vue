@@ -4,13 +4,16 @@
     stroke="blue"
     :show="loading">
     <MyHeader @toggle-drawer="toggleDrawer" />
-    <MyDrawer :isVisible="isDrawerVisible" @close-drawer="closeDrawer" />
+    <MyDrawer :isVisible="isDrawerVisible" 
+    @close-drawer="closeDrawer" 
+    />
     <n-button
       v-if="isAdmin"
       @click="openModal"
       class="button__add"
-      type="warning"
-      >Добавить новый товар</n-button>
+      type="warning">
+      Добавить новый товар
+    </n-button>
     <AddProduct v-if="showModal" @close="closeModal" />
 
     <MyCardList @products-loaded="onProductsLoaded" />
