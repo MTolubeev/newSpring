@@ -55,50 +55,10 @@ public class CommentController {
 
         User user = userRepository.findByUsername(jwtTokenUtils.getUsername(token));
         Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
-
-        Comment comment = new Comment();
-        comment.setUser(user);
-        comment.setProduct(product);
-        comment.setText(text);
-        comment.setScore(score);
-
-        if (comment.getImages().isEmpty()) {
-            comment.setImages(new ArrayList<>());
-        }
-
-        // Обработка массива изображений
-        if (images != null && images.length > 0) {
-            for (MultipartFile image : images) {
-                if (!image.isEmpty()) {
-                    String imageUrl = saveImage(image);
-                    CommentImage commentImage = new CommentImage();
-                    commentImage.setImageUrl(imageUrl);
-                    commentImage.setComment(comment);
-                    commentImage.setBytes(image.getBytes());
-                    comment.getImages().add(commentImage);
-                }
-            }
-        }
-
-        Comment savedComment = commentRepository.save(comment);
-        return ResponseEntity.ok(savedComment);
+        return ResponseEntity.ok(commentService.addComment(text, score, images, user, product));
     }
 
-    private String saveImage(MultipartFile image) throws IOException {
-        String directory = "images/";
-        Path imageDirectory = Paths.get(directory);
 
-        if (!Files.exists(imageDirectory)) {
-            Files.createDirectories(imageDirectory); // Создаем директорию, если ее нет
-        }
-
-        String fileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
-        Path imagePath = imageDirectory.resolve(fileName);
-
-        Files.copy(image.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
-
-        return "/images/" + fileName;
-    }
 
     @GetMapping("/product/{productId}")
     public ResponseEntity<List<Comment>> getComments(@PathVariable Long productId) {
@@ -147,8 +107,6 @@ public class CommentController {
     @GetMapping("/getAllComments")
     public ResponseEntity<List<CommentDto>> getAllComments() {
         List<Comment> comments = commentRepository.findAll();
-
-        // Конвертация комментариев в DTO
         List<CommentDto> commentDtos = comments.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());

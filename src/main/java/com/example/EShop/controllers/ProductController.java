@@ -3,8 +3,10 @@ package com.example.EShop.controllers;
 import com.example.EShop.dtos.CategoryDto;
 import com.example.EShop.dtos.ProductDto;
 import com.example.EShop.models.Comment;
+import com.example.EShop.models.Image;
 import com.example.EShop.models.Product;
 import com.example.EShop.models.User;
+import com.example.EShop.repositories.ProductRepository;
 import com.example.EShop.repositories.UserRepository;
 import com.example.EShop.services.BasketService;
 import com.example.EShop.services.CommentService;
@@ -34,6 +36,7 @@ public class ProductController {
     private final CommentService commentService;
     private final UserRepository userRepository;
     private final JwtTokenUtils jwtTokenUtils;
+    private final ProductRepository  productRepository;
 
 
     @GetMapping("/")
@@ -108,4 +111,14 @@ public class ProductController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/product/change")
+    public ResponseEntity<?> changeProduct(@RequestBody Product product){
+
+        Product oldproduct = productRepository.findById(product.getId()).orElseThrow(() -> new RuntimeException("Product not found"));
+
+        return ResponseEntity.ok(productRepository.save(oldproduct));
+
+    }
+
 }
