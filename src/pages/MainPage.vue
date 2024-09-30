@@ -75,9 +75,7 @@ const limitedComments = computed(() => {
 });
 const getAllComments = async () => {
   try {
-    const response = await axios.get(
-      `http://localhost:8080/comments/getAllComments`
-    );
+    const response = await axios.get(`http://localhost:8080/comments/getAllComments`);
     comments.value = response.data;
     commentsLoaded.value = true;
   } catch (error) {
