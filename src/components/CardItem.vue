@@ -1,9 +1,9 @@
 <template>
-  <n-card size="huge" class="card" @click="navigateToproduct" hoverable>
+  <n-card size="huge" class="card" @click="navigateToproduct" hoverable v-if="!isEdited">
     <div class="edit_container">
         <img src="@/assets/pencil.svg" alt="edit_product" @click.stop="editModel">
       </div>
-    <div class="card-content" v-if="!isEdited">
+    <div class="card-content" >
       <div class="image-container">
         <img :src="item.imageUrl" alt="png" />
       </div>
@@ -29,7 +29,8 @@
       </n-button>
     </div>
   </div>
-  <div class="card-content" v-else>
+  </n-card>
+  <n-card class="card" v-else>
       <img style="width: 70px;" v-if="!imageDeleted" :src="item.imageUrl" alt="png" @click.stop="deleteImage" />
       <n-upload
         :default-file-list="fileList"
@@ -55,7 +56,6 @@
       <n-button type="success" @click.stop="editProductPut">Сохранить изменения</n-button>
       <n-button type="error" @click.stop="cancelEdit">Отменить изменения</n-button>
     </div>
-  </div>
   </n-card>
 
   <div v-if="confirmDialogVisible" class="dialog-overlay">
