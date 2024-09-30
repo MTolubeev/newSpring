@@ -31,7 +31,15 @@
   </div>
   <div class="card-content" v-else>
       <img style="width: 70px;" v-if="!imageDeleted" :src="item.imageUrl" alt="png" @click.stop="deleteImage" />
-      <input type="file" v-else @change="handleImageChange" />
+      <n-upload
+        :default-file-list="fileList"
+        list-type="image"
+        :create-thumbnail-url="createThumbnailUrl"
+        v-else 
+        @change="handleImageChange"
+        >
+    <n-button>Upload</n-button>
+  </n-upload>
     <label>Название товара</label>
       <n-input v-model:value="editProduct.title" placeholder="Название товара"/>
     <label>Описание товара</label>
@@ -67,7 +75,7 @@
 <script setup>
 import { ref, defineProps, defineEmits, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { NCard, NButton, NDialog, NInput } from "naive-ui";
+import { NCard, NButton, NDialog, NInput, NUpload } from "naive-ui";
 import { useUserStore } from "@/store/userStore";
 import CartButton from "./BasketButton.vue";
 import axios from "axios";
