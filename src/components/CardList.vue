@@ -5,6 +5,9 @@
       v-for="item in items"
       :key="item.id"
       :item="item"
+      :categoryOptions="categoryOptions"
+      :subcategoryOptions="subcategoryOptions"
+      :subsubcategoryOptions="subsubcategoryOptions"
       @delete="handleDelete"
     ></MyCard>
   </div>
@@ -18,6 +21,9 @@ import MyCard from './CardItem.vue';
 const emit = defineEmits(['products-loaded']);
 
 const items = ref([]);
+const categoryOptions = ref([]);
+const subcategoryOptions = ref([]);
+const subsubcategoryOptions = ref([]);
 
 const fetchItems = async () => {
   try {
@@ -28,17 +34,47 @@ const fetchItems = async () => {
         ...product,
         imageUrl: `data:image/png;base64,${product.base64Image}`,
       };
-});
+    });
+
     emit('products-loaded');
   } catch (err) {
     console.log(err);
   }
 };
+
+const fetchCategories = async () => {
+  try {
+    const response = await axios.get('http://localhost:8080/product/getAll');
+    const products = response.data;
+
+    const categoriesSet = new Set();
+    const subcategoriesSet = new Set();
+    const subsubcategoriesSet = new Set();
+
+    products.forEach(product => {
+      product.categories.forEach(cat => {
+        categoriesSet.add(cat.name);
+        if (cat.subcategory) subcategoriesSet.add(cat.subcategory);
+        if (cat.subsubcategory) subsubcategoriesSet.add(cat.subsubcategory);
+      });
+    });
+
+    categoryOptions.value = Array.from(categoriesSet).map(cat => ({ label: cat, value: cat }));
+    subcategoryOptions.value = Array.from(subcategoriesSet).map(subcat => ({ label: subcat, value: subcat }));
+    subsubcategoryOptions.value = Array.from(subsubcategoriesSet).map(subsubcat => ({ label: subsubcat, value: subsubcat }));
+  } catch (error) {
+    console.error('Ошибка при загрузке категорий', error);
+  }
+};
+
 const handleDelete = (itemId) => {
   items.value = items.value.filter((item) => item.id !== itemId);
 };
 
-onMounted(fetchItems);
+onMounted(() => {
+  fetchItems();
+  fetchCategories();
+});
 </script>
 
 <style scoped>

@@ -82,6 +82,18 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  categoryOptions: {
+    type: Array,
+    required: true,
+  },
+  subcategoryOptions: {
+    type: Array,
+    required: true,
+  },
+  subsubcategoryOptions: {
+    type: Array,
+    required: true,
+  },
 });
 
 const emit = defineEmits(["delete"]);
@@ -129,37 +141,9 @@ const closeConfirmDialog = () => {
 const navigateToproduct = () => {
   router.push({ path: `/product-view/${props.item.id}` });
 };
-const categoryOptions = ref([]);
-const subcategoryOptions = ref([]);
-const subsubcategoryOptions = ref([]);
 
-const fetchCategories = async () => {
-  try {
-    const response = await axios.get('http://localhost:8080/product/getAll');
-    const products = response.data;
-
-    const categoriesSet = new Set();
-    const subcategoriesSet = new Set();
-    const subsubcategoriesSet = new Set();
-
-    products.forEach(product => {
-      product.categories.forEach(cat => {
-        categoriesSet.add(cat.name);
-        if (cat.subcategory) subcategoriesSet.add(cat.subcategory);
-        if (cat.subsubcategory) subsubcategoriesSet.add(cat.subsubcategory);
-      });
-    });
-
-    categoryOptions.value = Array.from(categoriesSet).map(cat => ({ label: cat, value: cat }));
-    subcategoryOptions.value = Array.from(subcategoriesSet).map(subcat => ({ label: subcat, value: subcat }));
-    subsubcategoryOptions.value = Array.from(subsubcategoriesSet).map(subsubcat => ({ label: subsubcat, value: subsubcat }));
-  } catch (error) {
-    console.error('Ошибка при загрузке категорий', error);
-  }
-};
 const handleSave = async (updatedProduct) => {
   try {
-    // console.log("Sending updated product:", updatedProduct);
     const response = await axios.put(`http://localhost:8080/product/change`, updatedProduct, {
       headers: {
         'Content-Type': 'application/json'
@@ -168,15 +152,6 @@ const handleSave = async (updatedProduct) => {
     console.log("Server response:", response.data);
   } catch (error) {
     console.error("Error saving product:", error);
-    if (error.response) {
-      console.error("Server response data:", error.response.data);
-      console.error("Server response status:", error.response.status);
-      console.error("Server response headers:", error.response.headers);
-    } else if (error.request) {
-      console.error("No response received:", error.request);
-    } else {
-      console.error("Error setting up the request:", error.message);
-    }
   }
   isEdited.value = false;
 };
@@ -188,7 +163,6 @@ const handleCancel = () => {
 onMounted(() => {
   userStore.fetchUser();
   checkAuth();
-  fetchCategories();
 });
 
 </script>
