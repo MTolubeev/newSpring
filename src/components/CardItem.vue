@@ -1,9 +1,19 @@
 <template>
-  <n-card size="huge" class="card" @click="navigateToproduct" hoverable v-if="!isEdited">
+  <n-card
+    size="huge"
+    class="card"
+    @click="navigateToproduct"
+    hoverable
+    v-if="!isEdited"
+  >
     <div class="edit_container">
-        <img src="@/assets/pencil.svg" alt="edit_product" @click.stop="editModel">
-      </div>
-    <div class="card-content" >
+      <img
+        src="@/assets/pencil.svg"
+        alt="edit_product"
+        @click.stop="editModel"
+      />
+    </div>
+    <div class="card-content">
       <div class="image-container">
         <img :src="item.imageUrl" alt="png" />
       </div>
@@ -20,41 +30,70 @@
           Количество товаров осталось: <b>{{ item.count }}</b>
         </span>
       </div>
-    <div class="card__button">
-      <CartButton :productId="item.id" :product="item" @click.stop />
-      <n-button style="--n-border-hover: 1px solid #3B5998; --n-text-color-hover:#3B5998;"  
-      v-if="isAdmin" 
-      @click.stop="openConfirmDialog">
-        Удалить товар из списка
-      </n-button>
+      <div class="card__button">
+        <CartButton :productId="item.id" :product="item" @click.stop />
+        <n-button
+          style="
+            --n-border-hover: 1px solid #3b5998;
+            --n-text-color-hover: #3b5998;
+          "
+          v-if="isAdmin"
+          @click.stop="openConfirmDialog"
+        >
+          Удалить товар из списка
+        </n-button>
+      </div>
     </div>
-  </div>
   </n-card>
   <n-card class="card" v-else>
-      <img style="width: 70px;" v-if="!imageDeleted" :src="item.imageUrl" alt="png" @click.stop="deleteImage" />
-      <n-upload
-        :default-file-list="fileList"
-        list-type="image"
-        :create-thumbnail-url="createThumbnailUrl"
-        v-else 
-        @change="handleImageChange"
-        >
-    <n-button>Upload</n-button>
-  </n-upload>
+    <img
+      style="width: 70px"
+      v-if="!imageDeleted"
+      :src="item.imageUrl"
+      alt="png"
+      @click.stop="deleteImage"
+    />
+    <n-upload
+      :default-file-list="fileList"
+      list-type="image"
+      :create-thumbnail-url="createThumbnailUrl"
+      v-else
+      @change="handleChange"
+      max="1"
+    >
+      <n-button>Upload</n-button>
+    </n-upload>
     <label>Название товара</label>
-      <n-input v-model:value="editProduct.title" placeholder="Название товара"/>
+    <n-input v-model:value="editProduct.title" placeholder="Название товара" />
     <label>Описание товара</label>
-      <n-input type="textarea" v-model:value="editProduct.description" placeholder="Введите описание товара"/>
+    <n-input
+      type="textarea"
+      v-model:value="editProduct.description"
+      placeholder="Введите описание товара"
+    />
     <label>Цена товара</label>
-      <n-input v-model:value="editProduct.price" placeholder="Введите цену товара"/>
+    <n-input
+      v-model:value="editProduct.price"
+      placeholder="Введите цену товара"
+    />
     <label>Скидочная цена товара</label>
-      <n-input v-model:value="editProduct.discountPrice" placeholder="Введите скидку товара"/>
+    <n-input
+      v-model:value="editProduct.discountPrice"
+      placeholder="Введите скидку товара"
+    />
     <label>Количество товаров</label>
-      <n-input v-model:value="editProduct.count" placeholder="Введите скидку товара"/>
+    <n-input
+      v-model:value="editProduct.count"
+      placeholder="Введите скидку товара"
+    />
 
     <div class="card__button">
-      <n-button type="success" @click.stop="editProductPut">Сохранить изменения</n-button>
-      <n-button type="error" @click.stop="cancelEdit">Отменить изменения</n-button>
+      <n-button type="success" @click.stop="editProductPut">
+        Сохранить изменения
+      </n-button>
+      <n-button type="error" @click.stop="cancelEdit">
+        Отменить изменения
+      </n-button>
     </div>
   </n-card>
 
@@ -66,7 +105,8 @@
       negative-text="Отмена"
       @positive-click="deleteProduct"
       @negative-click="closeConfirmDialog"
-      :closable="false">
+      :closable="false"
+    >
       Вы уверены, что хотите удалить этот продукт?
     </n-dialog>
   </div>
@@ -95,7 +135,8 @@ const confirmDialogVisible = ref(false);
 const isAuthenticated = ref(false);
 const isEdited = ref(false);
 const imageDeleted = ref(false);
-const editProduct = ref({...props.item});
+const editProduct = ref({ ...props.item });
+const fileList = ref([]);
 
 const role = computed(() => userStore.role.value);
 const isAdmin = computed(() => role.value === "ROLE_ADMIN");
@@ -107,21 +148,28 @@ const checkAuth = () => {
   }
 };
 
-const editModel = () =>{
+const editModel = () => {
   isEdited.value = true;
-}
+};
 
 const deleteImage = () => {
   imageDeleted.value = true;
+  editProduct.value.imageUrl = null;
 };
 
-const handleImageChange = (event) => {
-  const file = event.target.files[0];
-  if (file) {
+const handleChange = (event) => {
+  if (event.fileList && event.fileList.length > 0) {
+    const file = event.fileList[0].file;
     const reader = new FileReader();
     reader.onload = (e) => {
-      editProduct.value.imageUrl = e.target.result;
-      imageDeleted.value = false;
+      editProduct.value.base64Image = e.target.result;
+      fileList.value = [
+        {
+          id: file.uid,
+          name: file.name,
+          url: e.target.result,
+        },
+      ];
     };
     reader.readAsDataURL(file);
   }
@@ -131,16 +179,16 @@ const cancelEdit = () => {
   editProduct.value = { ...props.item };
   isEdited.value = false;
   imageDeleted.value = false;
+  fileList.value = [];
 };
-const editProductPut = () =>{
-  try{
+const editProductPut = () => {
+  try {
+    delete editProduct.value.imageUrl;
     console.log(editProduct.value);
-  } catch(error){
+  } catch (error) {
     console.log(error);
   }
-}
-
-
+};
 
 const deleteProduct = async () => {
   try {
@@ -160,7 +208,6 @@ const openConfirmDialog = (event) => {
 const closeConfirmDialog = () => {
   confirmDialogVisible.value = false;
 };
-
 
 const navigateToproduct = () => {
   router.push({ path: `/product-view/${props.item.id}` });
@@ -248,7 +295,7 @@ onMounted(() => {
   top: 40px;
   right: 40px;
 }
-.edit_container img{
+.edit_container img {
   width: 20px;
 }
 </style>
