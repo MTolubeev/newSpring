@@ -1,6 +1,9 @@
 <template>
-  <n-card size="huge" class="card" @click="navigateToproduct" hoverable>
-    <div class="card-content">
+  <n-card size="huge" class="card" @click="navigateToproduct" hoverable v-if="!isEdited">
+    <div class="edit_container">
+        <img src="@/assets/pencil.svg" alt="edit_product" @click.stop="editModel">
+      </div>
+    <div class="card-content" >
       <div class="image-container">
         <img :src="item.imageUrl" alt="png" />
       </div>
@@ -17,12 +20,41 @@
           Количество товаров осталось: <b>{{ item.count }}</b>
         </span>
       </div>
-    </div>
     <div class="card__button">
       <CartButton :productId="item.id" :product="item" @click.stop />
-      <n-button style="--n-border-hover: 1px solid #3B5998; --n-text-color-hover:#3B5998;"  v-if="isAdmin" @click.stop="openConfirmDialog">
+      <n-button style="--n-border-hover: 1px solid #3B5998; --n-text-color-hover:#3B5998;"  
+      v-if="isAdmin" 
+      @click.stop="openConfirmDialog">
         Удалить товар из списка
       </n-button>
+    </div>
+  </div>
+  </n-card>
+  <n-card class="card" v-else>
+      <img style="width: 70px;" v-if="!imageDeleted" :src="item.imageUrl" alt="png" @click.stop="deleteImage" />
+      <n-upload
+        :default-file-list="fileList"
+        list-type="image"
+        :create-thumbnail-url="createThumbnailUrl"
+        v-else 
+        @change="handleImageChange"
+        >
+    <n-button>Upload</n-button>
+  </n-upload>
+    <label>Название товара</label>
+      <n-input v-model:value="editProduct.title" placeholder="Название товара"/>
+    <label>Описание товара</label>
+      <n-input type="textarea" v-model:value="editProduct.description" placeholder="Введите описание товара"/>
+    <label>Цена товара</label>
+      <n-input v-model:value="editProduct.price" placeholder="Введите цену товара"/>
+    <label>Скидочная цена товара</label>
+      <n-input v-model:value="editProduct.discountPrice" placeholder="Введите скидку товара"/>
+    <label>Количество товаров</label>
+      <n-input v-model:value="editProduct.count" placeholder="Введите скидку товара"/>
+
+    <div class="card__button">
+      <n-button type="success" @click.stop="editProductPut">Сохранить изменения</n-button>
+      <n-button type="error" @click.stop="cancelEdit">Отменить изменения</n-button>
     </div>
   </n-card>
 
@@ -43,7 +75,7 @@
 <script setup>
 import { ref, defineProps, defineEmits, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { NCard, NButton, NDialog } from "naive-ui";
+import { NCard, NButton, NDialog, NInput, NUpload } from "naive-ui";
 import { useUserStore } from "@/store/userStore";
 import CartButton from "./BasketButton.vue";
 import axios from "axios";
@@ -61,6 +93,9 @@ const userStore = useUserStore();
 const router = useRouter();
 const confirmDialogVisible = ref(false);
 const isAuthenticated = ref(false);
+const isEdited = ref(false);
+const imageDeleted = ref(false);
+const editProduct = ref({...props.item});
 
 const role = computed(() => userStore.role.value);
 const isAdmin = computed(() => role.value === "ROLE_ADMIN");
@@ -72,14 +107,40 @@ const checkAuth = () => {
   }
 };
 
-const openConfirmDialog = (event) => {
-  event.stopPropagation();
-  confirmDialogVisible.value = true;
+const editModel = () =>{
+  isEdited.value = true;
+}
+
+const deleteImage = () => {
+  imageDeleted.value = true;
 };
 
-const closeConfirmDialog = () => {
-  confirmDialogVisible.value = false;
+const handleImageChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      editProduct.value.imageUrl = e.target.result;
+      imageDeleted.value = false;
+    };
+    reader.readAsDataURL(file);
+  }
 };
+
+const cancelEdit = () => {
+  editProduct.value = { ...props.item };
+  isEdited.value = false;
+  imageDeleted.value = false;
+};
+const editProductPut = () =>{
+  try{
+    console.log(editProduct.value);
+  } catch(error){
+    console.log(error);
+  }
+}
+
+
 
 const deleteProduct = async () => {
   try {
@@ -91,6 +152,15 @@ const deleteProduct = async () => {
     closeConfirmDialog();
   }
 };
+
+const openConfirmDialog = (event) => {
+  event.stopPropagation();
+  confirmDialogVisible.value = true;
+};
+const closeConfirmDialog = () => {
+  confirmDialogVisible.value = false;
+};
+
 
 const navigateToproduct = () => {
   router.push({ path: `/product-view/${props.item.id}` });
@@ -172,5 +242,13 @@ onMounted(() => {
 
 .confirm-dialog {
   z-index: 9999;
+}
+.edit_container {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+}
+.edit_container img{
+  width: 20px;
 }
 </style>

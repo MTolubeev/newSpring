@@ -81,7 +81,6 @@ const updateCartItem = (updatedItem) => {
     }
   }
 };
-
 const placeOrder = async () => {
   const token = localStorage.getItem('token');
   try {

@@ -4,13 +4,16 @@
     stroke="blue"
     :show="loading">
     <MyHeader @toggle-drawer="toggleDrawer" />
-    <MyDrawer :isVisible="isDrawerVisible" @close-drawer="closeDrawer" />
+    <MyDrawer :isVisible="isDrawerVisible" 
+    @close-drawer="closeDrawer" 
+    />
     <n-button
       v-if="isAdmin"
       @click="openModal"
       class="button__add"
-      type="warning"
-      >Добавить новый товар</n-button>
+      type="warning">
+      Добавить новый товар
+    </n-button>
     <AddProduct v-if="showModal" @close="closeModal" />
 
     <MyCardList @products-loaded="onProductsLoaded" />
@@ -75,9 +78,7 @@ const limitedComments = computed(() => {
 });
 const getAllComments = async () => {
   try {
-    const response = await axios.get(
-      `http://localhost:8080/comments/getAllComments`
-    );
+    const response = await axios.get(`http://localhost:8080/comments/getAllComments`);
     comments.value = response.data;
     commentsLoaded.value = true;
   } catch (error) {

@@ -12,36 +12,36 @@
 
         <div class="form-group">
           <label>Название товара:</label>
-          <input
+          <n-input
             type="text"
-            v-model="product.title"
+            v-model:value="product.title"
             placeholder="Название"
-            required
-          />
+            required/>
         </div>
 
         <div class="form-group">
           <label>Цена:</label>
-          <input
+          <n-input
             type="number"
             placeholder="Цена"
-            v-model.number="product.price"
-            required
-          />
+            v-model:value="product.price"
+            required/>
         </div>
 
         <div class="form-group">
           <label>Скидочная цена:</label>
-          <input
+          <n-input
             type="number"
             placeholder="Скидочная цена"
-            v-model="product.discountPrice"
-          />
+            v-model:value="product.discountPrice"/>
         </div>
 
         <div class="form-group">
           <label>Описание товара:</label>
-          <textarea v-model="product.description" required></textarea>
+          <n-input 
+          type="textarea" 
+          v-model:value="product.description" 
+          required />
         </div>
 
         <div class="form-group">
@@ -54,40 +54,41 @@
         <div class="form-group">
           <SelectCategory
             :options="subcategoryOptions"
-            label="Подкатегория"
+            label="Подкатегория (Необязательно)"
             @data-changed="(value) => handleDataChange('subcategory')(value)"
           />
         </div>
         <div class="form-group">
           <SelectCategory
             :options="subsubcategoryOptions"
-            label="Подподкатегория"
+            label="Подподкатегория (Необязательно)"
             @data-changed="(value) => handleDataChange('subsubcategory')(value)"
           />
         </div>
         <div class="form-group">
           <label>Количество товаров:</label>
-          <input
+          <n-input
             type="number"
             placeholder="Количество"
-            v-model="product.count"
+            v-model:value="product.count"
           />
         </div>
         <button class="create__product" type="submit">Создать товар</button>
       </form>
-      <p v-if="message">{{ message }}</p>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, defineEmits, onMounted } from "vue";
+import { NInput } from "naive-ui";
 import axios from "axios";
 import SelectCategory from "./SelectCategory.vue";
+import { useNotificationService } from '@/composables/notificationUtils';
 
+const { showNotificationMessage } = useNotificationService();
 const emit = defineEmits(["close"]);
 
-const message = ref("");
 const file = ref(null);
 const product = ref({
   title: "",
@@ -151,30 +152,30 @@ const uploadFile =  async() => {
     formData.append("subcategory", selectedData.value.subcategory || "");
     formData.append("subsubcategory", selectedData.value.subsubcategory || "");
     formData.append("count", product.value.count);
-
-    for (let pair of formData.entries()) {
-      console.log(`${pair[0]}: ${pair[1]}`);
-    }
     try {
       const token = localStorage.getItem("token");
-       await axios.post("http://localhost:8080/product/create",formData,
+       const response = await axios.post("http://localhost:8080/product/create", formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: token,
           },
         });
-      message.value = "Ваш продукт создан! Обновите страницу";
+        console.log(response);
+        if(response.status === 201){
+          window.location.reload();
+        } else{
+          showNotificationMessage('error', 'Товар не удалось создать');
+        }
     } catch (error) {
       console.error("Error uploading file:", error.response?.data || error);
-      message.value = "Не удалось создать продукт";
     }
   }
 }
 
 onMounted(() => {
   fetchData();
-});
+})
 </script>
 
 <style scoped>
