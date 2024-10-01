@@ -4,10 +4,10 @@
     class="card"
     @click="navigateToproduct"
     hoverable
-    v-if="!isEdited"
-  >
+    v-if="!isEdited">
     <div class="edit_container">
       <img
+      v-if="isAdmin"
         src="@/assets/pencil.svg"
         alt="edit_product"
         @click.stop="editModel"
@@ -35,67 +35,23 @@
         <n-button
           style="
             --n-border-hover: 1px solid #3b5998;
-            --n-text-color-hover: #3b5998;
-          "
+            --n-text-color-hover: #3b5998;"
           v-if="isAdmin"
-          @click.stop="openConfirmDialog"
-        >
+          @click.stop="openConfirmDialog">
           Удалить товар из списка
         </n-button>
       </div>
     </div>
   </n-card>
-  <n-card class="card" v-else>
-    <img
-      style="width: 70px"
-      v-if="!imageDeleted"
-      :src="item.imageUrl"
-      alt="png"
-      @click.stop="deleteImage"
-    />
-    <n-upload
-      :default-file-list="fileList"
-      list-type="image"
-      :create-thumbnail-url="createThumbnailUrl"
-      v-else
-      @change="handleChange"
-      max="1"
-    >
-      <n-button>Upload</n-button>
-    </n-upload>
-    <label>Название товара</label>
-    <n-input v-model:value="editProduct.title" placeholder="Название товара" />
-    <label>Описание товара</label>
-    <n-input
-      type="textarea"
-      v-model:value="editProduct.description"
-      placeholder="Введите описание товара"
-    />
-    <label>Цена товара</label>
-    <n-input
-      v-model:value="editProduct.price"
-      placeholder="Введите цену товара"
-    />
-    <label>Скидочная цена товара</label>
-    <n-input
-      v-model:value="editProduct.discountPrice"
-      placeholder="Введите скидку товара"
-    />
-    <label>Количество товаров</label>
-    <n-input
-      v-model:value="editProduct.count"
-      placeholder="Введите скидку товара"
-    />
-
-    <div class="card__button">
-      <n-button type="success" @click.stop="editProductPut">
-        Сохранить изменения
-      </n-button>
-      <n-button type="error" @click.stop="cancelEdit">
-        Отменить изменения
-      </n-button>
-    </div>
-  </n-card>
+  <EditProduct
+    v-else
+    :item="item"
+    :categoryOptions="categoryOptions"
+    :subcategoryOptions="subcategoryOptions"
+    :subsubcategoryOptions="subsubcategoryOptions"
+    @save="handleSave"
+    @cancel="handleCancel"
+  />
 
   <div v-if="confirmDialogVisible" class="dialog-overlay">
     <n-dialog
@@ -115,10 +71,11 @@
 <script setup>
 import { ref, defineProps, defineEmits, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { NCard, NButton, NDialog, NInput, NUpload } from "naive-ui";
+import { NCard, NButton, NDialog } from "naive-ui";
 import { useUserStore } from "@/store/userStore";
 import CartButton from "./BasketButton.vue";
 import axios from "axios";
+import EditProduct from "./EditProduct.vue";
 
 const props = defineProps({
   item: {
@@ -134,9 +91,6 @@ const router = useRouter();
 const confirmDialogVisible = ref(false);
 const isAuthenticated = ref(false);
 const isEdited = ref(false);
-const imageDeleted = ref(false);
-const editProduct = ref({ ...props.item });
-const fileList = ref([]);
 
 const role = computed(() => userStore.role.value);
 const isAdmin = computed(() => role.value === "ROLE_ADMIN");
@@ -150,44 +104,6 @@ const checkAuth = () => {
 
 const editModel = () => {
   isEdited.value = true;
-};
-
-const deleteImage = () => {
-  imageDeleted.value = true;
-  editProduct.value.imageUrl = null;
-};
-
-const handleChange = (event) => {
-  if (event.fileList && event.fileList.length > 0) {
-    const file = event.fileList[0].file;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      editProduct.value.base64Image = e.target.result;
-      fileList.value = [
-        {
-          id: file.uid,
-          name: file.name,
-          url: e.target.result,
-        },
-      ];
-    };
-    reader.readAsDataURL(file);
-  }
-};
-
-const cancelEdit = () => {
-  editProduct.value = { ...props.item };
-  isEdited.value = false;
-  imageDeleted.value = false;
-  fileList.value = [];
-};
-const editProductPut = () => {
-  try {
-    delete editProduct.value.imageUrl;
-    console.log(editProduct.value);
-  } catch (error) {
-    console.log(error);
-  }
 };
 
 const deleteProduct = async () => {
@@ -205,6 +121,7 @@ const openConfirmDialog = (event) => {
   event.stopPropagation();
   confirmDialogVisible.value = true;
 };
+
 const closeConfirmDialog = () => {
   confirmDialogVisible.value = false;
 };
@@ -212,11 +129,68 @@ const closeConfirmDialog = () => {
 const navigateToproduct = () => {
   router.push({ path: `/product-view/${props.item.id}` });
 };
+const categoryOptions = ref([]);
+const subcategoryOptions = ref([]);
+const subsubcategoryOptions = ref([]);
+
+const fetchCategories = async () => {
+  try {
+    const response = await axios.get('http://localhost:8080/product/getAll');
+    const products = response.data;
+
+    const categoriesSet = new Set();
+    const subcategoriesSet = new Set();
+    const subsubcategoriesSet = new Set();
+
+    products.forEach(product => {
+      product.categories.forEach(cat => {
+        categoriesSet.add(cat.name);
+        if (cat.subcategory) subcategoriesSet.add(cat.subcategory);
+        if (cat.subsubcategory) subsubcategoriesSet.add(cat.subsubcategory);
+      });
+    });
+
+    categoryOptions.value = Array.from(categoriesSet).map(cat => ({ label: cat, value: cat }));
+    subcategoryOptions.value = Array.from(subcategoriesSet).map(subcat => ({ label: subcat, value: subcat }));
+    subsubcategoryOptions.value = Array.from(subsubcategoriesSet).map(subsubcat => ({ label: subsubcat, value: subsubcat }));
+  } catch (error) {
+    console.error('Ошибка при загрузке категорий', error);
+  }
+};
+const handleSave = async (updatedProduct) => {
+  try {
+    // console.log("Sending updated product:", updatedProduct);
+    const response = await axios.put(`http://localhost:8080/product/change`, updatedProduct, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    console.log("Server response:", response.data);
+  } catch (error) {
+    console.error("Error saving product:", error);
+    if (error.response) {
+      console.error("Server response data:", error.response.data);
+      console.error("Server response status:", error.response.status);
+      console.error("Server response headers:", error.response.headers);
+    } else if (error.request) {
+      console.error("No response received:", error.request);
+    } else {
+      console.error("Error setting up the request:", error.message);
+    }
+  }
+  isEdited.value = false;
+};
+
+const handleCancel = () => {
+  isEdited.value = false;
+};
 
 onMounted(() => {
   userStore.fetchUser();
   checkAuth();
+  fetchCategories();
 });
+
 </script>
 
 <style scoped>
