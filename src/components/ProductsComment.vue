@@ -5,13 +5,15 @@
       <h3
         v-if="comments.length > 3"
         class="open__comments"
-        @click="toggleComments">
-        {{ showAll ? 'Скрыть отзывы' : 'Показать все отзывы' }}
+        @click="toggleComments"
+      >
+        {{ showAll ? "Скрыть отзывы" : "Показать все отзывы" }}
       </h3>
       <n-button
         type="success"
         @click="handleWriteReview"
-        class="write-review-btn">
+        class="write-review-btn"
+      >
         Написать отзыв
       </n-button>
       <n-select
@@ -19,7 +21,8 @@
         :options="sortOptions"
         v-model:value="sortOrder"
         placeholder="Сортировать по"
-        style="width: 200px; margin-left: 20px;"/>
+        style="width: 200px; margin-left: 20px"
+      />
     </div>
   </div>
 
@@ -37,8 +40,11 @@
               viewBox="0 0 24 24"
               :fill="star <= comment.score ? 'gold' : 'lightgray'"
               width="20"
-              height="20">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              height="20"
+            >
+              <path
+                d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"
+              />
             </svg>
           </div>
         </div>
@@ -46,36 +52,41 @@
         <div class="comment-images" v-if="comment.images.length > 0">
           <div class="images-container">
             <div class="images-wrapper">
-              <img 
-                v-for="image in comment.images.slice(0, 3)" 
-                :src="convertBase64(image.bytes)" 
-                :key="image.id" 
-                class="comment-image" 
-                alt="изображение комментария" 
-                @click="openImageGallery(comment.images)" />
+              <img
+                v-for="image in comment.images.slice(0, 3)"
+                :src="convertBase64(image.bytes)"
+                :key="image.id"
+                class="comment-image"
+                alt="изображение комментария"
+                @click="openImageGallery(comment.images)"
+              />
             </div>
-            <n-button 
-              quaternary circle
-              v-if="comment.images.length > 3" 
-              @click="openImageGallery(comment.images)" 
+            <n-button
+              quaternary
+              circle
+              v-if="comment.images.length > 3"
+              @click="openImageGallery(comment.images)"
               size="large"
-              class="gallery-button">
+              class="gallery-button"
+            >
               +
             </n-button>
           </div>
         </div>
-        <ImageGallery 
-        :images="currentImages" 
-        :show="showImageGallery" 
-        @close="closeImageGallery"
-        @delete-image="(imageId) => handleDeleteImage(comment.id, imageId)" />
+        <ImageGallery
+          :images="currentImages"
+          :show="showImageGallery"
+          @close="closeImageGallery"
+          @delete-image="(imageId) => handleDeleteImage(comment.id, imageId)"
+        />
 
-        <img 
-          v-if="isAdmin || isOwner(comment)" 
+        <img
+          v-if="isAdmin || isOwner(comment)"
           src="@/assets/bin.webp"
-          alt="admin badge" 
+          alt="admin badge"
           class="admin-icon"
-          @click="openDeleteDialog(comment.id)"/>
+          @click="openDeleteDialog(comment.id)"
+        />
       </n-card>
     </div>
     <div v-else>
@@ -88,7 +99,9 @@
       <h3>Подтверждение удаления</h3>
       <p>Вы уверены, что хотите удалить этот комментарий?</p>
       <div class="modal-actions">
-        <n-button @click="confirmDeleteComment" type="primary">Удалить</n-button>
+        <n-button @click="confirmDeleteComment" type="primary"
+          >Удалить</n-button
+        >
         <n-button @click="closeConfirmDialog" type="default">Отмена</n-button>
       </div>
     </div>
@@ -98,45 +111,45 @@
 </template>
 
 <script setup>
-import { defineProps, ref, computed, onMounted } from 'vue';
-import { NCard, NButton, NSelect } from 'naive-ui';
-import WriteReviewModal from './WriteReviewModal.vue';
-import { useUserStore } from '@/store/userStore';
-import axios from 'axios';
-import ImageGallery from './ImageGallery.vue';
-import { useNotificationService } from '@/composables/notificationUtils';
+import { defineProps, ref, computed, onMounted } from "vue";
+import { NCard, NButton, NSelect } from "naive-ui";
+import WriteReviewModal from "./WriteReviewModal.vue";
+import { useUserStore } from "@/store/userStore";
+import axios from "axios";
+import ImageGallery from "./ImageGallery.vue";
+import { useNotificationService } from "@/composables/notificationUtils";
 
 const { showNotificationMessage } = useNotificationService();
 
 const userStore = useUserStore();
 const user = computed(() => userStore.user.value);
 const role = computed(() => userStore.role.value);
-const isAdmin = computed(() => role.value === 'ROLE_ADMIN');
+const isAdmin = computed(() => role.value === "ROLE_ADMIN");
 
 const maxStars = 5;
 
 const props = defineProps({
   comments: {
     type: Array,
-    required: true
+    required: true,
   },
   productId: {
     type: Number,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const showAll = ref(false);
 const showReviewModal = ref(false);
 const confirmDialogVisible = ref(false);
 const commentIdToDelete = ref(null);
-const sortOrder = ref('desc');
-const currentImages = ref([]); 
-const showImageGallery = ref(false); 
+const sortOrder = ref("desc");
+const currentImages = ref([]);
+const showImageGallery = ref(false);
 
 const sortOptions = [
-  { label: 'От высоких к низким', value: 'desc' },
-  { label: 'От низких к высоким', value: 'asc' }
+  { label: "От высоких к низким", value: "desc" },
+  { label: "От низких к высоким", value: "asc" },
 ];
 
 const toggleComments = () => {
@@ -144,11 +157,11 @@ const toggleComments = () => {
 };
 const closeImageGallery = () => {
   showImageGallery.value = false;
-  currentImages.value = []; 
+  currentImages.value = [];
 };
 
 const convertBase64 = (base64String) => {
-  return base64String ? `data:image/jpeg;base64,${base64String}` : '';
+  return base64String ? `data:image/jpeg;base64,${base64String}` : "";
 };
 
 const isOwner = (comment) => {
@@ -158,7 +171,7 @@ const isOwner = (comment) => {
 const sortedComments = computed(() => {
   const sorted = [...props.comments];
   sorted.sort((a, b) => {
-    return sortOrder.value === 'asc' ? a.score - b.score : b.score - a.score;
+    return sortOrder.value === "asc" ? a.score - b.score : b.score - a.score;
   });
   return showAll.value ? sorted : sorted.slice(0, 3);
 });
@@ -167,7 +180,7 @@ const handleWriteReview = () => {
   if (user.value) {
     showReviewModal.value = true;
   } else {
-    showNotificationMessage('error', 'Ошибка добавления комментария', 'Авторизуйтесь для создания комментария');
+    showNotificationMessage("error","Ошибка добавления комментария","Авторизуйтесь для создания комментария");
   }
 };
 
@@ -197,70 +210,71 @@ const confirmDeleteComment = async () => {
     });
 
     if (response.status === 200) {
-      localStorage.setItem('showDeleteSuccessNotification', 'true');
-      window.location.reload(); 
+      localStorage.setItem("showDeleteSuccessNotification", "true");
+      window.location.reload();
     } else {
-      showNotificationMessage('error', 'Ошибка', 'Произошла ошибка при удалении комментария.');
+      showNotificationMessage("error","Ошибка","Произошла ошибка при удалении комментария.");
     }
   } catch (error) {
     if (error.response) {
-      showNotificationMessage('error', 'Ошибка', `Ошибка: ${error.response.data.message || error.response.data}`);
+      showNotificationMessage("error","Ошибка",`Ошибка: ${error.response.data.message || error.response.data}`);
     } else {
-      showNotificationMessage('error', 'Ошибка', 'Произошла ошибка при удалении комментария.');
+      showNotificationMessage("error","Ошибка","Произошла ошибка при удалении комментария.");
     }
   } finally {
     closeConfirmDialog();
   }
 };
 const handleDeleteImage = async (commentId, imageId) => {
+  console.log(commentId, " ", imageId)
   try {
-    const token = localStorage.getItem('token');
-    console.log('Отправка запроса на удаление изображения:', {
-      commentId,
-      imageId,
-      headers: {
-        Authorization: token,
-      },
-    });
-
-    const response = await axios.delete(`http://localhost:8080/comments/deleteImage/${commentId}`, {
-      headers: {
-        Authorization: token,
-      },
-      params: {
-        commentImageId: imageId,
-      },
-    });
+    const token = localStorage.getItem("token");
+    const response = await axios.delete(`http://localhost:8080/comments/deleteImage/${commentId}`,
+      {
+        headers: {
+          Authorization: token,
+        },
+        params: {
+          commentImageId: imageId,
+        },
+      }
+    );
 
     if (response.status === 200) {
-      showNotificationMessage('success', 'Изображение успешно удалено.');
-      // window.location.reload();
+      localStorage.setItem("showDeleteImageSuccessNotification", "true"); 
+      window.location.reload(); 
     } else {
-      showNotificationMessage('error', 'Ошибка при удалении изображения.');
+      showNotificationMessage("error", "Ошибка при удалении изображения.");
     }
   } catch (error) {
     console.error(error);
-    showNotificationMessage('error', 'Произошла ошибка при удалении изображения.');
+    showNotificationMessage("error","Произошла ошибка при удалении изображения."
+    );
   }
-}
-const openImageGallery = (images) => { 
-  currentImages.value = images.map(image => ({
+};
+const openImageGallery = (images) => {
+  currentImages.value = images.map((image) => ({
     base64: convertBase64(image.bytes),
-    ...image
+    ...image,
   }));
-  showImageGallery.value = true; 
+  showImageGallery.value = true;
 };
 
 onMounted(async () => {
   await userStore.fetchUser();
-  const notificationFlag = localStorage.getItem('showDeleteSuccessNotification');
-  if (notificationFlag === 'true') {
-    showNotificationMessage('success', 'Комментарий успешно удалён.');
-    localStorage.removeItem('showDeleteSuccessNotification');
+  const deleteCommentNotificationFlag = localStorage.getItem("showDeleteSuccessNotification");
+  if (deleteCommentNotificationFlag === "true") {
+    showNotificationMessage("success", "Комментарий успешно удалён.");
+    localStorage.removeItem("showDeleteSuccessNotification");
+  }
+
+  const deleteImageNotificationFlag = localStorage.getItem("showDeleteImageSuccessNotification");
+  if (deleteImageNotificationFlag === "true") {
+    showNotificationMessage("success", "Изображение успешно удалено.");
+    localStorage.removeItem("showDeleteImageSuccessNotification");
   }
 });
 </script>
-
 
 <style scoped>
 .comments__wrapper {
@@ -271,7 +285,7 @@ onMounted(async () => {
 .comments__items {
   margin-top: 30px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr); 
+  grid-template-columns: repeat(3, 1fr);
   gap: 30px;
 }
 .profile {
@@ -285,7 +299,8 @@ onMounted(async () => {
   flex-direction: column;
   justify-content: center;
 }
-h2, h3 {
+h2,
+h3 {
   margin: 0;
   cursor: pointer;
 }
@@ -340,19 +355,19 @@ h2, h3 {
 .comment-image {
   width: 60px;
   height: 60px;
-  object-fit: contain; 
-  border-radius: 10px; 
-  cursor: pointer; 
+  object-fit: contain;
+  border-radius: 10px;
+  cursor: pointer;
 }
 .images-container {
   display: flex;
-  align-items: center; 
-  gap: 10px; 
+  align-items: center;
+  gap: 10px;
 }
 
 .images-wrapper {
   display: flex;
-  gap: 10px; 
+  gap: 10px;
   flex-wrap: wrap;
 }
 </style>
