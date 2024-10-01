@@ -1,7 +1,6 @@
 package com.example.EShop.models;
 
 import com.example.EShop.models.enums.Role;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -55,8 +54,6 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
     }
-
-
 
     @Override
     public boolean isAccountNonExpired() {

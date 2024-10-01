@@ -5,7 +5,6 @@ import com.example.EShop.dtos.UserDto;
 
 import com.example.EShop.repositories.UserRepository;
 import com.example.EShop.services.AuthService;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -29,7 +28,6 @@ public class UserController {
 
         try {
             String token = authService.createAuthToken(email, password);
-            System.out.println("TOKEN: " + token);
             User user = userRepository.findByEmail(email);
             return ResponseEntity.ok(new AuthDto(user, token));
         } catch (BadCredentialsException e) {

@@ -13,7 +13,6 @@ import com.example.EShop.services.CommentService;
 import com.example.EShop.services.ProductService;
 import com.example.EShop.services.UserService;
 import com.example.EShop.utils.JwtTokenUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -113,12 +112,33 @@ public class ProductController {
     }
 
     @PutMapping("/product/change")
-    public ResponseEntity<?> changeProduct(@RequestBody Product product){
+    public ResponseEntity<?> changeProduct(@RequestParam("id") Long productId,
+                                           @RequestParam(required = false) String newTitle,
+                                           @RequestParam(required = false) String newDescription,
+                                           @RequestParam(required = false) Integer newCount,
+                                           @RequestParam(required = false) Long newPrice,
+                                           @RequestParam(required = false) Long newDiscountPrice,
+                                           @RequestParam(required = false) String newCategory,
+                                           @RequestPart(value = "images", required = false) MultipartFile images) throws IOException {
+        Product oldProduct = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        Product oldproduct = productRepository.findById(product.getId()).orElseThrow(() -> new RuntimeException("Product not found"));
+        if (newTitle != null) oldProduct.setTitle(newTitle);
+        if (newDescription != null) oldProduct.setDescription(newDescription);
+        if (newCount != null) oldProduct.setCount(newCount);
+        if (newPrice != null) oldProduct.setPrice(newPrice);
+        if (newDiscountPrice != null) oldProduct.setDiscountPrice(newDiscountPrice);
+        if (newCategory != null) oldProduct.setCategory(newCategory);
 
-        return ResponseEntity.ok(productRepository.save(oldproduct));
+        if (images.getSize() != 0 && images.getSize() > 0) {
+            Image image1;
+            image1 = productService.toImageEntity(images);
 
+            oldProduct.addImageToProduct(image1);
+        }
+
+        Product savedProduct = productRepository.save(oldProduct);
+        return ResponseEntity.ok("good");
     }
 
 }

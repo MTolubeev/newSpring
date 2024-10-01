@@ -2,7 +2,6 @@ package com.example.EShop.controllers;
 
 import com.example.EShop.dtos.CommentDto;
 import com.example.EShop.models.Comment;
-import com.example.EShop.models.CommentImage;
 import com.example.EShop.models.Product;
 import com.example.EShop.models.User;
 import com.example.EShop.repositories.CommentRepository;
@@ -19,14 +18,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.io.IOException;
 import java.util.List;

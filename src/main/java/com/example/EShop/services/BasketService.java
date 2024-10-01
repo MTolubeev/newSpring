@@ -71,7 +71,6 @@ public class BasketService {
         basketRepository.save(basket);
     }
 
-
     @Transactional
     public void deleteProduct(User user, Product product) {
         Basket basket = basketRepository.findByUser(user);
@@ -105,6 +104,7 @@ public class BasketService {
 
         return productsInBasket.size();
     }
+
     public void cleanBasketAfterEmail(User user, Long id){
         Basket basket = basketRepository.findByUser(user);
         List<Product> products = basket.getProducts();

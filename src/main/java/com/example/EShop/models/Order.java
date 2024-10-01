@@ -1,6 +1,5 @@
 package com.example.EShop.models;
 
-import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 

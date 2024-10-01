@@ -57,7 +57,7 @@ public class CommentService {
         }
     }
 
-    public Comment  addComment(String text, int score,  MultipartFile[] images, User user, Product product) throws IOException {
+    public Comment addComment(String text, int score, MultipartFile[] images, User user, Product product) throws IOException {
         Comment comment = new Comment();
         comment.setUser(user);
         comment.setProduct(product);
@@ -82,6 +82,7 @@ public class CommentService {
         }
         return commentRepository.save(comment);
     }
+
     private String saveImage(MultipartFile image) throws IOException {
         String directory = "images/";
         Path imageDirectory = Paths.get(directory);

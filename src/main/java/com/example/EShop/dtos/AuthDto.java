@@ -1,11 +1,9 @@
 package com.example.EShop.dtos;
 
-import com.example.EShop.models.Comment;
 import com.example.EShop.models.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.List;
 
 @Data
 @AllArgsConstructor

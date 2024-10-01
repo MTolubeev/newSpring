@@ -2,16 +2,13 @@ package com.example.EShop.services;
 
 
 import com.example.EShop.models.CustomUserDetails;
-import com.example.EShop.models.User;
 import com.example.EShop.repositories.UserRepository;
 import com.example.EShop.utils.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 
 @Service

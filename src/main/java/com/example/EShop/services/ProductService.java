@@ -4,7 +4,6 @@ import com.example.EShop.dtos.CategoryDto;
 import com.example.EShop.dtos.CommentDto;
 import com.example.EShop.dtos.ProductDto;
 import com.example.EShop.models.Comment;
-import com.example.EShop.models.CommentImage;
 import com.example.EShop.models.Image;
 import com.example.EShop.models.Product;
 import com.example.EShop.repositories.*;
@@ -41,7 +40,6 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-
     private ProductDto convertProductToDto(Product product) {
         Image image = imageRepository.findById(product.getPreviewImageId()).orElse(null);
         String base64Image = image != null ? Base64.getEncoder().encodeToString(image.getBytes()) : null;
@@ -67,7 +65,7 @@ public class ProductService {
                 orderInt[k] = Integer.parseInt(orderStrings[k]);
             }
 
-            Integer order =  orderInt[0];
+            Integer order = orderInt[0];
             Integer subcategoryOrder = null;
             Integer subsubcategoryOrder = null;
 
@@ -93,8 +91,6 @@ public class ProductService {
                 base64Image
         );
     }
-
-
 
     public void generateCategoryOrderForProduct(Product product) {
         // Создаем Map для категорий, подкатегорий и подподкатегорий
@@ -200,10 +196,10 @@ public class ProductService {
             product.addImageToProduct(image1);
         }
         String cat = category;
-        if(subCategory != null)
+        if (subCategory != null)
             cat += "/" + subCategory;
         product.setCategory(cat);
-        if(subSubCategory != null)
+        if (subSubCategory != null)
             cat += "/" + subSubCategory;
 
         generateCategoryOrderForProduct(product);
@@ -215,7 +211,7 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    private Image toImageEntity(MultipartFile file) throws IOException {
+    public Image toImageEntity(MultipartFile file) throws IOException {
         Image image = new Image();
         image.setName(file.getName());
         image.setOriginalFileName(file.getOriginalFilename());
@@ -224,7 +220,6 @@ public class ProductService {
         image.setBytes(file.getBytes());
         return image;
     }
-
 
     public void deleteProduct(Long id) {
         basketRepository.deleteProductFromBasketProducts(id);
