@@ -31,10 +31,10 @@ defineProps({
 });
 
 const emit = defineEmits(["data-changed"]);
+
 const selectedValue = ref(null);
 const inputValue = ref("");
 const showInput = ref(false);
-
 
 const updateInputValue = (value) => {
   inputValue.value = value;

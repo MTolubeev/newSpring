@@ -61,8 +61,7 @@
       negative-text="Отмена"
       @positive-click="deleteProduct"
       @negative-click="closeConfirmDialog"
-      :closable="false"
-    >
+      :closable="false">
       Вы уверены, что хотите удалить этот продукт?
     </n-dialog>
   </div>
@@ -82,14 +81,17 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+
   categoryOptions: {
     type: Array,
     required: true,
   },
+
   subcategoryOptions: {
     type: Array,
     required: true,
   },
+  
   subsubcategoryOptions: {
     type: Array,
     required: true,

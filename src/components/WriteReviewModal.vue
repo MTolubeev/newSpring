@@ -51,7 +51,6 @@ import axios from 'axios';
 import { NModal, NUpload, NButton, NInput } from 'naive-ui';
 import { useNotificationService } from '@/composables/notificationUtils.js'; 
 
-const { showNotificationMessage } = useNotificationService();
 const props = defineProps({
   modelValue: Boolean,
   productId: {
@@ -59,20 +58,20 @@ const props = defineProps({
     required: true
   }
 });
+
 const emits = defineEmits(['update:modelValue']);
 
+const { showNotificationMessage } = useNotificationService();
 const visible = ref(props.modelValue);
 const reviewText = ref('');
 const rating = ref(0);
 const maxStars = 5;
+const files = ref([]);
+const images = ref([]);
 
 const setRating = (star) => {
   rating.value = star;
 };
-
-const files = ref([]);
-
-const images = ref([]);
 
 const beforeUpload = () => {
   return true;
@@ -99,18 +98,14 @@ const submitReview = async () => {
     showNotificationMessage('error', 'Ошибка', 'Заполните все поля!');
     return;
   }
-
   const formData = new FormData();
   formData.append('productId', props.productId);
   formData.append('text', reviewText.value);
   formData.append('score', rating.value.toString());
-
   files.value.forEach((file) => {
     formData.append('images', file); 
   });
-
   const token = localStorage.getItem('token');
-
   try {
     const response = await axios.post('http://localhost:8080/comments/add', formData, {
       headers: {
@@ -131,6 +126,10 @@ const submitReview = async () => {
   }
 };
 
+watch(() => props.modelValue, (newVal) => {
+  visible.value = newVal;
+});
+
 onMounted(() => {
   const notificationFlag = localStorage.getItem('showReviewSuccessNotification');
   
@@ -138,10 +137,6 @@ onMounted(() => {
     showNotificationMessage('success', 'Успешно!', 'Ваш отзыв был успешно отправлен.');
     localStorage.removeItem('showReviewSuccessNotification');
   }
-});
-
-watch(() => props.modelValue, (newVal) => {
-  visible.value = newVal;
 });
 </script>
 

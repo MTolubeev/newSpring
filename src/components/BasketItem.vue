@@ -24,12 +24,6 @@ import { useCartStore } from "@/store/cartStore";
 import { useUserStore } from "@/store/userStore";
 import { NCard, NButton } from "naive-ui";
 
-const cartStore = useCartStore();
-const userStore = useUserStore();
-const token = localStorage.getItem("token");
-
-const user = computed(() => userStore.user.value);
-
 const props = defineProps({
   item: {
     type: Object,
@@ -39,7 +33,12 @@ const props = defineProps({
 
 const emit = defineEmits(["updateItem"]);
 
+const cartStore = useCartStore();
+const userStore = useUserStore();
+const token = localStorage.getItem("token");
 const localCount = ref(props.item.count);
+
+const user = computed(() => userStore.user.value);
 
 const incrementCount = async () => {
   if (localCount.value >= 0) {
@@ -64,8 +63,7 @@ const removeItem = async () => {
   }
 };
 
-watch(
-  () => props.item,
+watch(() => props.item,
   (newItem) => {
     localCount.value = newItem.count;
   },

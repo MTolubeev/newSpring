@@ -1,7 +1,7 @@
 <template>
   <h2>Все товары</h2>
   <div class="cards">
-    <MyCard
+    <CardItem
       v-for="item in items"
       :key="item.id"
       :item="item"
@@ -9,14 +9,14 @@
       :subcategoryOptions="subcategoryOptions"
       :subsubcategoryOptions="subsubcategoryOptions"
       @delete="handleDelete"
-    ></MyCard>
+      />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, defineEmits } from 'vue';
 import axios from 'axios';
-import MyCard from './CardItem.vue';
+import CardItem from './CardItem.vue';
 
 const emit = defineEmits(['products-loaded']);
 

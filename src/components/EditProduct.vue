@@ -160,7 +160,7 @@ const saveChanges = () => {
     selectedSubcategory.value = value;
     selectedSubsubcategory.value = '';
   };
-  </script>
+</script>
 
 
 <style scoped>

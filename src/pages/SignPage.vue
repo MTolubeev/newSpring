@@ -46,14 +46,6 @@ const loginEmail = ref("");
 const loginPassword = ref("");
 let cameFromRegistration = ref(false);
 
-onBeforeMount(() => {
-  if (
-    route?.redirectedFrom?.fullPath === "/registration" ||
-    route?.query?.from === "registration"
-  ) {
-    cameFromRegistration.value = true;
-  }
-});
 const login = async () => {
   try {
     await userStore.login(loginEmail.value, loginPassword.value);
@@ -72,6 +64,15 @@ const login = async () => {
 const closeModal = () => {
   router.push("/").then(() => window.location.reload());
 };
+
+onBeforeMount(() => {
+  if (
+    route?.redirectedFrom?.fullPath === "/registration" ||
+    route?.query?.from === "registration"
+  ) {
+    cameFromRegistration.value = true;
+  }
+});
 </script>
 
 <style scoped>

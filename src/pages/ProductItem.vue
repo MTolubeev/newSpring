@@ -72,9 +72,21 @@ import CartButton from "@/components/BasketButton.vue";
 const { isDrawerVisible, toggleDrawer, closeDrawer } = useDrawer();
 const route = useRoute();
 const product = ref(null);
-const loader = computed(() => !product.value);
+
 const isAuthenicated = ref(false);
 
+const loader = computed(() => !product.value);
+const productCategory = computed(() => {
+  return product.value?.categories?.[0]?.name || "Unknown";
+});
+
+const productSubcategory = computed(() => {
+  return product.value?.categories?.[0]?.subcategory || "None";
+});
+
+const productSubsubcategory = computed(() => {
+  return product.value?.categories?.[0]?.subsubcategory || "None";
+});
 
 const fetchProduct = async (id) => {
   try {
@@ -103,17 +115,6 @@ watch(() => route.params.productId, (newId) => {
     fetchProduct(newId);
     closeDrawer();
   }
-});
-const productCategory = computed(() => {
-  return product.value?.categories?.[0]?.name || "Unknown";
-});
-
-const productSubcategory = computed(() => {
-  return product.value?.categories?.[0]?.subcategory || "None";
-});
-
-const productSubsubcategory = computed(() => {
-  return product.value?.categories?.[0]?.subsubcategory || "None";
 });
 
 onMounted(() => {

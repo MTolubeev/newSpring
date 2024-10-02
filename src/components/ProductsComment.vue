@@ -120,15 +120,6 @@ import axios from "axios";
 import ImageGallery from "./ImageGallery.vue";
 import { useNotificationService } from "@/composables/notificationUtils";
 
-const { showNotificationMessage } = useNotificationService();
-
-const userStore = useUserStore();
-const user = computed(() => userStore.user.value);
-const role = computed(() => userStore.role.value);
-const isAdmin = computed(() => role.value === "ROLE_ADMIN");
-
-const maxStars = 5;
-
 const props = defineProps({
   comments: {
     type: Array,
@@ -140,6 +131,9 @@ const props = defineProps({
   },
 });
 
+const { showNotificationMessage } = useNotificationService();
+const userStore = useUserStore();
+
 const showAll = ref(false);
 const showReviewModal = ref(false);
 const confirmDialogVisible = ref(false);
@@ -148,11 +142,16 @@ const sortOrder = ref("desc");
 const currentImages = ref([]);
 const showImageGallery = ref(false);
 const currentImageGalleryId = ref(null);
+const maxStars = 5;
 
 const sortOptions = [
   { label: "От высоких к низким", value: "desc" },
   { label: "От низких к высоким", value: "asc" },
 ];
+
+const user = computed(() => userStore.user.value);
+const role = computed(() => userStore.role.value);
+const isAdmin = computed(() => role.value === "ROLE_ADMIN");
 
 const toggleComments = () => {
   showAll.value = !showAll.value;
@@ -182,11 +181,7 @@ const handleWriteReview = () => {
   if (user.value) {
     showReviewModal.value = true;
   } else {
-    showNotificationMessage(
-      "error",
-      "Ошибка добавления комментария",
-      "Авторизуйтесь для создания комментария"
-    );
+    showNotificationMessage("error", "Ошибка добавления комментария","Авторизуйтесь для создания комментария");
   }
 };
 
@@ -227,25 +222,13 @@ const confirmDeleteComment = async () => {
       localStorage.setItem("showDeleteSuccessNotification", "true");
       window.location.reload();
     } else {
-      showNotificationMessage(
-        "error",
-        "Ошибка",
-        "Произошла ошибка при удалении комментария."
-      );
+      showNotificationMessage("error", "Ошибка","Произошла ошибка при удалении комментария.");
     }
   } catch (error) {
     if (error.response) {
-      showNotificationMessage(
-        "error",
-        "Ошибка",
-        `Ошибка: ${error.response.data.message || error.response.data}`
-      );
+      showNotificationMessage("error", "Ошибка",`Ошибка: ${error.response.data.message || error.response.data}`);
     } else {
-      showNotificationMessage(
-        "error",
-        "Ошибка",
-        "Произошла ошибка при удалении комментария."
-      );
+      showNotificationMessage("error", "Ошибка", "Произошла ошибка при удалении комментария.");
     }
   } finally {
     closeConfirmDialog();
@@ -255,8 +238,7 @@ const handleDeleteImage = async ({ commentId, imageId }) => {
   try {
     const token = localStorage.getItem("token");
 
-    const response = await axios.delete(
-      `http://localhost:8080/comments/deleteImage/${commentId}`,
+    const response = await axios.delete(`http://localhost:8080/comments/deleteImage/${commentId}`,
       {
         headers: {
           Authorization: token,
@@ -275,26 +257,19 @@ const handleDeleteImage = async ({ commentId, imageId }) => {
     }
   } catch (error) {
     console.error(error);
-    showNotificationMessage(
-      "error",
-      "Произошла ошибка при удалении изображения."
-    );
+    showNotificationMessage("error","Произошла ошибка при удалении изображения.");
   }
 };
 
 onMounted(async () => {
-  await userStore.fetchUser();
-  const deleteCommentNotification = localStorage.getItem(
-    "showDeleteSuccessNotification"
-  );
+await userStore.fetchUser();
+const deleteCommentNotification = localStorage.getItem("showDeleteSuccessNotification");
   if (deleteCommentNotification === "true") {
     showNotificationMessage("success", "Комментарий успешно удалён.");
     localStorage.removeItem("showDeleteSuccessNotification");
   }
 
-  const deleteImageNotification = localStorage.getItem(
-    "showDeleteImageSuccessNotification"
-  );
+const deleteImageNotification = localStorage.getItem("showDeleteImageSuccessNotification");
   if (deleteImageNotification === "true") {
     showNotificationMessage("success", "Изображение успешно удалено.");
     localStorage.removeItem("showDeleteImageSuccessNotification");

@@ -45,12 +45,12 @@ import MyCard from "@/components/CardItem.vue";
 import { useDrawer } from "@/composables/useHeader.js";
 import MyHeader from "@/components/AppHeader.vue";
 import MyDrawer from "@/components/AppDrawer.vue";
-import { NSpin } from 'naive-ui'; // Импортируйте n-spin
+import { NSpin } from 'naive-ui'; 
 
 const { isDrawerVisible, toggleDrawer, closeDrawer } = useDrawer();
 const route = useRoute();
 const categories = ref([]);
-const isLoading = ref(true); // Переменная для управления загрузкой
+const isLoading = ref(true); 
 const categoryName = ref(route.params.categoryName);
 const subcategoryName = ref(route.params.subcategoryName || "");
 const subsubcategoryName = ref(route.params.subsubcategoryName || "");

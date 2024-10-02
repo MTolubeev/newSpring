@@ -86,9 +86,9 @@ import axios from "axios";
 import SelectCategory from "./SelectCategory.vue";
 import { useNotificationService } from '@/composables/notificationUtils';
 
-const { showNotificationMessage } = useNotificationService();
 const emit = defineEmits(["close"]);
 
+const { showNotificationMessage } = useNotificationService();
 const file = ref(null);
 const product = ref({
   title: "",
@@ -98,6 +98,7 @@ const product = ref({
   category: "",
   count: "",
 });
+
 const categoryOptions = ref([]);
 const subcategoryOptions = ref([]);
 const subsubcategoryOptions = ref([]);

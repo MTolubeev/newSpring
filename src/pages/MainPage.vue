@@ -63,6 +63,11 @@ const showModal = ref(false);
 const comments = ref([]);
 
 const loading = computed(() => !productsLoaded.value || !commentsLoaded.value);
+const role = computed(() => userStore.role.value);
+const isAdmin = computed(() => role.value === "ROLE_ADMIN");
+const limitedComments = computed(() => {
+  return comments.value.filter((comment) => comment.score >= 4).slice(0, 5);
+});
 
 const openModal = () => {
   showModal.value = true;
@@ -73,9 +78,7 @@ const closeModal = () => {
   showModal.value = false;
   document.body.style.overflow = "";
 };
-const limitedComments = computed(() => {
-  return comments.value.filter((comment) => comment.score >= 4).slice(0, 5);
-});
+
 const getAllComments = async () => {
   try {
     const response = await axios.get(`http://localhost:8080/comments/getAllComments`);
@@ -91,8 +94,6 @@ const onProductsLoaded = () => {
     loading.value = false;
   }
 };
-const role = computed(() => userStore.role.value);
-const isAdmin = computed(() => role.value === "ROLE_ADMIN");
 
 onMounted(async () => {
   await userStore.fetchUser();
