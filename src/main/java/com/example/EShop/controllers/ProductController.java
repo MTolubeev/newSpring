@@ -35,7 +35,7 @@ public class ProductController {
     private final CommentService commentService;
     private final UserRepository userRepository;
     private final JwtTokenUtils jwtTokenUtils;
-    private final ProductRepository  productRepository;
+    private final ProductRepository productRepository;
 
 
     @GetMapping("/")
@@ -119,6 +119,8 @@ public class ProductController {
                                            @RequestParam(required = false) Long newPrice,
                                            @RequestParam(required = false) Long newDiscountPrice,
                                            @RequestParam(required = false) String newCategory,
+                                           @RequestParam(required = false) String newSubCategory,
+                                           @RequestParam(required = false) String newSubSubCategory,
                                            @RequestPart(value = "images", required = false) MultipartFile images) throws IOException {
         Product oldProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -128,12 +130,19 @@ public class ProductController {
         if (newCount != null) oldProduct.setCount(newCount);
         if (newPrice != null) oldProduct.setPrice(newPrice);
         if (newDiscountPrice != null) oldProduct.setDiscountPrice(newDiscountPrice);
-        if (newCategory != null) oldProduct.setCategory(newCategory);
 
+        if (newCategory != null) {
+            String cat = newCategory;
+            if (newSubCategory != null)
+                cat += "/" + newSubCategory;
+            oldProduct.setCategory(cat);
+            if (newSubSubCategory != null)
+                cat += "/" + newSubSubCategory;
+            productService.generateCategoryOrderForProduct(oldProduct);
+        }
         if (images.getSize() != 0 && images.getSize() > 0) {
             Image image1;
             image1 = productService.toImageEntity(images);
-
             oldProduct.addImageToProduct(image1);
         }
 
