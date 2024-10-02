@@ -1,20 +1,26 @@
 <template>
   <div class="modal-overlay">
     <div class="modal-content">
-      <button @click="emitClose" class="close-button">✖</button>
-      <form @submit.prevent="uploadFile">
+      <n-button 
+        style="--n-text-color-hover: none" 
+        color="#465a86" 
+        class="close-button" 
+        @click="emitClose">
+        ✖
+      </n-button>
+      <div>
         <div class="form-group">
           <label>Изображение к товару:</label>
           <input 
-          type="file" 
-          @change="handleFileChange" />
+            type="file" 
+            @change="handleFileChange"/>
         </div>
 
         <div class="form-group">
           <label>Название товара:</label>
           <n-input
-            type="text"
             v-model:value="product.title"
+            type="text"
             placeholder="Название"
             required/>
         </div>
@@ -22,25 +28,25 @@
         <div class="form-group">
           <label>Цена:</label>
           <n-input
+            v-model:value="product.price"
             type="number"
             placeholder="Цена"
-            v-model:value="product.price"
             required/>
         </div>
 
         <div class="form-group">
           <label>Скидочная цена:</label>
           <n-input
+            v-model:value="product.discountPrice"
             type="number"
-            placeholder="Скидочная цена"
-            v-model:value="product.discountPrice"/>
+            placeholder="Скидочная цена"/>
         </div>
 
         <div class="form-group">
           <label>Описание товара:</label>
           <n-input 
+          v-model:value="product.description"
           type="textarea" 
-          v-model:value="product.description" 
           required />
         </div>
 
@@ -68,20 +74,20 @@
         <div class="form-group">
           <label>Количество товаров:</label>
           <n-input
+            v-model:value="product.count"
             type="number"
             placeholder="Количество"
-            v-model:value="product.count"
           />
         </div>
-        <button class="create__product" type="submit">Создать товар</button>
-      </form>
+        <n-button class="create__product" type="success" @click="uploadFile">Создать товар</n-button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, defineEmits, onMounted } from "vue";
-import { NInput } from "naive-ui";
+import { NInput, NButton } from "naive-ui";
 import axios from "axios";
 import SelectCategory from "./SelectCategory.vue";
 import { useNotificationService } from '@/composables/notificationUtils';
@@ -89,6 +95,7 @@ import { useNotificationService } from '@/composables/notificationUtils';
 const emit = defineEmits(["close"]);
 
 const { showNotificationMessage } = useNotificationService();
+
 const file = ref(null);
 const product = ref({
   title: "",
@@ -140,9 +147,18 @@ const handleDataChange = (field) => (value) => {
 const handleFileChange = (event) => {
   file.value = event.target.files[0];
 }
-
+const isFormValid = () => {
+  return (
+    file.value &&
+    product.value.title &&
+    product.value.price &&
+    product.value.description &&
+    selectedData.value.category &&
+    product.value.count !== ""
+  );
+};
 const uploadFile =  async() => {
-  if (file.value && product.value.title && product.value.price) {
+  if (isFormValid()) {
     const formData = new FormData();
     formData.append("file1", file.value);
     formData.append("title", product.value.title);
@@ -155,7 +171,7 @@ const uploadFile =  async() => {
     formData.append("count", product.value.count);
     try {
       const token = localStorage.getItem("token");
-       const response = await axios.post("http://localhost:8080/product/create", formData,
+       const response = await axios.post(`http://localhost:8080/product/create`, formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -171,6 +187,8 @@ const uploadFile =  async() => {
     } catch (error) {
       console.error("Error uploading file:", error.response?.data || error);
     }
+  } else{
+    showNotificationMessage('error', 'Не все поля заполнены');
   }
 }
 
@@ -226,11 +244,7 @@ textarea {
   resize: vertical;
 }
 .close-button {
-  background: none;
-  border: none;
   font-size: 24px;
-  cursor: pointer;
-  color: #333;
   position: absolute;
   top: 10px;
   right: 20px;

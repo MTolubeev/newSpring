@@ -1,17 +1,16 @@
 <template>
   <n-card
-    size="huge"
+    v-if="!isEdited"
     class="card"
-    @click="navigateToproduct"
+    size="huge"
     hoverable
-    v-if="!isEdited">
+    @click="navigateToproduct">
     <div class="edit_container">
       <img
-      v-if="isAdmin"
+        v-if="isAdmin"
         src="@/assets/pencil.svg"
         alt="edit_product"
-        @click.stop="editModel"
-      />
+        @click.stop="editModel"/>
     </div>
     <div class="card-content">
       <div class="image-container">
@@ -31,12 +30,16 @@
         </span>
       </div>
       <div class="card__button">
-        <CartButton :productId="item.id" :product="item" @click.stop />
+        <CartButton 
+        :productId="item.id" 
+        :product="item" 
+        @click.stop 
+        />
         <n-button
+          v-if="isAdmin"
           style="
             --n-border-hover: 1px solid #3b5998;
             --n-text-color-hover: #3b5998;"
-          v-if="isAdmin"
           @click.stop="openConfirmDialog">
           Удалить товар из списка
         </n-button>
@@ -59,9 +62,9 @@
       title="Подтверждение удаления"
       positive-text="Удалить"
       negative-text="Отмена"
+      :closable="false"
       @positive-click="deleteProduct"
-      @negative-click="closeConfirmDialog"
-      :closable="false">
+      @negative-click="closeConfirmDialog">
       Вы уверены, что хотите удалить этот продукт?
     </n-dialog>
   </div>
