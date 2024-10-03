@@ -116,7 +116,7 @@
   
   const handleChange = (event) => {
   if (event.fileList && event.fileList.length > 0) {
-    fileList.value = event.fileList; // Добавляем файлы в fileList
+    fileList.value = event.fileList; 
   }
 };
   
@@ -126,13 +126,9 @@
   
 const saveChanges = () => {
   let imageToSend = null;
-
-    // Проверяем, было ли изображение удалено или заменено
     if (imageDeleted.value && fileList.value.length > 0) {
-        imageToSend = fileList.value[0].file; // Отправляем новое изображение
+        imageToSend = fileList.value[0].file; 
     }
-    // delete editProduct.value.imageUrl;
-
     const updatedProduct = {
       id: editProduct.value.id,
       newTitle: editProduct.value.title,

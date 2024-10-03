@@ -225,6 +225,9 @@ onMounted(() => {
 .n-dialog :deep(.n-dialog__title) {
   display: none;
 }
+.n-dialog :deep(.n-dialog__close) {
+  display: none;
+}
 .modal-content {
   background: white;
   padding: 20px;

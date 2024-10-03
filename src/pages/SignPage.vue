@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-overlay">
+  <n-dialog class="modal-overlay">
     <div class="modal-content">
       <button @click="closeModal" class="close-button">✖</button>
       <h2>Вход в личный аккаунт</h2>
@@ -7,27 +7,27 @@
       <router-link to="/registration">
         <n-button type="warning">Создать аккаунт</n-button>
       </router-link>
-      <form @submit.prevent="login">
-        <input
+      <form>
+        <n-input
           type="email"
-          v-model="loginEmail"
+          v-model:value="loginEmail"
           placeholder="Email"
           required
           autocomplete="email"
         />
-        <input
+        <n-input
           type="password"
-          v-model="loginPassword"
+          v-model:value="loginPassword"
           placeholder="Пароль"
           required
           autocomplete="current-password"
         />
         <div class="buttons">
-          <button class="registr" type="submit">Войти</button>
+          <n-button class="registr" type="success" @click="login">Войти</n-button>
         </div>
       </form>
     </div>
-  </div>
+  </n-dialog>
 </template>
 
 <script setup>
@@ -35,7 +35,7 @@ import { ref, onBeforeMount } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useUserStore } from "@/store/userStore";
 import { useNotificationService } from "@/composables/notificationUtils.js";
-import { NButton } from "naive-ui";
+import { NButton, NInput, NDialog } from "naive-ui";
 
 const router = useRouter();
 const route = useRoute();
@@ -98,7 +98,12 @@ onBeforeMount(() => {
   width: 500px;
   gap: 10px;
 }
-
+.n-dialog :deep(.n-dialog__title) {
+  display: none;
+}
+.n-dialog :deep(.n-dialog__close) {
+  display: none;
+}
 .modal-content h2 {
   margin-top: 0;
 }

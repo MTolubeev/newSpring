@@ -201,7 +201,6 @@ onMounted(() => {
   position: relative;
   cursor: pointer;
 }
-
 .card-content {
   display: flex;
   flex-direction: column;
