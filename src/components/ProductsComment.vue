@@ -12,8 +12,7 @@
       <n-button
         type="success"
         @click="handleWriteReview"
-        class="write-review-btn"
-      >
+        class="write-review-btn">
         Написать отзыв
       </n-button>
       <n-select

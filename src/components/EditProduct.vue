@@ -115,39 +115,37 @@
   };
   
   const handleChange = (event) => {
-    if (event.fileList && event.fileList.length > 0) {
-      const file = event.fileList[0].file;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        editProduct.value.base64Image = e.target.result;
-        fileList.value = [
-          {
-            id: file.uid,
-            name: file.name,
-            url: e.target.result,
-          },
-        ];
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  if (event.fileList && event.fileList.length > 0) {
+    fileList.value = event.fileList; // Добавляем файлы в fileList
+  }
+};
   
   const cancelEdit = () => {
     emit("cancel");
   };
   
 const saveChanges = () => {
-    delete editProduct.value.imageUrl;
-    emit("save", {
-      ...editProduct.value,
-      categories: [
-        {
-          name: selectedCategory.value,
-          subcategory: selectedSubcategory.value,
-          subsubcategory: selectedSubsubcategory.value,
-        },
-      ],
-    });
+  let imageToSend = null;
+
+    // Проверяем, было ли изображение удалено или заменено
+    if (imageDeleted.value && fileList.value.length > 0) {
+        imageToSend = fileList.value[0].file; // Отправляем новое изображение
+    }
+    // delete editProduct.value.imageUrl;
+
+    const updatedProduct = {
+      id: editProduct.value.id,
+      newTitle: editProduct.value.title,
+      newDescription: editProduct.value.description,
+      newPrice: editProduct.value.price,
+      newDiscountPrice: editProduct.value.discountPrice,
+      newCount: editProduct.value.count,
+      newCategory: selectedCategory.value,
+      newSubCategory: selectedSubcategory.value,
+      newSubSubCategory: selectedSubsubcategory.value,
+      images: imageToSend
+    }
+    emit('save', updatedProduct);
   };
   
   const handleCategoryChange = (value) => {
@@ -161,7 +159,6 @@ const saveChanges = () => {
     selectedSubsubcategory.value = '';
   };
 </script>
-
 
 <style scoped>
 .card {

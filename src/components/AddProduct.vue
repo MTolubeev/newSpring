@@ -1,6 +1,8 @@
 <template>
-  <div class="modal-overlay">
-    <div class="modal-content">
+ <n-dialog
+    v-model:show="showModal" 
+    class="modal-overlay">
+     <div class="modal-content"> 
       <n-button 
         style="--n-text-color-hover: none" 
         color="#465a86" 
@@ -11,9 +13,14 @@
       <div>
         <div class="form-group">
           <label>Изображение к товару:</label>
-          <input 
-            type="file" 
-            @change="handleFileChange"/>
+          <n-upload
+            :default-file-list="fileList"
+            @change="handleFileChange"
+            :max="1"
+            list-type="image"
+          >
+            <n-button>Выбрать файл</n-button>
+          </n-upload>
         </div>
 
         <div class="form-group">
@@ -76,18 +83,18 @@
           <n-input
             v-model:value="product.count"
             type="number"
-            placeholder="Количество"
-          />
+            placeholder="Количество"/>
         </div>
         <n-button class="create__product" type="success" @click="uploadFile">Создать товар</n-button>
-      </div>
+       </div>
     </div>
-  </div>
+ </n-dialog>
+  <!-- </div> -->
 </template>
 
 <script setup>
 import { ref, defineEmits, onMounted } from "vue";
-import { NInput, NButton } from "naive-ui";
+import { NInput, NButton, NDialog, NUpload } from "naive-ui";
 import axios from "axios";
 import SelectCategory from "./SelectCategory.vue";
 import { useNotificationService } from '@/composables/notificationUtils';
@@ -96,8 +103,8 @@ const emit = defineEmits(["close"]);
 
 const { showNotificationMessage } = useNotificationService();
 
-
-const file = ref(null);
+const showModal = ref(false);
+const fileList = ref([]);
 const product = ref({
   title: "",
   price: "",
@@ -117,6 +124,7 @@ const selectedData = ref({
 });
 
 const emitClose = () => {
+  showModal.value = false;
   emit("close");
 };
 
@@ -146,11 +154,13 @@ const handleDataChange = (field) => (value) => {
 };
 
 const handleFileChange = (event) => {
-  file.value = event.target.files[0];
-}
+  if (event.fileList && event.fileList.length > 0) {
+    fileList.value = event.fileList;
+  }
+};
 const isFormValid = () => {
   return (
-    file.value &&
+    fileList.value.length > 0 &&
     product.value.title &&
     product.value.price &&
     product.value.description &&
@@ -161,7 +171,7 @@ const isFormValid = () => {
 const uploadFile =  async() => {
   if (isFormValid()) {
     const formData = new FormData();
-    formData.append("file1", file.value);
+    formData.append("file1", fileList.value[0].file);
     formData.append("title", product.value.title);
     formData.append("price", product.value.price);
     formData.append("discountPrice", product.value.discountPrice);
@@ -206,19 +216,21 @@ onMounted(() => {
   width: 100%;
   overflow-y: auto;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 99;
 }
-
+.n-dialog :deep(.n-dialog__title) {
+  display: none;
+}
 .modal-content {
   background: white;
   padding: 20px;
   border-radius: 8px;
   width: 700px;
-  position: relative;
+   position: relative; 
   z-index: 100;
 }
 .form-group {
@@ -229,20 +241,6 @@ label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
-}
-
-input,
-textarea {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-textarea {
-  height: 50px;
-  resize: vertical;
 }
 .close-button {
   font-size: 24px;

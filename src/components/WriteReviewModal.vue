@@ -145,8 +145,6 @@ onMounted(() => {
   padding: 20px;
   box-sizing: border-box; 
   width: 600px; 
-}
-.n-modal {
   background-color: #fff;
 }
 

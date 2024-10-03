@@ -148,16 +148,31 @@ const navigateToproduct = () => {
 };
 
 const handleSave = async (updatedProduct) => {
-  try {
-    const response = await axios.put(`http://localhost:8080/product/change`, updatedProduct, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    console.log("Server response:", response.data);
-  } catch (error) {
-    console.error("Error saving product:", error);
-  }
+  const newFrom = new FormData();
+
+  newFrom.append("id", updatedProduct.id);
+  newFrom.append("newTitle", updatedProduct.newTitle);
+  newFrom.append("newDescription", updatedProduct.newDescription);
+  newFrom.append("newCount", updatedProduct.newCount);
+  newFrom.append("newPrice", updatedProduct.newPrice);
+  newFrom.append("newDiscountPrice", updatedProduct.newDiscountPrice);
+  newFrom.append("newCategory", updatedProduct.newCategory);
+  newFrom.append("newSubCategory", updatedProduct.newSubCategory);
+  newFrom.append("newSubSubCategory", updatedProduct.newSubSubCategory);
+  newFrom.append("images", updatedProduct.images)
+   try {
+    for (let pair of newFrom.entries()) {
+   console.log(`${pair[0]}: ${pair[1]}`);
+ }
+     const response = await axios.put(`http://localhost:8080/product/change`, newFrom, {
+       headers: {
+         'Content-Type': 'multipart/form-data'
+       }
+     });
+     console.log("Server response:", response.data);
+   } catch (error) {
+     console.error("Error saving product:", error);
+   }
   isEdited.value = false;
 };
 
