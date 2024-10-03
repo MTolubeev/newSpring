@@ -14,7 +14,7 @@
       type="warning">
       Добавить новый товар
     </n-button>
-    <AddProduct v-modal:show="showModal" @close="closeModal" />
+    <AddProduct v-if="showModal" @close="closeModal" />
 
     <MyCardList @products-loaded="onProductsLoaded" />
 
