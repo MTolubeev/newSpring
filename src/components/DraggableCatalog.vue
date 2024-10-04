@@ -2,9 +2,9 @@
   <Draggable
     v-model="internalCategories"
     :group="{ name: 'categories' }"
-    @end="handleDragEnd"
+    :disabled="!editMode"
     item-key="name"
-    :disabled="!editMode">
+    @end="handleDragEnd">
     <template #item="{ element }">
       <li class="category-item">
         <div class="category-content">
@@ -13,10 +13,10 @@
               v-model:value="editedName"
               @blur="saveEdit(element)"
               @keyup.enter="saveEdit(element)"/>
-            <n-button size="small" round type="success" @click="saveEdit(element)" class="action-button">
+            <n-button class="action-button" size="small" round type="success" @click="saveEdit(element)">
               ✔️
             </n-button>
-            <n-button size="small" round type="error" @click="cancelEdit" class="action-button">
+            <n-button class="action-button" size="small" round type="error" @click="cancelEdit">
               ✖️
             </n-button>
           </template>
@@ -34,8 +34,8 @@
         <Draggable
           v-model="element.subcategories"
           :group="{ name: 'subcategories' }"
-          item-key="name"
-          :disabled="!editMode">
+          :disabled="!editMode"
+          item-key="name">
           <template #item="{ element: subcategory }">
             <ul>
               <li class="category-item">
@@ -46,10 +46,10 @@
                       @blur="saveEdit(subcategory)"
                       @keyup.enter="saveEdit(subcategory)"/>
 
-                    <n-button size="small" round type="success" @click="saveEdit(subcategory)" class="action-button">
+                    <n-button class="action-button" size="small" round type="success" @click="saveEdit(subcategory)">
                       ✔️
                     </n-button>
-                    <n-button size="small" round type="error" @click="cancelEdit" class="action-button">
+                    <n-button class="action-button" size="small" round type="error" @click="cancelEdit">
                       ✖️
                     </n-button>
                   </template>
@@ -66,8 +66,8 @@
                 <Draggable
                   v-model="subcategory.subsubcategories"
                   :group="{ name: 'subsubcategories' }"
-                  item-key="name"
-                  :disabled="!editMode">
+                  :disabled="!editMode"
+                  item-key="name">
                   <template #item="{ element: subsubcategory }">
                     <ul>
                       <li class="category-item">
@@ -77,10 +77,10 @@
                               v-model:value="editedName"
                               @blur="saveEdit(subsubcategory)"
                               @keyup.enter="saveEdit(subsubcategory)"/>
-                            <n-button size="small" round type="success" @click="saveEdit(subsubcategory)" class="action-button">
+                            <n-button class="action-button" size="small" round type="success" @click="saveEdit(subsubcategory)">
                               ✔️
                             </n-button>
-                            <n-button size="small" round type="error" @click="cancelEdit" class="action-button">
+                            <n-button class="action-button" size="small" round type="error" @click="cancelEdit">
                               ✖️
                             </n-button>
                           </template>
@@ -97,9 +97,9 @@
                         <Draggable
                           v-model="subsubcategory.products"
                           :group="{ name: 'products' }"
-                          item-key="id"
                           :move="checkSameList"
-                          :disabled="!editMode">
+                          :disabled="!editMode"
+                          item-key="id">
                           <template #item="{ element: product }">
                             <ul>
                               <li>
@@ -114,14 +114,12 @@
                     </ul>
                   </template>
                 </Draggable>
-
-
                 <Draggable
                   v-model="subcategory.products"
                   :group="{ name: 'products' }"
-                  item-key="id"
                   :move="checkSameList"
-                  :disabled="!editMode">
+                  :disabled="!editMode"
+                  item-key="id">
                   <template #item="{ element: product }">
                     <ul>
                       <li>
@@ -140,9 +138,9 @@
         <Draggable
           v-model="element.productsWithoutSubcategory"
           :group="{ name: 'products' }"
-          item-key="id"
           :move="checkSameList"
-          :disabled="!editMode">
+          :disabled="!editMode"
+          item-key="id">
           <template #item="{ element: product }">
             <ul>
               <li>

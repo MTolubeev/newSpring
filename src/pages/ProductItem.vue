@@ -1,8 +1,8 @@
 <template>
   <n-spin content-style="--n-opacity-spinning:0; height: 100vh;" stroke="blue" :show="loader">
     <div v-if="product">
-    <MyHeader @toggle-drawer="toggleDrawer" />
-    <MyDrawer :isVisible="isDrawerVisible" @close-drawer="closeDrawer" />
+      <MyHeader @toggle-drawer="toggleDrawer" />
+      <MyDrawer :isVisible="isDrawerVisible" @close-drawer="closeDrawer" />
       <h2 class="breadcrumb">
         <router-link
             class="product__link"
@@ -41,19 +41,25 @@
             <h1 class="product-title">{{ product.title }}</h1>
             <p class="product-description">{{ product.description }}</p>
             <div class="card__pay">
-            <span v-if="isAuthenicated">Цена: <b>{{ product.price }} руб.</b>
-            <del style="margin-left: 10px">{{ product.discountPrice }} руб.</del>
-            </span>
-            <span v-else>Цена: {{ product.price }}</span>
-            <span>Количество товаров осталось: <b>{{ product.count }}</b></span>
-            <CartButton v-if="product" :productId="product.id" :product="product" />
+              <span v-if="isAuthenicated">Цена: <b>{{ product.price }} руб.</b>
+                  <del style="margin-left: 10px">{{ product.discountPrice }} руб.</del>
+              </span>
+              <span v-else>Цена: {{ product.price }}</span>
+              <span>Количество товаров осталось: <b>{{ product.count }}</b></span>
+              <CartButton 
+              v-if="product" 
+              :productId="product.id" 
+              :product="product" 
+              />
             </div>
           </div>
         </n-card>
       </div>
-    <ProductsComment :comments="product.comments" :productId="product.id" />
-  </div>
-
+      <ProductsComment 
+      :comments="product.comments" 
+      :productId="product.id" 
+      />
+    </div>
   </n-spin>
 </template>
 

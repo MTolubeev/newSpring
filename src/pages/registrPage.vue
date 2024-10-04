@@ -1,16 +1,32 @@
 <template>
   <n-dialog class="modal-overlay">
     <div class="modal-content">
-      <button @click="closeModal" class="close-button">✖</button>
+      <n-button @click="closeModal" class="close-button">✖</n-button>
       <h2>Регистрация нового пользователя</h2>
       <p>Если аккаунт уже существует, то войдите</p>
       <router-link :to="{ path: '/signin', query: { from: 'registration' } }">
-  <n-button type="warning">Войти</n-button>
-  </router-link>
-        <n-input v-model:value="username" type="text" placeholder="Имя" required  />
-        <n-input v-model:value="surname" type="text" placeholder="Фамилия" required />
-        <n-input v-model:value="email" type="email" placeholder="Email" required />
-        <n-input v-model:value="password" type="password" placeholder="Пароль" required />
+        <n-button type="warning">Войти</n-button>
+      </router-link>
+      <n-input 
+        v-model:value="username" 
+        type="text" 
+        placeholder="Имя" 
+        required  />
+      <n-input 
+        v-model:value="surname" 
+        type="text" 
+        placeholder="Фамилия" 
+        required />
+      <n-input 
+        v-model:value="email" 
+        type="email" 
+        placeholder="Email" 
+        required />
+      <n-input
+        v-model:value="password" 
+        type="password" 
+        placeholder="Пароль" 
+        required />
         <div class="buttons">
           <n-button type="success" @click="register">Зарегистрироваться</n-button>
         </div>

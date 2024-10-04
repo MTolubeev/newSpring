@@ -1,19 +1,21 @@
 <template>
   <div v-if="!showOrderConfirmed" class="cart">
-    <h2 v-if="cartItems.length">Ваша корзина</h2>
-    <div v-if="cartItems.length" class="cart__info">
-      <div class="products__list">
-        <BasketItem
-          v-for="item in cartItems"
-          :key="item.id"
-          :item="item"
-          @updateItem="updateCartItem"
-        />
-      </div>
-      <div class="info__controll">
-        <span>Всего товаров: {{ totalItems }}</span>
-        <span>Общая сумма: {{ totalPrice }} ₽</span>
-        <n-button class="button" type="success" @click="openConfirmation">Оформить заказ</n-button>
+    <div v-if="cartItems.length" class="cart__main">
+      <h2>Ваша корзина</h2>
+      <div class="cart__info">
+        <div class="products__list">
+          <BasketItem
+            v-for="item in cartItems"
+            :key="item.id"
+            :item="item"
+            @updateItem="updateCartItem"
+          />
+        </div>
+        <div class="info__controll">
+          <span>Всего товаров: {{ totalItems }}</span>
+          <span>Общая сумма: {{ totalPrice }} ₽</span>
+          <n-button class="button" type="success" @click="openConfirmation">Оформить заказ</n-button>
+        </div>
       </div>
     </div>
     <div v-else class="cart__empty">
@@ -44,8 +46,7 @@
       Оформить заказ?
     </n-dialog>
   </div>
-
-
+  
   <div v-if="isLoading" class="loading-overlay">
     <n-spin size="large" description="Оформляем ваш заказ..." />
   </div>
@@ -110,12 +111,8 @@ const closeConfirmation = () => {
 onMounted(async () => {
   try {
     await userStore.fetchUser();
-    if (user.value && user.value.id) {
       const token = localStorage.getItem("token");
       await cartStore.fetchCart(user.value.id, token);
-    } else {
-      console.error("User not authenticated or user ID is missing.");
-    }
   } catch (err) {
     console.error("Failed to load user or cart:", err.message);
   }
@@ -123,13 +120,23 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+
+.cart {
+  margin-top: 100px;
+}
+.cart__main{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
 .button {
   margin-top: auto;
 }
 
 .cart__info {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 200px;
 }
 
 .info__controll {
@@ -160,18 +167,16 @@ p {
   font-size: 16px;
 }
 
-.cart {
-  margin-top: 100px;
-}
 
 h2 {
   text-align: center;
+  color: #465a86;
+  font-size: 28px;
 }
 
 .n-card {
   width: 600px;
 }
-
 .order-confirmed {
   display: flex;
   height: 100vh;
@@ -180,11 +185,9 @@ h2 {
   justify-content: center;
   gap: 20px;
 }
-
 .order-confirmed img {
   width: 150px;
 }
-
 .modal-content {
   text-align: center;
 }
@@ -209,7 +212,6 @@ h2 {
 .confirm-dialog {
   z-index: 100;
 }
-
 
 .loading-overlay {
   position: fixed;

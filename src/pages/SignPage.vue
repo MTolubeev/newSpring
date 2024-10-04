@@ -1,31 +1,27 @@
 <template>
   <n-dialog class="modal-overlay">
     <div class="modal-content">
-      <button @click="closeModal" class="close-button">✖</button>
+      <n-button class="close-button" @click="closeModal">✖</n-button>
       <h2>Вход в личный аккаунт</h2>
       <p>Нет аккаунта? создайте!</p>
       <router-link to="/registration">
         <n-button type="warning">Создать аккаунт</n-button>
       </router-link>
-      <form>
-        <n-input
-          type="email"
-          v-model:value="loginEmail"
-          placeholder="Email"
-          required
-          autocomplete="email"
-        />
-        <n-input
-          type="password"
-          v-model:value="loginPassword"
-          placeholder="Пароль"
-          required
-          autocomplete="current-password"
-        />
-        <div class="buttons">
-          <n-button class="registr" type="success" @click="login">Войти</n-button>
-        </div>
-      </form>
+      <n-input
+        v-model:value="loginEmail"
+        type="email"
+        placeholder="Email"
+        required
+        autocomplete="email"/>
+      <n-input
+        v-model:value="loginPassword"
+        type="password" 
+        placeholder="Пароль"
+        required
+        autocomplete="current-password"/>
+      <div class="buttons">
+        <n-button type="success" class="registr" @click="login">Войти</n-button>
+      </div>
     </div>
   </n-dialog>
 </template>

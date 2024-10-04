@@ -1,28 +1,30 @@
 <template>
-  <n-modal v-model:show="visible" title="Написать отзыв" @close="handleClose" content-style="padding:20px; width:600px;">
+  <n-modal 
+    v-model:show="visible" 
+    title="Написать отзыв"
+    content-style="padding:20px; width:600px;" 
+    @close="handleClose">
     <div class="review-form">
       <label for="reviewText">Ваш отзыв:</label>
       <n-input
-      v-model:value="reviewText"
-      type="textarea"
-      placeholder="Введите ваш отзыв"
-      rows="4"/>
-
+        v-model:value="reviewText"
+        type="textarea"
+        placeholder="Введите ваш отзыв"
+        rows="4"/>
       <label>Оценка:</label>
       <div class="stars">
         <svg
           v-for="star in maxStars"
           :key="star"
-          @click="setRating(star)"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
           :fill="star <= rating ? 'gold' : 'lightgray'"
           width="30"
-          height="30">
+          height="30"
+          @click="setRating(star)">
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/>
         </svg>
       </div>
-
       <label>Добавить изображения:</label>
       <n-upload 
         :multiple="true" 
@@ -35,12 +37,13 @@
         <h3>Загруженные изображения:</h3>
         <div class="images-wrapper">
           <div v-for="(img, index) in images" :key="index" class="image-item">
-            <img :src="img.url" :alt="'Image ' + (index + 1)" />
+            <img 
+            :src="img.url" 
+            :alt="'Image ' + (index + 1)" />
           </div>
         </div>
       </div>
-
-      <button @click="submitReview" class="submit-btn">Отправить отзыв</button>
+      <n-button @click="submitReview">Отправить отзыв</n-button>
     </div>
   </n-modal>
 </template>

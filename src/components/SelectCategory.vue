@@ -1,20 +1,18 @@
 <template>
   <div>
     <label>{{ label }}</label>
-    <div style="display: flex; align-items: center">
+    <div class="select__control">
       <NSelect v-model:value="selectedValue" :options="options" />
       <NButton @click="toggleInput" size="small" style="margin-left: 8px">
         {{ showInput ? "-" : "+" }}
       </NButton>
     </div>
-
-    <NInput
+    <n-input
       v-if="showInput"
       :value="inputValue"
-      @update:value="updateInputValue"
       placeholder="Введите новое значение"
       style="margin-top: 8px"
-    />
+      @update:value="updateInputValue"/>
   </div>
 </template>
 
@@ -61,3 +59,9 @@ watch(inputValue, (newValue) => {
   }
 });
 </script>
+<style scoped>
+.select__control{
+  display: flex;
+  align-items: center;
+}
+</style>

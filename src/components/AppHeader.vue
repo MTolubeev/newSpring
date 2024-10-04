@@ -10,7 +10,7 @@
           <span>{{ user.sub }}</span>
           <n-button @click="logout" style="--n-border-hover: 1px solid #fff; --n-border-focus: 1px solid #f0f0f0;">
             Выйти
-            </n-button>
+          </n-button>
         </div>
       </div>
       <div class="cart">
@@ -27,7 +27,8 @@
               --n-border-hover: 1px solid #fff;
               --n-text-color-focus: #f0f0f0;
               --n-border-focus: 1px solid #f0f0f0;">
-            Главная</n-button>
+            Главная
+          </n-button>
         </router-link>
       </div>
     </div>

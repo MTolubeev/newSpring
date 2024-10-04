@@ -55,7 +55,6 @@
     @save="handleSave"
     @cancel="handleCancel"
   />
-
   <div v-if="confirmDialogVisible" class="dialog-overlay">
     <n-dialog
       class="confirm-dialog"

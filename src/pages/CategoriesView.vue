@@ -1,5 +1,8 @@
 <template>
-  <n-spin content-style="--n-opacity-spinning:0; height: 100vh;" stroke="blue" :show="isLoading">
+  <n-spin 
+    content-style="--n-opacity-spinning:0; height: 100vh;" 
+    stroke="blue" 
+    :show="isLoading">
     <MyHeader @toggle-drawer="toggleDrawer" />
     <MyDrawer :isVisible="isDrawerVisible" @close-drawer="closeDrawer" />
     <div class="paths">
@@ -31,7 +34,7 @@
         v-for="product in filteredProducts"
         :key="product.id"
         :item="product"
-      ></MyCard>
+        />
     </div>
   </n-spin>
 </template>
@@ -120,7 +123,6 @@ onMounted(() => {
   fetchData();
 });
 </script>
-
 
 <style scoped>
 .paths {

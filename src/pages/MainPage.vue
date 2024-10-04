@@ -4,14 +4,15 @@
     stroke="blue"
     :show="loading">
     <MyHeader @toggle-drawer="toggleDrawer" />
-    <MyDrawer :isVisible="isDrawerVisible" 
-    @close-drawer="closeDrawer" 
+    <MyDrawer 
+      :isVisible="isDrawerVisible" 
+      @close-drawer="closeDrawer" 
     />
     <n-button
       v-if="isAdmin"
-      @click="openModal"
       class="button__add"
-      type="warning">
+      type="warning"
+      @click="openModal">
       Добавить новый товар
     </n-button>
     <AddProduct v-if="showModal" @close="closeModal" />
@@ -21,9 +22,9 @@
     <div class="all_comments">
       <h2>Отзывы наших пользователей</h2>
       <n-card
-        content-style="display:flex; justify-content:space-around;"
         v-for="comment in limitedComments"
-        :key="comment.id">
+        :key="comment.id"
+        content-style="display:flex; justify-content:space-around;">
         <div>
           <h3>{{ comment.username }}</h3>
           <span>Оценка за товар: {{ comment.score }}</span>
