@@ -6,6 +6,7 @@ import com.example.EShop.models.Comment;
 import com.example.EShop.models.Image;
 import com.example.EShop.models.Product;
 import com.example.EShop.models.User;
+import com.example.EShop.repositories.ImageRepository;
 import com.example.EShop.repositories.ProductRepository;
 import com.example.EShop.repositories.UserRepository;
 import com.example.EShop.services.BasketService;
@@ -36,7 +37,7 @@ public class ProductController {
     private final UserRepository userRepository;
     private final JwtTokenUtils jwtTokenUtils;
     private final ProductRepository productRepository;
-
+    private final ImageRepository imageRepository;
 
     @GetMapping("/")
     public ResponseEntity<?> products(@RequestParam(name = "title", required = false) String title,
@@ -142,8 +143,13 @@ public class ProductController {
         }
         if (images.getSize() != 0 && images.getSize() > 0) {
             Image image1;
+            oldProduct.getImages().get(0).setPreviewImage(false);
             image1 = productService.toImageEntity(images);
+            image1.setPreviewImage(true);
+            image1 = imageRepository.save(image1);
+
             oldProduct.addImageToProduct(image1);
+            oldProduct.setPreviewImageId(image1.getId());
         }
 
         Product savedProduct = productRepository.save(oldProduct);

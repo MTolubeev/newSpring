@@ -22,7 +22,8 @@ public class Image {
     private Long size;
     @Column(name = "contentType")
     private String contentType;
-
+    @Column(name = "isPreviewImage")
+    private boolean isPreviewImage;
 
 
     @Column(name = "bytes", columnDefinition = "bytea")
