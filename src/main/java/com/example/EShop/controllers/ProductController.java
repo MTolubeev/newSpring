@@ -141,7 +141,7 @@ public class ProductController {
                 cat += "/" + newSubSubCategory;
             productService.generateCategoryOrderForProduct(oldProduct);
         }
-        if (images.getSize() != 0 && images.getSize() > 0) {
+        if (images != null) {
             Image image1;
             oldProduct.getImages().get(0).setPreviewImage(false);
             image1 = productService.toImageEntity(images);
