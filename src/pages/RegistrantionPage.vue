@@ -1,7 +1,7 @@
 <template>
   <n-dialog class="modal-overlay">
     <div class="modal-content">
-      <n-button @click="closeModal" class="close-button">✖</n-button>
+      <n-button class="close-button" @click="closeModal">✖</n-button>
       <h2>Регистрация нового пользователя</h2>
       <p>Если аккаунт уже существует, то войдите</p>
       <router-link :to="{ path: '/signin', query: { from: 'registration' } }">
@@ -39,7 +39,7 @@ import { ref } from 'vue';
 import api from '../services/api';
 import { NButton, NDialog, NInput } from 'naive-ui';
 import router from '@/router';
-import { useNotificationService } from '@/composables/notificationUtils.js'; 
+import { useNotificationService } from '@/composables/useNotifications.js'; 
 
 const { showNotificationMessage } = useNotificationService(); 
 const username = ref('');
@@ -88,7 +88,6 @@ const closeModal = () => {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   width: 500px;
-  box-sizing: border-box;
   gap: 10px;
 }
 .n-dialog :deep(.n-dialog__title) {
@@ -113,20 +112,12 @@ input {
   border-radius: 4px;
 }
 
-.modal-content button {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  cursor: pointer;
-}
 .close-button {
-  background: none;
-  border: none;
   font-size: 24px;
   cursor: pointer;
   color: #333;
   position: absolute;
   top: 10px;
-  left: 220px;
+  right: 10px;
 }
 </style>

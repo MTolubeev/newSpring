@@ -52,7 +52,7 @@
 import { ref, defineProps, defineEmits, watch, onMounted } from 'vue';
 import axios from 'axios';
 import { NModal, NUpload, NButton, NInput } from 'naive-ui';
-import { useNotificationService } from '@/composables/notificationUtils.js'; 
+import { useNotificationService } from '@/composables/useNotifications.js'; 
 
 const props = defineProps({
   modelValue: Boolean,

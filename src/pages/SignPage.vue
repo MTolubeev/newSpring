@@ -20,7 +20,7 @@
         required
         autocomplete="current-password"/>
       <div class="buttons">
-        <n-button type="success" class="registr" @click="login">Войти</n-button>
+        <n-button type="success" class="registrantion" @click="login">Войти</n-button>
       </div>
     </div>
   </n-dialog>
@@ -30,7 +30,7 @@
 import { ref, onBeforeMount } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useUserStore } from "@/store/userStore";
-import { useNotificationService } from "@/composables/notificationUtils.js";
+import { useNotificationService } from "@/composables/useNotifications.js";
 import { NButton, NInput, NDialog } from "naive-ui";
 
 const router = useRouter();
@@ -116,7 +116,7 @@ input {
   border: 1px solid #ddd;
   border-radius: 4px;
 }
-.registr {
+.registrantion {
   width: 100%;
   display: flex;
   justify-content: center;

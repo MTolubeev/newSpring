@@ -3,9 +3,9 @@
     content-style="--n-opacity-spinning:0; height: 100vh;"
     stroke="blue"
     :show="loading">
-    <MyHeader @toggle-drawer="toggleDrawer" />
-    <MyDrawer 
-      :isVisible="isDrawerVisible" 
+    <AppHeader @toggle-drawer="toggleDrawer" />
+    <AppDrawer 
+      :is-visible="isDrawerVisible" 
       @close-drawer="closeDrawer" 
     />
     <n-button
@@ -16,9 +16,7 @@
       Добавить новый товар
     </n-button>
     <AddProduct v-if="showModal" @close="closeModal" />
-
-    <MyCardList @products-loaded="onProductsLoaded" />
-
+    <CardList @products-loaded="onProductsLoaded" />
     <div class="all_comments">
       <h2>Отзывы наших пользователей</h2>
       <n-card
@@ -33,7 +31,7 @@
         <div>
           <router-link
             :to="{
-              name: 'ProductView',
+              name: 'ProductItem',
               params: { productId: comment.productId },}"
             class="name_product">
             {{ comment.productTitle }}
@@ -48,10 +46,10 @@
 import { computed, onMounted, ref } from "vue";
 import { NButton, NCard, NSpin } from "naive-ui";
 import axios from "axios";
-import MyHeader from "@/components/AppHeader.vue";
-import MyDrawer from "@/components/AppDrawer.vue";
+import AppHeader from "@/components/AppHeader.vue";
+import AppDrawer from "@/components/AppDrawer.vue";
 import AddProduct from "@/components/AddProduct.vue";
-import MyCardList from "@/components/CardList.vue";
+import CardList from "@/components/CardList.vue";
 import { useUserStore } from "@/store/userStore";
 import { useDrawer } from "@/composables/useHeader.js";
 

@@ -16,7 +16,7 @@
     </n-button>
     <DraggableCatalog
       :categories="categories"
-      :editMode="editMode"
+      :edit-mode="editMode"
       @drag-end="onDragEnd"
     />
     <n-button 

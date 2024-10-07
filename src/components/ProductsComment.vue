@@ -68,7 +68,7 @@
         <ImageGallery
           :images="currentImages"
           :show="showImageGallery"
-          :commentId="currentImageGalleryId"
+          :comment-id="currentImageGalleryId"
           @close="closeImageGallery"
           @delete-image="handleDeleteImage"
         />
@@ -96,7 +96,7 @@
       </div>
     </div>
   </div>
-  <WriteReviewModal v-model:show="showReviewModal" :productId="productId" />
+  <WriteReviewModal v-model:show="showReviewModal" :product-id="productId" />
 </template>
 
 <script setup>
@@ -106,7 +106,7 @@ import WriteReviewModal from "./WriteReviewModal.vue";
 import { useUserStore } from "@/store/userStore";
 import axios from "axios";
 import ImageGallery from "./ImageGallery.vue";
-import { useNotificationService } from "@/composables/notificationUtils";
+import { useNotificationService } from "@/composables/useNotifications";
 
 const props = defineProps({
   comments: {

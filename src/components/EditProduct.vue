@@ -63,7 +63,7 @@
         :options="subsubcategoryOptions"
         placeholder="Выберите субсубкатегорию"/>
   
-      <div class="card__button">
+      <div class="edit__button">
         <n-button type="success" @click.stop="saveChanges">
           Сохранить изменения
         </n-button>
@@ -74,53 +74,53 @@
     </n-card>
   </template>
   
-  <script setup>
-  import { ref, defineProps, defineEmits } from "vue";
-  import { NCard, NButton, NInput, NUpload, NSelect } from "naive-ui";
-  
-  const props = defineProps({
-    item: {
-      type: Object,
-      required: true,
-    },
-    categoryOptions: {
-      type: Array,
-      required: true,
-    },
-    subcategoryOptions: {
-      type: Array,
-      required: true,
-    },
-    subsubcategoryOptions: {
-      type: Array,
-      required: true,
-    },
-  });
-  
-  const emit = defineEmits(["save", "cancel"]);
-  
-  const imageDeleted = ref(false);
-  const editProduct = ref({ ...props.item });
-  const fileList = ref([]);
-  
-  const selectedCategory = ref(props.item.categories[0]?.name || '');
-  const selectedSubcategory = ref(props.item.categories[0]?.subcategory || '');
-  const selectedSubsubcategory = ref(props.item.categories[0]?.subsubcategory || '');
-  
-  const deleteImage = () => {
-    imageDeleted.value = true;
-    editProduct.value.imageUrl = null;
-  };
-  
-  const handleChange = (event) => {
+<script setup>
+import { ref, defineProps, defineEmits } from "vue";
+import { NCard, NButton, NInput, NUpload, NSelect } from "naive-ui";
+
+const props = defineProps({
+  item: {
+    type: Object,
+    required: true,
+  },
+  categoryOptions: {
+    type: Array,
+    required: true,
+  },
+  subcategoryOptions: {
+    type: Array,
+    required: true,
+  },
+  subsubcategoryOptions: {
+    type: Array,
+    required: true,
+  },
+});
+
+const emit = defineEmits(["save", "cancel"]);
+
+const imageDeleted = ref(false);
+const editProduct = ref({ ...props.item });
+const fileList = ref([]);
+
+const selectedCategory = ref(props.item.categories[0]?.name || '');
+const selectedSubcategory = ref(props.item.categories[0]?.subcategory || '');
+const selectedSubsubcategory = ref(props.item.categories[0]?.subsubcategory || '');
+
+const deleteImage = () => {
+  imageDeleted.value = true;
+  editProduct.value.imageUrl = null;
+};
+
+const handleChange = (event) => {
   if (event.fileList && event.fileList.length > 0) {
     fileList.value = event.fileList; 
   }
 };
   
-  const cancelEdit = () => {
-    emit("cancel");
-  };
+const cancelEdit = () => {
+  emit("cancel");
+};
   
 const saveChanges = () => {
   let imageToSend = null;
@@ -142,16 +142,16 @@ const saveChanges = () => {
     emit('save', updatedProduct);
   };
   
-  const handleCategoryChange = (value) => {
-    selectedCategory.value = value;
-    selectedSubcategory.value = '';
-    selectedSubsubcategory.value = '';
-  };
+const handleCategoryChange = (value) => {
+  selectedCategory.value = value;
+  selectedSubcategory.value = '';
+  selectedSubsubcategory.value = '';
+};
   
-  const handleSubcategoryChange = (value) => {
-    selectedSubcategory.value = value;
-    selectedSubsubcategory.value = '';
-  };
+const handleSubcategoryChange = (value) => {
+  selectedSubcategory.value = value;
+  selectedSubsubcategory.value = '';
+};
 </script>
 
 <style scoped>
@@ -167,5 +167,10 @@ const saveChanges = () => {
   justify-content: space-between;
   position: relative;
   cursor: pointer;
+}
+.edit__button{
+  margin-top: 20px;
+  display: flex;
+  gap: 20px;
 }
 </style>

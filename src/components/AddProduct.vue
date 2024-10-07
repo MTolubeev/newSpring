@@ -93,7 +93,7 @@ import { ref, defineEmits, onMounted } from "vue";
 import { NInput, NButton, NDialog, NUpload } from "naive-ui";
 import axios from "axios";
 import SelectCategory from "./SelectCategory.vue";
-import { useNotificationService } from '@/composables/notificationUtils';
+import { useNotificationService } from '@/composables/useNotifications';
 
 const emit = defineEmits(["close"]);
 

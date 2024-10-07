@@ -21,7 +21,7 @@
             </n-button>
           </template>
           <template v-else>
-            <router-link :to="{ name: 'Category', params: { categoryName: element.name } }" class="category-link">
+            <router-link :to="{ name: 'CategoriesView', params: { categoryName: element.name } }" class="category-link">
               <strong>{{ element.name }}</strong>
             </router-link>
           </template>
@@ -54,7 +54,7 @@
                     </n-button>
                   </template>
                   <template v-else>
-                    <router-link :to="{ name: 'Category', params: { categoryName: element.name, subcategoryName: subcategory.name } }">
+                    <router-link :to="{ name: 'CategoriesView', params: { categoryName: element.name, subcategoryName: subcategory.name } }">
                       <strong>{{ subcategory.name }}</strong>
                     </router-link>
                   </template>
@@ -85,7 +85,7 @@
                             </n-button>
                           </template>
                           <template v-else>
-                            <router-link :to="{ name: 'Category', params: { categoryName: element.name, subcategoryName: subcategory.name, subsubcategoryName: subsubcategory.name } }">
+                            <router-link :to="{ name: 'CategoriesView', params: { categoryName: element.name, subcategoryName: subcategory.name, subsubcategoryName: subsubcategory.name } }">
                               <strong>{{ subsubcategory.name }}</strong>
                             </router-link>
                           </template>
@@ -103,7 +103,7 @@
                           <template #item="{ element: product }">
                             <ul>
                               <li>
-                                <router-link :to="{ name: 'ProductView', params: { productId: product.id } }">
+                                <router-link :to="{ name: 'ProductItem', params: { productId: product.id } }">
                                   {{ product.title }}
                                 </router-link>
                               </li>
@@ -123,7 +123,7 @@
                   <template #item="{ element: product }">
                     <ul>
                       <li>
-                        <router-link :to="{ name: 'ProductView', params: { productId: product.id } }">
+                        <router-link :to="{ name: 'ProductItem', params: { productId: product.id } }">
                           {{ product.title }}
                         </router-link>
                       </li>
@@ -144,7 +144,7 @@
           <template #item="{ element: product }">
             <ul>
               <li>
-                <router-link :to="{ name: 'ProductView', params: { productId: product.id } }">
+                <router-link :to="{ name: 'ProductItem', params: { productId: product.id } }">
                   {{ product.title }}
                 </router-link>
               </li>
