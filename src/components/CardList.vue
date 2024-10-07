@@ -35,7 +35,6 @@ const fetchItems = async () => {
         imageUrl: `data:image/png;base64,${product.base64Image}`,
       };
     });
-
     emit('products-loaded');
   } catch (err) {
     console.log(err);
@@ -67,9 +66,8 @@ const fetchCategories = async () => {
   }
 };
 
-const handleDelete = (itemId) => {
+const handleDelete = () => {
   window.location.reload();
-  items.value = items.value.filter((item) => item.id !== itemId);
 };
 
 onMounted(() => {

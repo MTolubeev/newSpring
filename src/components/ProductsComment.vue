@@ -4,13 +4,11 @@
     <div class="controls">
       <h3
         v-if="comments.length > 3"
-        class="open__comments"
         @click="toggleComments">
         {{ showAll ? "Скрыть отзывы" : "Показать все отзывы" }}
       </h3>
       <n-button
-        type="success"
-        class="write-review-btn"
+        color="#465a86"
         @click="handleWriteReview">
         Написать отзыв
       </n-button>
@@ -56,7 +54,7 @@
             </div>
             <n-button
               v-if="comment.images.length > 3"
-              class="gallery-button"
+              color="#465a86"
               quaternary
               circle
               size="large"
@@ -86,22 +84,23 @@
   </div>
 
   <div v-if="confirmDialogVisible" class="modal-overlay">
-    <div class="modal-content">
-      <h3>Подтверждение удаления</h3>
-      <p>Вы уверены, что хотите удалить этот комментарий?</p>
-      <div class="modal-actions">
-        <n-button type="primary" @click="confirmDeleteComment">
-          Удалить</n-button>
-        <n-button type="default" @click="closeConfirmDialog">Отмена</n-button>
-      </div>
-    </div>
+    <n-dialog
+      class="modal-content"
+      title="Удаление комментария"
+      positive-text="Удалить"
+      negative-text="Отмена"
+      @positive-click="confirmDeleteComment"
+      @negative-click="closeConfirmDialog"
+      :closable="false">
+      Оформить заказ?
+    </n-dialog>
   </div>
   <WriteReviewModal v-model:show="showReviewModal" :product-id="productId" />
 </template>
 
 <script setup>
 import { defineProps, ref, computed, onMounted } from "vue";
-import { NCard, NButton, NSelect } from "naive-ui";
+import { NCard, NButton, NSelect, NDialog } from "naive-ui";
 import WriteReviewModal from "./WriteReviewModal.vue";
 import { useUserStore } from "@/store/userStore";
 import axios from "axios";
@@ -323,15 +322,6 @@ h3 {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-}
-.modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 400px;
-  max-width: 90%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
 }
 
 .modal-actions {

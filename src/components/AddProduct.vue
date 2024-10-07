@@ -5,7 +5,6 @@
      <div class="modal-content"> 
       <n-button 
         class="close-button"
-        style="--n-text-color-hover: none" 
         color="#465a86" 
         @click="emitClose">
         ✖
@@ -18,7 +17,7 @@
             :max="1"
             list-type="image"
             @change="handleFileChange">
-            <n-button>Выбрать файл</n-button>
+            <n-button color="#465a86">Выбрать файл</n-button>
           </n-upload>
         </div>
         <div class="form-group">
@@ -82,7 +81,12 @@
             type="number"
             placeholder="Количество"/>
         </div>
-        <n-button class="create__product" type="success" @click="uploadFile">Создать товар</n-button>
+        <n-button 
+          color="#465a86" 
+          class="create__product" 
+          @click="uploadFile">
+          Создать товар
+        </n-button>
        </div>
     </div>
  </n-dialog>
@@ -250,8 +254,6 @@ label {
 .create__product {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
   cursor: pointer;
 }
 .close-button:hover {

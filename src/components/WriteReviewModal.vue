@@ -30,20 +30,23 @@
         :multiple="true" 
         :before-upload="beforeUpload"
         @change="handleChange">
-        <n-button>Выберите файлы</n-button>
+        <n-button color="#465a86">Выберите файлы</n-button>
       </n-upload>
 
       <div v-if="images.length">
         <h3>Загруженные изображения:</h3>
         <div class="images-wrapper">
-          <div v-for="(img, index) in images" :key="index" class="image-item">
+          <div 
+            v-for="img in images" 
+            :key="img.id" 
+            class="image-item">
             <img 
-            :src="img.url" 
-            :alt="'Image ' + (index + 1)" />
+              :src="img.url" 
+              :alt="image" />
           </div>
         </div>
       </div>
-      <n-button @click="submitReview">Отправить отзыв</n-button>
+      <n-button color="#465a86" @click="submitReview">Отправить отзыв</n-button>
     </div>
   </n-modal>
 </template>
@@ -191,16 +194,4 @@ onMounted(() => {
   margin: 5px;
 }
 
-.submit-btn {
-  padding: 8px 16px;
-  background-color: #28a745;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.submit-btn:hover {
-  background-color: #218838;
-}
 </style>

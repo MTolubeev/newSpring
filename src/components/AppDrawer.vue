@@ -1,6 +1,6 @@
 <template>
   <div v-if="isVisible" class="catalog">
-    <div class="cart">
+    <div class="basket">
       <h2>Каталог товаров</h2>
       <svg @click="$emit('close-drawer')" width="16" height="14" fill="#fff">
         <path d="M1 7H14.7143" stroke="#fff" stroke-width="2" />
@@ -9,7 +9,7 @@
     </div>
     <n-button 
       v-if="!editMode && isAdmin" 
-      type="primary" 
+      type="warning" 
       size="small" 
       @click="enableEditMode">
       Включить режим редактирования
@@ -19,18 +19,20 @@
       :edit-mode="editMode"
       @drag-end="onDragEnd"
     />
-    <n-button 
-      v-if="editMode" 
-      type="warning" 
-      @click="saveOrder">
-      Сохранить изменения
-    </n-button>
-    <n-button 
-      v-if="editMode" 
-      type="error" 
-      @click="cancelEditMode">
-      Отменить изменения
-    </n-button>
+    <div class="change_order_btns">
+      <n-button 
+        v-if="editMode" 
+        type="warning" 
+        @click="saveOrder">
+        Сохранить изменения
+      </n-button>
+      <n-button 
+        v-if="editMode" 
+        type="error" 
+        @click="cancelEditMode">
+        Отменить изменения
+      </n-button>
+  </div>
   </div>
 </template>
 
@@ -152,6 +154,7 @@ onMounted(() => {
   right: 0;
   z-index: 10;
   border-left: 3px solid #f0f0f0;
+  overflow-y: scroll;
 }
 .catalog a {
   color: #fff;
@@ -163,7 +166,7 @@ span {
   color: #fff;
 }
 
-.cart {
+.basket {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -171,5 +174,10 @@ span {
 
 svg {
   cursor: pointer;
+}
+.change_order_btns{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 </style>

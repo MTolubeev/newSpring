@@ -1,20 +1,11 @@
 <template>
-  <div class="modal-overlay">
+  <n-dialog class="modal-overlay">
     <div class="modal-content">
-      <n-button class="close-button" @click="closeModal">✖</n-button>
+      <n-button color="#465a86" class="close-button" @click="closeModal">✖</n-button>
       <h2>Регистрация нового пользователя</h2>
       <p>Если аккаунт уже существует, то войдите</p>
       <router-link :to="{ path: '/signin', query: { from: 'registration' } }">
-<<<<<<< HEAD:src/pages/registrPage.vue
-  <n-button type="warning">Войти</n-button>
-  </router-link>
-      <form @submit.prevent="register">
-        <input v-model="username" type="text" placeholder="Имя" required  />
-        <input v-model="surname" type="text" placeholder="Фамилия" required />
-        <input v-model="email" type="email" placeholder="Email" required />
-        <input v-model="password" type="password" placeholder="Пароль" required />
-=======
-        <n-button type="warning">Войти</n-button>
+         <n-button type="warning">Войти</n-button> 
       </router-link>
       <n-input 
         v-model:value="username" 
@@ -36,19 +27,17 @@
         type="password" 
         placeholder="Пароль" 
         required />
->>>>>>> f0242fa87f4a695b741a452b186c0d76cef58c63:src/pages/RegistrantionPage.vue
         <div class="buttons">
-          <button type="submit">Зарегистрироваться</button>
+          <n-button color="#465a86" @click="register">Зарегистрироваться</n-button>
         </div>
-      </form>
     </div>
-  </div>
+  </n-dialog>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import api from '../services/api';
-import { NButton } from 'naive-ui';
+import { NButton, NDialog, NInput } from 'naive-ui';
 import router from '@/router';
 import { useNotificationService } from '@/composables/useNotifications.js'; 
 
@@ -74,7 +63,7 @@ const register = async () => {
   }
 };
 const closeModal = () => {
-  router.push('/')
+  router.push("/").then(() => window.location.reload());
 };
 </script>
 
@@ -101,6 +90,12 @@ const closeModal = () => {
   width: 500px;
   gap: 10px;
 }
+.n-dialog :deep(.n-dialog__title) {
+  display: none;
+}
+.n-dialog :deep(.n-dialog__close) {
+  display: none;
+}
 .modal-content h2 {
   margin-top: 0;
 }
@@ -120,7 +115,6 @@ input {
 .close-button {
   font-size: 24px;
   cursor: pointer;
-  color: #333;
   position: absolute;
   top: 10px;
   right: 10px;

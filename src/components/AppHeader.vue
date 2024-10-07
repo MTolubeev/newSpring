@@ -4,37 +4,31 @@
       <div class="profile">
         <img src="@/assets/Union.svg" alt="profile" />
         <router-link v-if="!user" to="/signin">
-          <n-button style="--n-border-hover: 1px solid #fff; --n-border-focus: 1px solid #f0f0f0;">Войти</n-button>
+          <n-button color="#fff">Войти</n-button>
         </router-link>
         <div v-else>
           <span>{{ user.sub }}</span>
-          <n-button @click="logout" style="--n-border-hover: 1px solid #fff; --n-border-focus: 1px solid #f0f0f0;">
+          <n-button color="#fff" @click="logout">
             Выйти
           </n-button>
         </div>
       </div>
-      <div class="cart">
+      <div class="basket">
         <img src="@/assets/cart.svg" alt="cart" />
         <router-link to="/cart">
-          <n-button style="--n-border-hover: 1px solid #fff; --n-border-focus: 1px solid #f0f0f0;">Корзина</n-button>
+          <n-button color="#fff">Корзина</n-button>
         </router-link>
         <span>{{ cartItemCount }}</span>
       </div>
       <div class="main">
         <router-link to="/">
-          <n-button
-            style="
-              --n-border-hover: 1px solid #fff;
-              --n-text-color-focus: #f0f0f0;
-              --n-border-focus: 1px solid #f0f0f0;">
-            Главная
-          </n-button>
+          <n-button color="#fff">Главная</n-button>
         </router-link>
       </div>
     </div>
     <div class="menu">
       <n-button
-        style="--n-border-hover: 1px solid #fff"
+        color="#fff"
         @click="$emit('toggle-drawer')">
         Каталог
       </n-button>
@@ -91,7 +85,7 @@ header {
   gap: 30px;
 }
 .profile,
-.cart,
+.basket,
 .menu {
   display: flex;
   align-items: center;
@@ -101,14 +95,15 @@ header {
   color: #fff;
   margin-right: 10px;
 }
-.cart span {
+.basket span {
   width: 40px;
   color: #fff;
 }
 .n-button {
-  color: #fff;
+  color: #000;
 }
-.n-button:hover {
-  color: #f0f0f0;
+
+.n-button:hover{
+  color: #465a86;
 }
 </style>

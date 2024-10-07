@@ -1,6 +1,6 @@
 <template>
   <n-button 
-    style="--n-border-hover: 1px solid #3B5998;" 
+    color="#465a86" 
     :style="buttonStyle" 
     @click="toggleCart">
     {{ buttonText }}
@@ -13,7 +13,9 @@ import { useCartStore } from "@/store/cartStore";
 import { useUserStore } from "@/store/userStore";
 import { NButton } from "naive-ui";
 import { useRouter } from "vue-router";
+import { useNotificationService } from '@/composables/useNotifications.js'; 
 
+const { showNotificationMessage } = useNotificationService();
 const router = useRouter();
 const cartStore = useCartStore();
 const userStore = useUserStore();
@@ -63,6 +65,10 @@ const toggleCart = async () => {
 
     if (!token || !user.value) {
       return router.push("/signin");
+    }
+    if (props.product.count <= 0) {
+      showNotificationMessage('error', 'Ошибка', 'Товара нет на складе!');
+      return;
     }
     if (!inCart.value) {
       await cartStore.addToCart(props.productId, token);

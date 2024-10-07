@@ -25,21 +25,18 @@
         <span v-else>
           Цена: <b>{{ item.price }} руб.</b>
         </span>
-        <span>
-          Количество товаров осталось: <b>{{ item.count }}</b>
-        </span>
+        <span v-if="item.count > 0">Количество товаров осталось: <b>{{ item.count }}</b></span>
+        <span v-else><b>Товара нет на складе</b></span>
       </div>
       <div class="card__button">
-        <CartButton 
+        <BasketButton 
         :product-id="item.id" 
         :product="item" 
         @click.stop 
         />
         <n-button
           v-if="isAdmin"
-          style="
-            --n-border-hover: 1px solid #3b5998;
-            --n-text-color-hover: #3b5998;"
+          type="error"
           @click.stop="openConfirmDialog">
           Удалить товар из списка
         </n-button>
@@ -74,7 +71,7 @@ import { ref, defineProps, defineEmits, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { NCard, NButton, NDialog } from "naive-ui";
 import { useUserStore } from "@/store/userStore";
-import CartButton from "./BasketButton.vue";
+import BasketButton from "./BasketButton.vue";
 import axios from "axios";
 import EditProduct from "./EditProduct.vue";
 
@@ -218,6 +215,9 @@ onMounted(() => {
 }
 .card__button {
   margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 .card h3 {
   font-size: 24px;

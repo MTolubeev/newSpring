@@ -56,9 +56,7 @@ export const useUserStore = () => {
       localStorage.setItem("token", token);
       fetchUser();
     } catch (error) {
-      throw new Error(
-        "Ошибка входа: " + (error.response?.data || "Неизвестная ошибка")
-      );
+      console.log(error);
     }
   };
 

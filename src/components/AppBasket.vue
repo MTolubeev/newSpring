@@ -14,12 +14,17 @@
         <div class="info__controll">
           <span>Всего товаров: {{ totalItems }}</span>
           <span>Общая сумма: {{ totalPrice }} ₽</span>
-          <n-button class="button" type="success" @click="openConfirmation">Оформить заказ</n-button>
+          <n-button 
+            color="#465a86" 
+            class="button__confirm" 
+            @click="openConfirmation">
+            Оформить заказ
+          </n-button>
         </div>
       </div>
     </div>
     <div v-else class="cart__empty">
-      <h2>Корзина пустая</h2>
+      <h2>Корзина пуста</h2>
       <img src="@/assets/corob.svg" alt="Пустая корзина" />
       <p>Войдите или зарегистрируйтесь, чтобы вы смогли добавлять товары в корзину</p>
     </div>
@@ -30,7 +35,7 @@
     <img src="@/assets/ready.png" alt="Заказ оформлен" />
     <p>Вся информация о заказе отправлена на ваш email.</p>
     <router-link to="/">
-      <n-button type="success">Вернуться на главную</n-button>
+      <n-button color="#465a86">Вернуться на главную</n-button>
     </router-link>
   </div>
 
@@ -48,7 +53,10 @@
   </div>
   
   <div v-if="isLoading" class="loading-overlay">
-    <n-spin size="large" description="Оформляем ваш заказ..." />
+    <n-spin 
+      size="large" 
+      stroke="#465a86"
+      description="Оформляем ваш заказ..." />
   </div>
 </template>
 
@@ -129,7 +137,7 @@ onMounted(async () => {
   flex-direction: column;
   gap: 20px;
 }
-.button {
+.button__confirm {
   margin-top: auto;
 }
 

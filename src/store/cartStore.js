@@ -7,8 +7,7 @@ export const useCartStore = defineStore("cart", () => {
 
   const fetchCart = async (userId, token) => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/basket/${userId}`,
+      const response = await axios.get(`http://localhost:8080/basket/${userId}`,
         {
           headers: {
             Authorization: token,
@@ -26,17 +25,13 @@ export const useCartStore = defineStore("cart", () => {
 
       return cartItems.value;
     } catch (error) {
-      console.error(
-        "Ошибка получения корзины:",
-        error.response?.data || error.message
-      );
-      throw error;
+      console.error("Ошибка получения корзины:",error.response.data);
     }
   };
 
   const addToCart = async (productId, token) => {
     try {
-      const response = await axios.post(`http://localhost:8080/basket/addToBasket`,null,
+      const response = await axios.post(`http://localhost:8080/basket/addToBasket`, null,
         {
           params: { productId },
           headers: { Authorization: token },
@@ -65,11 +60,7 @@ export const useCartStore = defineStore("cart", () => {
       }
       return existingItem;
     } catch (error) {
-      console.error(
-        "Ошибка удаления товара из корзины:",
-        error.response?.data || error.message
-      );
-      throw error;
+      console.error("Ошибка удаления товара из корзины:", error.response.data);
     }
   };
 

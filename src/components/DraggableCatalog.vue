@@ -210,7 +210,7 @@ a:focus {
   outline: none;
 }
 a:hover {
-  color: #2fd40e;
+  color: rgb(177, 177, 177);
 }
 
 li {
@@ -248,8 +248,6 @@ ul {
   height: 16px;
   stroke: #ccc;
 }
-
-/* Стили для кнопок действий */
 .action-button {
   margin-left: 4px;
   padding: 0;

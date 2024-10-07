@@ -1,7 +1,7 @@
 <template>
   <n-dialog class="modal-overlay">
     <div class="modal-content">
-      <n-button class="close-button" @click="closeModal">✖</n-button>
+      <n-button color="#465a86" class="close-button" @click="closeModal">✖</n-button>
       <h2>Вход в личный аккаунт</h2>
       <p>Нет аккаунта? создайте!</p>
       <router-link to="/registration">
@@ -20,7 +20,7 @@
         required
         autocomplete="current-password"/>
       <div class="buttons">
-        <n-button type="success" class="registrantion" @click="login">Войти</n-button>
+        <n-button color="#465a86" class="registrantion" @click="login">Войти</n-button>
       </div>
     </div>
   </n-dialog>
@@ -125,11 +125,8 @@ input {
   cursor: pointer;
 }
 .close-button {
-  background: none;
-  border: none;
   font-size: 24px;
   cursor: pointer;
-  color: #333;
   position: absolute;
   top: 10px;
   right: 20px;

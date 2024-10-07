@@ -1,12 +1,15 @@
 <template>
   <n-card class="card">
     <div class="correct_img">
-      <img
-        v-if="!imageDeleted"
-        :src="item.imageUrl"
-        style="width: 70px"
-        alt="png"
-        @click.stop="deleteImage"/>
+      <div v-if="!imageDeleted" class="image-container">
+        <img
+          :src="item.imageUrl"
+          class="image__delete"
+          alt="png"/>
+        <div class="overlay">
+          <n-button color="#fff" style="color: #000;" size="large" @click.stop="deleteImage">Удалить</n-button>
+        </div>
+      </div>
       <n-upload
         v-else
         :default-file-list="fileList"
@@ -14,7 +17,7 @@
         list-type="image"
         max="1"
         @change="handleChange">
-        <n-button>Upload</n-button>
+        <n-button>Загрузить</n-button>
       </n-upload>
     </div>
       <label>Название товара</label>
@@ -64,7 +67,7 @@
         placeholder="Выберите субсубкатегорию"/>
   
       <div class="edit__button">
-        <n-button type="success" @click.stop="saveChanges">
+        <n-button color="#465a86" @click.stop="saveChanges">
           Сохранить изменения
         </n-button>
         <n-button type="error" @click.stop="cancelEdit">
@@ -140,7 +143,7 @@ const saveChanges = () => {
       images: imageToSend
     }
     emit('save', updatedProduct);
-  };
+};
   
 const handleCategoryChange = (value) => {
   selectedCategory.value = value;
@@ -172,5 +175,37 @@ const handleSubcategoryChange = (value) => {
   margin-top: 20px;
   display: flex;
   gap: 20px;
+}
+.image__delete {
+  width: 150px;
+  transition: opacity 0.3s ease;
+}
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+.image-container:hover .image__delete {
+  opacity: 0.5;
+}
+.btn__delete{
+  color: #fff;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-container:hover .overlay {
+  opacity: 1;
 }
 </style>

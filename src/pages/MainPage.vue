@@ -1,7 +1,7 @@
 <template>
   <n-spin
     content-style="--n-opacity-spinning:0; height: 100vh;"
-    stroke="blue"
+    stroke="#465a86"
     :show="loading">
     <AppHeader @toggle-drawer="toggleDrawer" />
     <AppDrawer 
@@ -11,7 +11,7 @@
     <n-button
       v-if="isAdmin"
       class="button__add"
-      type="warning"
+      color="#465a86"
       @click="openModal">
       Добавить новый товар
     </n-button>

@@ -1,5 +1,8 @@
 <template>
-  <n-spin content-style="--n-opacity-spinning:0; height: 100vh;" stroke="blue" :show="loader">
+  <n-spin 
+  content-style="--n-opacity-spinning:0; height: 100vh;" 
+  stroke="blue" 
+  :show="loader">
     <div v-if="product">
       <AppHeader @toggle-drawer="toggleDrawer" />
       <AppDrawer :is-visible="isDrawerVisible" @close-drawer="closeDrawer" />
@@ -29,23 +32,24 @@
         {{ product.title }}
       </h2>
       <div class="card__item">
-        <n-card class="product-card" content-style="display: flex; flex-direction: row !important;">
-          <div class="img-wrapper">
+        <n-card class="product__card" content-style="display: flex; flex-direction: row !important;">
+          <div class="img__wrapper">
             <img
                 v-if="product.imageUrl"
                 :src="product.imageUrl"
-                class="product-img"
+                class="product__img"
                 alt="Product Image"/>
           </div>
           <div class="card__info">
-            <h1 class="product-title">{{ product.title }}</h1>
-            <p class="product-description">{{ product.description }}</p>
+            <h1 class="product__title">{{ product.title }}</h1>
+            <p class="product__description">{{ product.description }}</p>
             <div class="card__pay">
               <span v-if="isAuthenicated">Цена: <b>{{ product.discountPrice }} руб.</b>
                   <del style="margin-left: 10px">{{ product.price }} руб.</del>
               </span>
               <span v-else>Цена: {{ product.price }}</span>
-              <span>Количество товаров осталось: <b>{{ product.count }}</b></span>
+              <span v-if="product.count > 0">Количество товаров осталось: <b>{{ product.count }}</b></span>
+              <span v-else><b>Товара нет на складе</b></span>
               <BasketButton 
                 v-if="product" 
                 :product-id="product.id" 
@@ -141,21 +145,21 @@ onMounted(() => {
   align-items: center;
 }
 
-.product-card {
+.product__card {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.img-wrapper {
+.img__wrapper {
   flex: 1;
+  margin-right: 30px;
+  margin-top: 10px;
 }
-
-.product-img {
+.product__img {
   width: 350px;
   object-fit: cover;
 }
-
 .card__info {
   display: flex;
   flex-direction: column;
@@ -166,13 +170,13 @@ onMounted(() => {
   flex-direction: column;
   gap: 15px;
 }
-.product-title {
+.product__title {
   font-size: 28px;
   margin-bottom: 15px;
   color: #333;
 }
 
-.product-description {
+.product__description {
   font-size: 16px;
   color: #666;
   margin-bottom: 20px;
