@@ -31,7 +31,7 @@
       </div>
       <div class="card__button">
         <CartButton 
-        :productId="item.id" 
+        :product-id="item.id" 
         :product="item" 
         @click.stop 
         />
@@ -49,13 +49,12 @@
   <EditProduct
     v-else
     :item="item"
-    :categoryOptions="categoryOptions"
-    :subcategoryOptions="subcategoryOptions"
-    :subsubcategoryOptions="subsubcategoryOptions"
+    :category-options="categoryOptions"
+    :subcategory-options="subcategoryOptions"
+    :subsubcategory-options="subsubcategoryOptions"
     @save="handleSave"
     @cancel="handleCancel"
   />
-
   <div v-if="confirmDialogVisible" class="dialog-overlay">
     <n-dialog
       class="confirm-dialog"
@@ -122,7 +121,10 @@ const checkAuth = () => {
 const editModel = () => {
   isEdited.value = true;
 };
-
+const openConfirmDialog = (event) => {
+  event.stopPropagation();
+  confirmDialogVisible.value = true;
+};
 const deleteProduct = async () => {
   try {
     await axios.post(`http://localhost:8080/product/delete/${props.item.id}`);
@@ -132,11 +134,6 @@ const deleteProduct = async () => {
     console.error("Ошибка при удалении продукта", error);
     closeConfirmDialog();
   }
-};
-
-const openConfirmDialog = (event) => {
-  event.stopPropagation();
-  confirmDialogVisible.value = true;
 };
 
 const closeConfirmDialog = () => {
@@ -170,6 +167,7 @@ const handleSave = async (updatedProduct) => {
        }
      });
      console.log("Server response:", response.data);
+     window.location.reload();
    } catch (error) {
      console.error("Error saving product:", error);
    }

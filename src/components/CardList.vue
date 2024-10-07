@@ -5,9 +5,9 @@
       v-for="item in items"
       :key="item.id"
       :item="item"
-      :categoryOptions="categoryOptions"
-      :subcategoryOptions="subcategoryOptions"
-      :subsubcategoryOptions="subsubcategoryOptions"
+      :category-options="categoryOptions"
+      :subcategory-options="subcategoryOptions"
+      :subsubcategory-options="subsubcategoryOptions"
       @delete="handleDelete"
       />
   </div>
@@ -68,6 +68,7 @@ const fetchCategories = async () => {
 };
 
 const handleDelete = (itemId) => {
+  window.location.reload();
   items.value = items.value.filter((item) => item.id !== itemId);
 };
 

@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <MyHeader @toggle-drawer="toggleDrawer" />
-    <AppDrawer :isVisible="isDrawerVisible" @close-drawer="closeDrawer" />
+    <AppDrawer :is-visible="isDrawerVisible" @close-drawer="closeDrawer" />
   </div>
   <AppCart />
 </template>

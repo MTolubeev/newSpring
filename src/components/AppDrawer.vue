@@ -8,29 +8,27 @@
       </svg>
     </div>
     <n-button 
-    v-if="!editMode && isAdmin" 
-    type="primary" 
-    size="small" 
-    @click="enableEditMode">
+      v-if="!editMode && isAdmin" 
+      type="primary" 
+      size="small" 
+      @click="enableEditMode">
       Включить режим редактирования
     </n-button>
-
     <DraggableCatalog
       :categories="categories"
-      :editMode="editMode"
+      :edit-mode="editMode"
       @drag-end="onDragEnd"
     />
-
     <n-button 
-    v-if="editMode" 
-    type="warning" 
-    @click="saveOrder">
+      v-if="editMode" 
+      type="warning" 
+      @click="saveOrder">
       Сохранить изменения
     </n-button>
     <n-button 
-    v-if="editMode" 
-    type="error" 
-    @click="cancelEditMode">
+      v-if="editMode" 
+      type="error" 
+      @click="cancelEditMode">
       Отменить изменения
     </n-button>
   </div>
@@ -117,7 +115,6 @@ const collectChanges = () => {
       });
     });
   });
-
   return changes;
 };
 const saveOrder = async () => {

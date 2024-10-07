@@ -1,71 +1,69 @@
 <template>
-    <n-card class="card">
-        <div class="correct_img">
+  <n-card class="card">
+    <div class="correct_img">
       <img
-        style="width: 70px"
         v-if="!imageDeleted"
         :src="item.imageUrl"
+        style="width: 70px"
         alt="png"
         @click.stop="deleteImage"/>
       <n-upload
-        :default-file-list="fileList"
-        list-type="image"
-        :create-thumbnail-url="createThumbnailUrl"
         v-else
-        @change="handleChange"
+        :default-file-list="fileList"
+        :create-thumbnail-url="createThumbnailUrl"
+        list-type="image"
         max="1"
-      >
+        @change="handleChange">
         <n-button>Upload</n-button>
       </n-upload>
     </div>
       <label>Название товара</label>
-      <n-input v-model:value="editProduct.title" placeholder="Название товара" />
+      <n-input 
+        v-model:value="editProduct.title"
+        type="text" 
+        placeholder="Название товара" />
       <label>Описание товара</label>
       <n-input
-        type="textarea"
         v-model:value="editProduct.description"
-        placeholder="Введите описание товара"
-      />
+        type="textarea"
+        placeholder="Введите описание товара"/>
       <label>Цена товара</label>
       <n-input
         v-model:value="editProduct.price"
-        placeholder="Введите цену товара"
-      />
+        type="number"
+        placeholder="Введите цену товара"/>
       <label>Скидочная цена товара</label>
       <n-input
         v-model:value="editProduct.discountPrice"
-        placeholder="Введите скидку товара"
-      />
+        type="number"
+        placeholder="Введите скидку товара"/>
       <label>Количество товаров</label>
       <n-input
         v-model:value="editProduct.count"
-        placeholder="Введите скидку товара"
-      />
+        type="numer"
+        placeholder="Введите количество товаров"/>
   
       <label>Категория</label>
       <n-select
         v-model:value="selectedCategory"
         :options="categoryOptions"
         placeholder="Выберите категорию"
-        @update:value="handleCategoryChange"
-      />
+        @update:value="handleCategoryChange"/>
   
       <label>Подкатегория</label>
       <n-select
         v-model:value="selectedSubcategory"
         :options="subcategoryOptions"
         placeholder="Выберите подкатегорию"
-        @update:value="handleSubcategoryChange"
-      />
+        @update:value="handleSubcategoryChange"/>
   
-      <label>Субсубкатегория</label>
+      <label>Поподкатегория</label>
       <n-select
         v-model:value="selectedSubsubcategory"
         :options="subsubcategoryOptions"
-        placeholder="Выберите субсубкатегорию"
-      />
+        placeholder="Выберите субсубкатегорию"/>
   
-      <div class="card__button">
+      <div class="edit__button">
         <n-button type="success" @click.stop="saveChanges">
           Сохранить изменения
         </n-button>
@@ -76,53 +74,53 @@
     </n-card>
   </template>
   
-  <script setup>
-  import { ref, defineProps, defineEmits } from "vue";
-  import { NCard, NButton, NInput, NUpload, NSelect } from "naive-ui";
-  
-  const props = defineProps({
-    item: {
-      type: Object,
-      required: true,
-    },
-    categoryOptions: {
-      type: Array,
-      required: true,
-    },
-    subcategoryOptions: {
-      type: Array,
-      required: true,
-    },
-    subsubcategoryOptions: {
-      type: Array,
-      required: true,
-    },
-  });
-  
-  const emit = defineEmits(["save", "cancel"]);
-  
-  const imageDeleted = ref(false);
-  const editProduct = ref({ ...props.item });
-  const fileList = ref([]);
-  
-  const selectedCategory = ref(props.item.categories[0]?.name || '');
-  const selectedSubcategory = ref(props.item.categories[0]?.subcategory || '');
-  const selectedSubsubcategory = ref(props.item.categories[0]?.subsubcategory || '');
-  
-  const deleteImage = () => {
-    imageDeleted.value = true;
-    editProduct.value.imageUrl = null;
-  };
-  
-  const handleChange = (event) => {
+<script setup>
+import { ref, defineProps, defineEmits } from "vue";
+import { NCard, NButton, NInput, NUpload, NSelect } from "naive-ui";
+
+const props = defineProps({
+  item: {
+    type: Object,
+    required: true,
+  },
+  categoryOptions: {
+    type: Array,
+    required: true,
+  },
+  subcategoryOptions: {
+    type: Array,
+    required: true,
+  },
+  subsubcategoryOptions: {
+    type: Array,
+    required: true,
+  },
+});
+
+const emit = defineEmits(["save", "cancel"]);
+
+const imageDeleted = ref(false);
+const editProduct = ref({ ...props.item });
+const fileList = ref([]);
+
+const selectedCategory = ref(props.item.categories[0]?.name || '');
+const selectedSubcategory = ref(props.item.categories[0]?.subcategory || '');
+const selectedSubsubcategory = ref(props.item.categories[0]?.subsubcategory || '');
+
+const deleteImage = () => {
+  imageDeleted.value = true;
+  editProduct.value.imageUrl = null;
+};
+
+const handleChange = (event) => {
   if (event.fileList && event.fileList.length > 0) {
     fileList.value = event.fileList; 
   }
 };
   
-  const cancelEdit = () => {
-    emit("cancel");
-  };
+const cancelEdit = () => {
+  emit("cancel");
+};
   
 const saveChanges = () => {
   let imageToSend = null;
@@ -144,16 +142,16 @@ const saveChanges = () => {
     emit('save', updatedProduct);
   };
   
-  const handleCategoryChange = (value) => {
-    selectedCategory.value = value;
-    selectedSubcategory.value = '';
-    selectedSubsubcategory.value = '';
-  };
+const handleCategoryChange = (value) => {
+  selectedCategory.value = value;
+  selectedSubcategory.value = '';
+  selectedSubsubcategory.value = '';
+};
   
-  const handleSubcategoryChange = (value) => {
-    selectedSubcategory.value = value;
-    selectedSubsubcategory.value = '';
-  };
+const handleSubcategoryChange = (value) => {
+  selectedSubcategory.value = value;
+  selectedSubsubcategory.value = '';
+};
 </script>
 
 <style scoped>
@@ -169,5 +167,10 @@ const saveChanges = () => {
   justify-content: space-between;
   position: relative;
   cursor: pointer;
+}
+.edit__button{
+  margin-top: 20px;
+  display: flex;
+  gap: 20px;
 }
 </style>

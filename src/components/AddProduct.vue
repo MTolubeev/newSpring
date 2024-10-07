@@ -4,9 +4,9 @@
     class="modal-overlay">
      <div class="modal-content"> 
       <n-button 
+        class="close-button"
         style="--n-text-color-hover: none" 
         color="#465a86" 
-        class="close-button" 
         @click="emitClose">
         ✖
       </n-button>
@@ -15,23 +15,20 @@
           <label>Изображение к товару:</label>
           <n-upload
             :default-file-list="fileList"
-            @change="handleFileChange"
             :max="1"
             list-type="image"
-          >
+            @change="handleFileChange">
             <n-button>Выбрать файл</n-button>
           </n-upload>
         </div>
-
         <div class="form-group">
           <label>Название товара:</label>
           <n-input
             v-model:value="product.title"
             type="text"
             placeholder="Название"
-            required/>
+            required />
         </div>
-
         <div class="form-group">
           <label>Цена:</label>
           <n-input
@@ -89,7 +86,6 @@
        </div>
     </div>
  </n-dialog>
-  <!-- </div> -->
 </template>
 
 <script setup>
@@ -97,7 +93,7 @@ import { ref, defineEmits, onMounted } from "vue";
 import { NInput, NButton, NDialog, NUpload } from "naive-ui";
 import axios from "axios";
 import SelectCategory from "./SelectCategory.vue";
-import { useNotificationService } from '@/composables/notificationUtils';
+import { useNotificationService } from '@/composables/useNotifications';
 
 const emit = defineEmits(["close"]);
 

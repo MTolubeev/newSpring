@@ -1,42 +1,42 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-import MyHome from "@/pages/MainPage.vue";
-import CartPage from "@/pages/BasketPage.vue";
-import RegistrPage from '@/pages/RegistrPage.vue';
-import CategoriesView from "@/pages/CategoriesView.vue";
-import ProductItem from "@/pages/ProductItem.vue";
-import SignPage from "@/pages/SignPage.vue";
+// import MainPage from "@/pages/MainPage.vue";
+// import BasketPage from "@/pages/BasketPage.vue";
+// import RegistrantionPage from '@/pages/RegistrantionPage.vue';
+// import CategoriesView from "@/pages/CategoriesView.vue";
+// import ProductItem from "@/pages/ProductItem.vue";
+// import SignPage from "@/pages/SignPage.vue";
 
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: MyHome,
+    name: "MainPage",
+    component: () => import('@/pages/MainPage.vue')
   },
   {
     path: "/cart",
-    name: "Cart",
-    component: CartPage,
+    name: "BasketPage",
+    component: () => import('@/pages/BasketPage.vue')
   },
   {
     path: "/registration",
-    name: "Register",
-    component: RegistrPage,
+    name: "Registrantion",
+    component: () => import('@/pages/RegistrantionPage.vue')
   },
   {
     path: "/signin",
     name: "SignIn",
-    component: SignPage,
+    component: () => import('@/pages/SignPage.vue')
   },
   {
     path: "/category/:categoryName/:subcategoryName?/:subsubcategoryName?",
-    name: "Category",
-    component: CategoriesView,
+    name: "CategoriesView",
+    component: () => import('@/pages/CategoriesView.vue'),
     props: true,
   },
   {
     path: "/product-view/:productId",
-    name: "ProductView",
-    component: ProductItem,
+    name: "ProductItem",
+    component: () => import('@/pages/ProductItem.vue'),
     props: true,
   },
 ];

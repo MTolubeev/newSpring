@@ -2,35 +2,38 @@
   <div v-if="show" class="image-gallery">
     <n-button 
       class="prev-button" 
-      @click="prevImage" 
       :disabled="currentIndex === 0"
-      style="color: white;">
+      style="color: white;"
+      @click="prevImage">
       &#9664;
     </n-button>
     
     <div class="gallery-content">
-      <img :src="currentImage" alt="gallery image" class="gallery-image" v-if="currentImage" />
-
+      <img 
+        v-if="currentImage"
+        :src="currentImage"
+        class="gallery-image" 
+        alt="gallery image"/>
       <n-button 
         class="close-button" 
-        @click="emitClose" 
-        style="color: white; font-size: 24px;">
+        style="color: white; font-size: 24px;"
+        @click="emitClose">
         ×
       </n-button>
 
       <n-button 
         class="delete-button" 
-        @click="deleteImage"
-        style="color: white; font-size: 24px;">
+        style="color: white; font-size: 24px;"
+        @click="deleteImage">
         🗑
       </n-button>
     </div>
 
     <n-button 
       class="next-button" 
-      @click="nextImage" 
       :disabled="currentIndex >= images.length - 1"
-      style="color: white;">
+      style="color: white;"
+      @click="nextImage">
       &#9654;
     </n-button>
   </div>

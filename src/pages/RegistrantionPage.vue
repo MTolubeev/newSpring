@@ -1,10 +1,11 @@
 <template>
   <div class="modal-overlay">
     <div class="modal-content">
-      <button @click="closeModal" class="close-button">✖</button>
+      <n-button class="close-button" @click="closeModal">✖</n-button>
       <h2>Регистрация нового пользователя</h2>
       <p>Если аккаунт уже существует, то войдите</p>
       <router-link :to="{ path: '/signin', query: { from: 'registration' } }">
+<<<<<<< HEAD:src/pages/registrPage.vue
   <n-button type="warning">Войти</n-button>
   </router-link>
       <form @submit.prevent="register">
@@ -12,6 +13,30 @@
         <input v-model="surname" type="text" placeholder="Фамилия" required />
         <input v-model="email" type="email" placeholder="Email" required />
         <input v-model="password" type="password" placeholder="Пароль" required />
+=======
+        <n-button type="warning">Войти</n-button>
+      </router-link>
+      <n-input 
+        v-model:value="username" 
+        type="text" 
+        placeholder="Имя" 
+        required  />
+      <n-input 
+        v-model:value="surname" 
+        type="text" 
+        placeholder="Фамилия" 
+        required />
+      <n-input 
+        v-model:value="email" 
+        type="email" 
+        placeholder="Email" 
+        required />
+      <n-input
+        v-model:value="password" 
+        type="password" 
+        placeholder="Пароль" 
+        required />
+>>>>>>> f0242fa87f4a695b741a452b186c0d76cef58c63:src/pages/RegistrantionPage.vue
         <div class="buttons">
           <button type="submit">Зарегистрироваться</button>
         </div>
@@ -25,7 +50,7 @@ import { ref } from 'vue';
 import api from '../services/api';
 import { NButton } from 'naive-ui';
 import router from '@/router';
-import { useNotificationService } from '@/composables/notificationUtils.js'; 
+import { useNotificationService } from '@/composables/useNotifications.js'; 
 
 const { showNotificationMessage } = useNotificationService(); 
 const username = ref('');
@@ -74,7 +99,6 @@ const closeModal = () => {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   width: 500px;
-  box-sizing: border-box;
   gap: 10px;
 }
 .modal-content h2 {
@@ -93,20 +117,12 @@ input {
   border-radius: 4px;
 }
 
-.modal-content button {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  cursor: pointer;
-}
 .close-button {
-  background: none;
-  border: none;
   font-size: 24px;
   cursor: pointer;
   color: #333;
   position: absolute;
   top: 10px;
-  left: 220px;
+  right: 10px;
 }
 </style>

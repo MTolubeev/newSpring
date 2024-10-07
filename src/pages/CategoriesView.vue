@@ -1,37 +1,41 @@
 <template>
-  <n-spin content-style="--n-opacity-spinning:0; height: 100vh;" stroke="blue" :show="isLoading">
-    <MyHeader @toggle-drawer="toggleDrawer" />
-    <MyDrawer :isVisible="isDrawerVisible" @close-drawer="closeDrawer" />
+  <n-spin 
+    content-style="--n-opacity-spinning:0; height: 100vh;" 
+    stroke="blue" 
+    :show="isLoading">
+    <AppHeader @toggle-drawer="toggleDrawer" />
+    <AppDrawer :is-visible="isDrawerVisible" @close-drawer="closeDrawer" />
     <div class="paths">
       <h1>
         <router-link
           class="path__link"
-          :to="{ name: 'Category', params: { categoryName: categoryName } }">
+          :to="{ name: 'CategoriesView', params: { categoryName: categoryName } }">
           {{ categoryName }}
         </router-link>
         /
         <router-link
           v-if="subcategoryName"
           class="path__link"
-          :to="{ name: 'Category', params: { categoryName: categoryName, subcategoryName: subcategoryName } }">
+          :to="{ name: 'CategoriesView', params: { categoryName: categoryName, subcategoryName: subcategoryName } }">
           {{ subcategoryName }}
         </router-link>
         <span v-if="subsubcategoryName">
           /
           <router-link
             class="path__link"
-            :to="{ name: 'Category', params: { categoryName: categoryName, subcategoryName: subcategoryName, subsubcategoryName: subsubcategoryName } }">
+            :to="{ name: 'CategoriesView', params: { categoryName: categoryName, subcategoryName: subcategoryName, subsubcategoryName: subsubcategoryName } }">
             {{ subsubcategoryName }}
           </router-link>
         </span>
       </h1>
     </div>
     <div class="cards">
-      <MyCard
+      <CardItem
         v-for="product in filteredProducts"
         :key="product.id"
         :item="product"
-      ></MyCard>
+        @delete ="handleDelete"
+        />
     </div>
   </n-spin>
 </template>
@@ -41,10 +45,10 @@ import { ref, computed, onMounted, watch } from "vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
 import { useOrganizeProducts } from '@/composables/useOrganizeProducts.js';
-import MyCard from "@/components/CardItem.vue";
+import CardItem from "@/components/CardItem.vue";
 import { useDrawer } from "@/composables/useHeader.js";
-import MyHeader from "@/components/AppHeader.vue";
-import MyDrawer from "@/components/AppDrawer.vue";
+import AppHeader from "@/components/AppHeader.vue";
+import AppDrawer from "@/components/AppDrawer.vue";
 import { NSpin } from 'naive-ui'; 
 
 const { isDrawerVisible, toggleDrawer, closeDrawer } = useDrawer();
@@ -103,7 +107,9 @@ const fetchData = async () => {
     isLoading.value = false; 
   }
 };
-
+const handleDelete = () => {
+  window.location.reload();
+}
 watch(
   () => route.params,
   (newParams) => {
@@ -120,7 +126,6 @@ onMounted(() => {
   fetchData();
 });
 </script>
-
 
 <style scoped>
 .paths {

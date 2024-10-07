@@ -2,18 +2,19 @@
   <n-card content-style="display: flex; flex-direction:column; gap:20px">
     <h2>{{ item.title }}</h2>
     <img
-      width="200px"
-      :src="item.imageUrl"
-      alt="Product Image"
       v-if="item.imageUrl"
+      :src="item.imageUrl"
+      width="200px"
       class="product-image"
-    />
+      alt="Product Image"/>
     <div class="controls">
       <n-button @click="decrementCount">-</n-button>
       <span>{{ localCount }}</span>
       <n-button @click="incrementCount">+</n-button>
     </div>
-    <span class="item__price"><strong>{{ item.price }} руб.</strong></span>
+    <span class="item__price">
+      <strong>{{ item.price }} руб.</strong>
+    </span>
     <n-button type="error" @click="removeItem">Удалить</n-button>
   </n-card>
 </template>

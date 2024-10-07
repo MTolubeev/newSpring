@@ -5,23 +5,21 @@
       <h3
         v-if="comments.length > 3"
         class="open__comments"
-        @click="toggleComments"
-      >
+        @click="toggleComments">
         {{ showAll ? "Скрыть отзывы" : "Показать все отзывы" }}
       </h3>
       <n-button
         type="success"
-        @click="handleWriteReview"
-        class="write-review-btn">
+        class="write-review-btn"
+        @click="handleWriteReview">
         Написать отзыв
       </n-button>
       <n-select
         v-if="comments.length > 0"
-        :options="sortOptions"
         v-model:value="sortOrder"
+        :options="sortOptions"
         placeholder="Сортировать по"
-        style="width: 200px; margin-left: 20px"
-      />
+        style="width: 200px; margin-left: 20px"/>
     </div>
   </div>
 
@@ -39,35 +37,30 @@
               viewBox="0 0 24 24"
               :fill="star <= comment.score ? 'gold' : 'lightgray'"
               width="20"
-              height="20"
-            >
-              <path
-                d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"
-              />
+              height="20">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/>
             </svg>
           </div>
         </div>
         <div>{{ comment.text }}</div>
-        <div class="comment-images" v-if="comment.images.length > 0">
+        <div v-if="comment.images.length > 0" class="comment-images">
           <div class="images-container">
             <div class="images-wrapper">
               <img
                 v-for="image in comment.images.slice(0, 3)"
-                :src="convertBase64(image.bytes)"
                 :key="image.id"
+                :src="convertBase64(image.bytes)"
                 class="comment-image"
                 alt="изображение комментария"
-                @click="openImageGallery(comment.images, comment.id)"
-              />
+                @click="openImageGallery(comment.images, comment.id)"/>
             </div>
             <n-button
+              v-if="comment.images.length > 3"
+              class="gallery-button"
               quaternary
               circle
-              v-if="comment.images.length > 3"
-              @click="openImageGallery(comment.images)"
               size="large"
-              class="gallery-button"
-            >
+              @click="openImageGallery(comment.images)">
               +
             </n-button>
           </div>
@@ -75,18 +68,16 @@
         <ImageGallery
           :images="currentImages"
           :show="showImageGallery"
-          :commentId="currentImageGalleryId"
+          :comment-id="currentImageGalleryId"
           @close="closeImageGallery"
           @delete-image="handleDeleteImage"
         />
-
         <img
           v-if="isAdmin || isOwner(comment)"
+          class="admin-icon"
           src="@/assets/bin.webp"
           alt="admin badge"
-          class="admin-icon"
-          @click="openDeleteDialog(comment.id)"
-        />
+          @click="openDeleteDialog(comment.id)"/>
       </n-card>
     </div>
     <div v-else>
@@ -99,15 +90,13 @@
       <h3>Подтверждение удаления</h3>
       <p>Вы уверены, что хотите удалить этот комментарий?</p>
       <div class="modal-actions">
-        <n-button @click="confirmDeleteComment" type="primary"
-          >Удалить</n-button
-        >
-        <n-button @click="closeConfirmDialog" type="default">Отмена</n-button>
+        <n-button type="primary" @click="confirmDeleteComment">
+          Удалить</n-button>
+        <n-button type="default" @click="closeConfirmDialog">Отмена</n-button>
       </div>
     </div>
   </div>
-
-  <WriteReviewModal v-model:show="showReviewModal" :productId="productId" />
+  <WriteReviewModal v-model:show="showReviewModal" :product-id="productId" />
 </template>
 
 <script setup>
@@ -117,7 +106,7 @@ import WriteReviewModal from "./WriteReviewModal.vue";
 import { useUserStore } from "@/store/userStore";
 import axios from "axios";
 import ImageGallery from "./ImageGallery.vue";
-import { useNotificationService } from "@/composables/notificationUtils";
+import { useNotificationService } from "@/composables/useNotifications";
 
 const props = defineProps({
   comments: {
