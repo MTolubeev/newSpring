@@ -1,5 +1,5 @@
 <template>
-  <n-dialog class="modal-overlay">
+  <div class="modal-overlay">
     <div class="modal-content">
       <button @click="closeModal" class="close-button">✖</button>
       <h2>Регистрация нового пользователя</h2>
@@ -7,21 +7,23 @@
       <router-link :to="{ path: '/signin', query: { from: 'registration' } }">
   <n-button type="warning">Войти</n-button>
   </router-link>
-        <n-input v-model:value="username" type="text" placeholder="Имя" required  />
-        <n-input v-model:value="surname" type="text" placeholder="Фамилия" required />
-        <n-input v-model:value="email" type="email" placeholder="Email" required />
-        <n-input v-model:value="password" type="password" placeholder="Пароль" required />
+      <form @submit.prevent="register">
+        <input v-model="username" type="text" placeholder="Имя" required  />
+        <input v-model="surname" type="text" placeholder="Фамилия" required />
+        <input v-model="email" type="email" placeholder="Email" required />
+        <input v-model="password" type="password" placeholder="Пароль" required />
         <div class="buttons">
-          <n-button type="success" @click="register">Зарегистрироваться</n-button>
+          <button type="submit">Зарегистрироваться</button>
         </div>
+      </form>
     </div>
-  </n-dialog>
+  </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import api from '../services/api';
-import { NButton, NDialog, NInput } from 'naive-ui';
+import { NButton } from 'naive-ui';
 import router from '@/router';
 import { useNotificationService } from '@/composables/notificationUtils.js'; 
 
@@ -47,7 +49,7 @@ const register = async () => {
   }
 };
 const closeModal = () => {
-  router.push("/").then(() => window.location.reload());
+  router.push('/')
 };
 </script>
 
@@ -74,12 +76,6 @@ const closeModal = () => {
   width: 500px;
   box-sizing: border-box;
   gap: 10px;
-}
-.n-dialog :deep(.n-dialog__title) {
-  display: none;
-}
-.n-dialog :deep(.n-dialog__close) {
-  display: none;
 }
 .modal-content h2 {
   margin-top: 0;
