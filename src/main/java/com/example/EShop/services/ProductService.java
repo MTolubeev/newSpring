@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -228,11 +230,7 @@ public class ProductService {
 
     private CommentDto convertCommentToDto(Comment comment) {
         CommentDto dto = new CommentDto();
-//        if(comment.getImages().size() != 0) {
-//            CommentImage commentImage = comment.getImages().get(0);
-//            String image = Base64.getEncoder().encodeToString(commentImage.getBytes());
-//            dto.setImage(image);
-//        }
+
         dto.setId(comment.getId());
         dto.setText(comment.getText());
         dto.setImages(comment.getImages());
@@ -282,6 +280,39 @@ public class ProductService {
         product.setCategoryOrder(categoryOrderBuilder.toString());
 
         productRepository.save(product);
+    }
+
+    public void changeProduct(Long productId, String newTitle, String newDescription, Integer newCount, Long newPrice, Long newDiscountPrice, String newCategory, String newSubCategory, String newSubSubCategory, MultipartFile images) throws IOException {
+        Product oldProduct = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        if (newTitle != null) oldProduct.setTitle(newTitle);
+        if (newDescription != null) oldProduct.setDescription(newDescription);
+        if (newCount != null) oldProduct.setCount(newCount);
+        if (newPrice != null) oldProduct.setPrice(newPrice);
+        if (newDiscountPrice != null) oldProduct.setDiscountPrice(newDiscountPrice);
+
+        if (newCategory != null) {
+            String cat = newCategory;
+            if (newSubCategory != null)
+                cat += "/" + newSubCategory;
+            oldProduct.setCategory(cat);
+            if (newSubSubCategory != null)
+                cat += "/" + newSubSubCategory;
+            generateCategoryOrderForProduct(oldProduct);
+        }
+        if (images != null) {
+            Image image1;
+            oldProduct.getImages().get(0).setPreviewImage(false);
+            image1 = toImageEntity(images);
+            image1.setPreviewImage(true);
+            image1 = imageRepository.save(image1);
+
+            oldProduct.addImageToProduct(image1);
+            oldProduct.setPreviewImageId(image1.getId());
+        }
+
+        Product savedProduct = productRepository.save(oldProduct);
     }
 
 }
