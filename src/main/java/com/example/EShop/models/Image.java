@@ -1,6 +1,6 @@
 package com.example.EShop.models;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 
 @Getter

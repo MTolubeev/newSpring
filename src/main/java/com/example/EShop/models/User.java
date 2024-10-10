@@ -2,7 +2,7 @@ package com.example.EShop.models;
 
 import com.example.EShop.models.enums.Role;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

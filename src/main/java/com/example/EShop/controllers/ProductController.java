@@ -123,36 +123,7 @@ public class ProductController {
                                            @RequestParam(required = false) String newSubCategory,
                                            @RequestParam(required = false) String newSubSubCategory,
                                            @RequestPart(value = "images", required = false) MultipartFile images) throws IOException {
-        Product oldProduct = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-
-        if (newTitle != null) oldProduct.setTitle(newTitle);
-        if (newDescription != null) oldProduct.setDescription(newDescription);
-        if (newCount != null) oldProduct.setCount(newCount);
-        if (newPrice != null) oldProduct.setPrice(newPrice);
-        if (newDiscountPrice != null) oldProduct.setDiscountPrice(newDiscountPrice);
-
-        if (newCategory != null) {
-            String cat = newCategory;
-            if (newSubCategory != null)
-                cat += "/" + newSubCategory;
-            oldProduct.setCategory(cat);
-            if (newSubSubCategory != null)
-                cat += "/" + newSubSubCategory;
-            productService.generateCategoryOrderForProduct(oldProduct);
-        }
-        if (images != null) {
-            Image image1;
-            oldProduct.getImages().get(0).setPreviewImage(false);
-            image1 = productService.toImageEntity(images);
-            image1.setPreviewImage(true);
-            image1 = imageRepository.save(image1);
-
-            oldProduct.addImageToProduct(image1);
-            oldProduct.setPreviewImageId(image1.getId());
-        }
-
-        Product savedProduct = productRepository.save(oldProduct);
+       productService.changeProduct(productId, newTitle, newDescription, newCount, newPrice, newDiscountPrice, newCategory, newSubCategory, newSubSubCategory, images);
         return ResponseEntity.ok("good");
     }
 
