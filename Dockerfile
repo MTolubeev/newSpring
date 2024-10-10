@@ -7,8 +7,8 @@ WORKDIR /app
 # Копируем файл jar в контейнер
 COPY target/E-Shop-0.0.1-SNAPSHOT.jar app.jar
 
-# Открываем порт, на котором работает Spring Boot
-EXPOSE 8080
+# Определяем переменные среды (настройки БД будут передаваться через docker-compose)
+ENV SPRING_PROFILES_ACTIVE=docker
 
 # Команда для запуска приложения
 ENTRYPOINT ["java", "-jar", "app.jar"]

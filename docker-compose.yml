@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  # Backend-сервис (уже настроен ранее)
+  springboot-app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-db
+    networks:
+      - app-network
+
+  # База данных
+  postgres-db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Aezakmi1111
+      POSTGRES_DB: Shop
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+  # Frontend-сервис
+  frontend-app:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080" # Пробрасываем порты (меняем внешний порт на 8081, если 8080 уже занят)
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
